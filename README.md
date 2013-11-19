@@ -53,10 +53,7 @@ Typical apache setup
                 Allow from all
         </Proxy>
         ProxyPreserveHost on
-                ProxyPass /sso http://localhost:9997/sso
-                ProxyPass /uib http://localhost:9995/uib
                 ProxyPass /tokenservice http://localhost:9998/tokenservice
-                ProxyPass /useradminservice http://localhost:9992/uab
-                ProxyPass /test http://localhost:9990/test/
+                ProxyPass /useradminservice http://localhost:9992/uas
 </VirtualHost>
 ```
