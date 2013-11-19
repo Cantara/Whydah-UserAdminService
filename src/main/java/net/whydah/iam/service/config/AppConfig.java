@@ -42,7 +42,7 @@ public class AppConfig {
 
     private static Properties loadFromClasspath(String appMode) throws IOException {
         Properties properties = new Properties();
-        String propertyfile = String.format("securitytokenservice.%s.properties", appMode);
+        String propertyfile = String.format("useradminservice.%s.properties", appMode);
         logger.info("Loading properties from classpath: {}", propertyfile);
         InputStream is = AppConfig.class.getClassLoader().getResourceAsStream(propertyfile);
         if(is == null) {

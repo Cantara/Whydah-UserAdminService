@@ -18,7 +18,7 @@ public class ApplicationMode {
             appMode = System.getProperty(IAM_MODE_KEY);
         }
         if(appMode == null) {
-            System.err.println(IAM_MODE_KEY + " not defined. Must be one of PROD, TEST, DEV.");
+            System.err.println(IAM_MODE_KEY + " not defined. Must be one of PROD, TEST, TEST_LOCALHOST, DEV.");
             System.exit(4);
         }
         if(!Arrays.asList(PROD, TEST, TEST_L, DEV).contains(appMode)) {

@@ -17,6 +17,6 @@ public class AppConfigTest {
     public void readProperties() throws IOException {
         AppConfig appConfig = new AppConfig();
         assertEquals("puh", appConfig.getProperty("nalle")); //fra testconfig
-        assertEquals("9998", appConfig.getProperty("service.port")); //fra securitytokenservice.TEST.properties
+        assertEquals("9998", appConfig.getProperty("service.port")); //fra useradminservice.TEST.properties
     }
 }

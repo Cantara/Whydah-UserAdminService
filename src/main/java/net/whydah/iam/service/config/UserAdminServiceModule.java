@@ -16,13 +16,13 @@ import java.net.URI;
  * Date: 2/15/11
  * Time: 10:58 AM
  */
-public class SecurityTokenServiceModule extends AbstractModule {
-    private final static Logger logger = LoggerFactory.getLogger(SecurityTokenServiceModule.class);
+public class UserAdminServiceModule extends AbstractModule {
+    private final static Logger logger = LoggerFactory.getLogger(UserAdminServiceModule.class);
 
     private final AppConfig appConfig;
     private final String applicationmode;
 
-    public SecurityTokenServiceModule(AppConfig appConfig, String applicationmode) {
+    public UserAdminServiceModule(AppConfig appConfig, String applicationmode) {
         this.appConfig = appConfig;
         this.applicationmode = applicationmode;
     }

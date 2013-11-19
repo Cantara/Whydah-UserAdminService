@@ -6,7 +6,7 @@ import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import net.whydah.iam.service.config.AppConfig;
 import net.whydah.iam.service.config.ApplicationMode;
-import net.whydah.iam.service.config.SecurityTokenServiceModule;
+import net.whydah.iam.service.config.UserAdminServiceModule;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.ServerConfiguration;
@@ -24,7 +24,7 @@ public class Main {
     protected void startServer() throws IOException {
         String appMode = ApplicationMode.getApplicationMode();
         AppConfig appConfig = new AppConfig();
-        Injector injector = Guice.createInjector(new SecurityTokenServiceModule(appConfig, appMode));
+        Injector injector = Guice.createInjector(new UserAdminServiceModule(appConfig, appMode));
 
         logger.info("Starting grizzly...");
 
@@ -46,7 +46,7 @@ public class Main {
         NetworkListener listener = new NetworkListener("grizzly", NetworkListener.DEFAULT_NETWORK_HOST, webappPort);
         httpServer.addListener(listener);
         httpServer.start();
-        logger.info("SecurityTokenService started on port {}", webappPort);
+        logger.info("Whydah-UserAdminService started on port {}", webappPort);
     }
 
     public int getPort() {
