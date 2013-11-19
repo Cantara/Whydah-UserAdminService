@@ -50,25 +50,6 @@ public class PostTest {
         assertTrue(responseXML.contains("Url"));
     }
 
-    @Test
-    @Ignore
-    public void testUserToken() {
-        String apptokenxml = getAppToken();
-        String applicationtokenid = getTokenIdFromAppToken(apptokenxml);
-        UserCredential user = new UserCredential("nalle", "puh");
-
-        WebResource userTokenResource = restClient.resource(baseUri).path("iam/" + applicationtokenid + "/usertoken");
-        MultivaluedMap<String,String> formData = new MultivaluedMapImpl();
-        formData.add("apptoken", apptokenxml);
-        formData.add("usercredential", user.toXML());
-        ClientResponse response = userTokenResource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, formData);
-        String responseXML = response.getEntity(String.class);
-        //System.out.println(responseXML);
-        assertTrue(responseXML.contains("securitylevel"));
-        assertTrue(responseXML.contains("id=\""));
-        assertTrue(responseXML.contains("personid"));
-        assertTrue(responseXML.contains("hash"));
-    }
 
     private String getAppToken() {
         ApplicationCredential acred = new ApplicationCredential();
