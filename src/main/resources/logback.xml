@@ -8,9 +8,9 @@
 
     <!--Daily rolling file appender -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>tokenservice.log</File>
+        <File>logs/UserAdminService.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>tokenservice-%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>UserAdminService-%d{yyyy-MM-dd}.log</FileNamePattern>
             <maxHistory>5</maxHistory>
         </rollingPolicy>
 
