@@ -4,6 +4,10 @@ UserAdminService
 The optional component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
 
 
+![Architectural Overview](https://raw2.github.com/altran/Whydah-SSOWebApplication/master/Whydah%20infrastructure.png)
+
+
+
 Installation
 ============
 
