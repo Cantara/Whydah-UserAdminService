@@ -14,4 +14,6 @@ dependency-reduced-pom.xml
 /.settings
 /*.log
 *.iml
+*.ipr
+*.iws
 /.idea
