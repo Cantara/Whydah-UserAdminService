@@ -9,6 +9,31 @@
     <name>UserAdminService</name>
     <url>https://wiki.cantara.no/display/iam/UserAdminService</url>
 
+
+    <developers>
+        <developer>
+            <id>totto</id>
+            <name>Thor Henning Hetland</name>
+            <email>totto@totto.org</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>Altran Norge AS</organization>
+            <organizationUrl>http://www.altran.no/</organizationUrl>
+        </developer>
+        <developer>
+            <id>kimcs</id>
+            <name>Kim Christian Swenson</name>
+            <email>kim.christian.swenson@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>Altran Norge AS</organization>
+            <organizationUrl>http://www.altran.no/</organizationUrl>
+        </developer>
+    </developers>
+
+
     <parent>
         <groupId>no.cantara.emi</groupId>
         <artifactId>parent</artifactId>
