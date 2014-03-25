@@ -6,31 +6,6 @@
     <name>UserAdminService</name>
     <url>https://wiki.cantara.no/display/iam/UserAdminService</url>
 
-
-    <developers>
-        <developer>
-            <id>totto</id>
-            <name>Thor Henning Hetland</name>
-            <email>totto@totto.org</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
-            <organization>Altran Norge AS</organization>
-            <organizationUrl>http://www.altran.no/</organizationUrl>
-        </developer>
-        <developer>
-            <id>kimcs</id>
-            <name>Kim Christian Swenson</name>
-            <email>kim.christian.swenson@gmail.com</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
-            <organization>Altran Norge AS</organization>
-            <organizationUrl>http://www.altran.no/</organizationUrl>
-        </developer>
-    </developers>
-
-
     <parent>
         <groupId>no.cantara.emi</groupId>
         <artifactId>parent</artifactId>
@@ -41,8 +16,8 @@
         <developerConnection>scm:git:ssh://git@github.com/altran/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/altran/Whydah-UserAdminService.git</connection>
         <url>https://github.com/altran/Whydah-UserAdminService</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -76,6 +51,29 @@
             <url>http://mvnrepo.cantara.no/content/repositories/releases/</url>
         </repository>
     </repositories>
+
+    <developers>
+        <developer>
+            <id>totto</id>
+            <name>Thor Henning Hetland</name>
+            <email>totto@totto.org</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>Altran Norge AS</organization>
+            <organizationUrl>http://www.altran.no/</organizationUrl>
+        </developer>
+        <developer>
+            <id>kimcs</id>
+            <name>Kim Christian Swenson</name>
+            <email>kim.christian.swenson@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>Altran Norge AS</organization>
+            <organizationUrl>http://www.altran.no/</organizationUrl>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -139,16 +137,31 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.6</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.27</version>
+            <version>1.1.1</version>
         </dependency>
+        <!-- Bridge commons-logging commons-httpclient -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.6</version>
+        </dependency>
+
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -156,6 +169,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+
     <build>
         <plugins>
             <plugin>
