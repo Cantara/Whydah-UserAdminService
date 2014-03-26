@@ -16,19 +16,7 @@
         <developerConnection>scm:git:ssh://git@github.com/altran/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/altran/Whydah-UserAdminService.git</connection>
         <url>https://github.com/altran/Whydah-UserAdminService</url>
-        <tag>HEAD</tag>
     </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>altran-releases</id>
-            <url>http://mvnrepo.cantara.no/content/repositories/altran-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>altran-snapshots</id>
-            <url>http://mvnrepo.cantara.no/content/repositories/altran-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <repositories>
         <repository>
