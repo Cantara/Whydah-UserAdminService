@@ -1,4 +1,4 @@
-package net.whydah.identity.config;
+package net.whydah.admin.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;

@@ -62,6 +62,16 @@
             <organization>Altran Norge AS</organization>
             <organizationUrl>http://www.altran.no/</organizationUrl>
         </developer>
+        <developer>
+            <id>baardl</id>
+            <name>Bard Lind</name>
+            <email>bard.lind@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>Altran Norge AS</organization>
+            <organizationUrl>http://www.altran.no/</organizationUrl>
+        </developer>
     </developers>
 
     <dependencies>
@@ -75,6 +85,11 @@
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-servlet</artifactId>
             <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-netty</artifactId>
+            <version>3.0.6.Final</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -166,7 +181,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>net.whydah.identity.Main</mainClass>
+                    <mainClass>net.whydah.admin.Main</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -175,7 +190,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>net.whydah.identity.Main</Main-Class>
+                            <Main-Class>net.whydah.admin.Main</Main-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>

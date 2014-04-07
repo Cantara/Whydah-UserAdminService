@@ -1,4 +1,4 @@
-package net.whydah.identity.config;
+package net.whydah.admin.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

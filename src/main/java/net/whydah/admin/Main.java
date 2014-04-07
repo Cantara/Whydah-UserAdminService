@@ -1,16 +1,17 @@
-package net.whydah.identity;
+package net.whydah.admin;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
-import net.whydah.identity.config.AppConfig;
-import net.whydah.identity.config.ApplicationMode;
-import net.whydah.identity.config.UserAdminServiceModule;
+import net.whydah.admin.config.AppConfig;
+import net.whydah.admin.config.ApplicationMode;
+import net.whydah.admin.config.UserAdminServiceModule;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.ServerConfiguration;
 import org.glassfish.grizzly.servlet.ServletHandler;
+import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,9 @@ public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
     private HttpServer httpServer;
     private int webappPort;
+    static NettyJaxrsServer netty;
 
-    protected void startServer() throws IOException {
+    public void startServer() throws IOException {
         String appMode = ApplicationMode.getApplicationMode();
         AppConfig appConfig = new AppConfig();
         Injector injector = Guice.createInjector(new UserAdminServiceModule(appConfig, appMode));
@@ -29,8 +31,8 @@ public class Main {
         logger.info("Starting grizzly...");
 
         ServletHandler adapter = new ServletHandler();
-        adapter.setContextPath("/tokenservice");
-        adapter.addInitParameter("com.sun.jersey.config.property.packages", "net.whydah.identity");
+        adapter.setContextPath("/useradminservice");
+        adapter.addInitParameter("com.sun.jersey.config.property.packages", "net.whydah.application");
         adapter.setProperty(ServletHandler.LOAD_ON_STARTUP, "1");
 
         GuiceFilter filter = new GuiceFilter();

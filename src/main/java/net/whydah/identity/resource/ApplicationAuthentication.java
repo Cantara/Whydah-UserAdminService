@@ -2,7 +2,7 @@ package net.whydah.identity.resource;
 
 import com.google.inject.Inject;
 import com.sun.jersey.api.view.Viewable;
-import net.whydah.identity.config.AppConfig;
+import net.whydah.admin.config.AppConfig;
 import net.whydah.identity.data.ApplicationCredential;
 import net.whydah.identity.data.ApplicationToken;
 import net.whydah.identity.data.UserCredential;
