@@ -1,10 +1,7 @@
 package net.whydah.admin.application;
 
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-
-import javax.ws.rs.core.MediaType;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
@@ -20,9 +17,13 @@ public class UibConnection {
         uib = client.resource(userIdentityBackendUri);
     }
 
-    public void addApplication(String applicationTokenId, String userTokenId) {
-        String applicationJson = "{}";
-        //TODO bli: ClientResponse response = uib.path("/" + applicationTokenId + "/" + userTokenId + "/application").type(MediaType.APPLICATION_JSON).post(applicationJson);
+    public Application addApplication(String userAdminServiceTokenId, String userTokenId, String applicationJson) {
 
+        //TODO bli: ClientResponse response = uib.path("/" + applicationTokenId + "/" + userTokenId + "/application").type(MediaType.APPLICATION_JSON).post(applicationJson);
+         return null;
+    }
+
+    public Application getApplication(String userAdminServiceTokenId, String userTokenId, String applicationId) {
+        return null;
     }
 }
