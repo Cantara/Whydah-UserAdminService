@@ -1,10 +1,9 @@
 package net.whydah.admin.application;
 
 import com.google.common.base.Joiner;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +72,11 @@ public class Application {
         try {
             Application application;
 
-            JSONObject jsonobj = new JSONObject(applicationJson);
+            ObjectMapper mapper = new ObjectMapper();
+            application = mapper.readValue(applicationJson, Application.class);
+           // JSONObject jsonobj = new JSONObject(applicationJson);
 
+            /*
             String id = jsonobj.getString("id");
             String name =  jsonobj.getString("name");
             String defaultrole = jsonobj.getString("defaultRole");
@@ -85,9 +87,16 @@ public class Application {
             for (int i = 0; i < availableOrgIds.length(); i++) {
                 application.addAvailableOrgId((String)availableOrgIds.get(i));
             }
+            */
             return application;
-        } catch (JSONException e) {
-            throw new IllegalArgumentException("Error parsing json", e);
+       // } catch (JSONException e) {
+         //   throw new IllegalArgumentException("Error parsing json", e);
+        } catch (JsonMappingException e) {
+            throw new IllegalArgumentException("Error mapping json for " + applicationJson, e);
+        } catch (JsonParseException e) {
+            throw new IllegalArgumentException("Error parsing json for " + applicationJson, e);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error reading json for " + applicationJson, e);
         }
     }
 
@@ -184,7 +193,7 @@ public class Application {
                 '}';
     }
 
-    public void setId(int id) {
-        this.id = new Integer(id).toString();
+    public void setId(String id) {
+        this.id = id;
     }
 }
