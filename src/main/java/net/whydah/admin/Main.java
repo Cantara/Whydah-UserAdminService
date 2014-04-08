@@ -32,7 +32,7 @@ public class Main {
 
         ServletHandler adapter = new ServletHandler();
         adapter.setContextPath("/useradminservice");
-        adapter.addInitParameter("com.sun.jersey.config.property.packages", "net.whydah.application");
+        adapter.addInitParameter("com.sun.jersey.config.property.packages", "net.whydah.identity");
         adapter.setProperty(ServletHandler.LOAD_ON_STARTUP, "1");
 
         GuiceFilter filter = new GuiceFilter();
