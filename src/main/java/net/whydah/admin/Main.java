@@ -19,6 +19,7 @@ import java.io.IOException;
 
 public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
+    public static final String CONTEXT_PATH = "/useradminservice";
     private HttpServer httpServer;
     private int webappPort;
     static NettyJaxrsServer netty;
@@ -31,7 +32,7 @@ public class Main {
         logger.info("Starting grizzly...");
 
         ServletHandler adapter = new ServletHandler();
-        adapter.setContextPath("/useradminservice");
+        adapter.setContextPath(CONTEXT_PATH);
         adapter.addInitParameter("com.sun.jersey.config.property.packages", "net.whydah.identity");
         adapter.setProperty(ServletHandler.LOAD_ON_STARTUP, "1");
 

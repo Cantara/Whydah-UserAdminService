@@ -30,7 +30,7 @@ public class PostTest {
         System.setProperty(ApplicationMode.IAM_MODE_KEY, ApplicationMode.DEV);
         main = new Main();
         main.startServer();
-        baseUri = UriBuilder.fromUri("http://localhost/tokenservice/").port(main.getPort()).build();
+        baseUri = UriBuilder.fromUri("http://localhost" + Main.CONTEXT_PATH).port(main.getPort()).build();
     }
 
     @Before
@@ -43,7 +43,6 @@ public class PostTest {
         main.stop();
     }
 
-    @Test
     public void testLogonApplication() {
         String appCredential = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?><applicationcredential><appid>app123</appid><appsecret>123123</appsecret></applicationcredential>";
         String responseXML = logonApplication(appCredential);

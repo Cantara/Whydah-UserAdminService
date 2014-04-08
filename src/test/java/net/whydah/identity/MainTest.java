@@ -25,7 +25,7 @@ public class MainTest {
         System.setProperty(ApplicationMode.IAM_MODE_KEY, ApplicationMode.DEV);
         main = new Main();
         main.startServer();
-        baseUri = UriBuilder.fromUri("http://localhost/tokenservice/").port(main.getPort()).build();
+        baseUri = UriBuilder.fromUri("http://localhost" + Main.CONTEXT_PATH).port(main.getPort()).build();
     }
 
     @Before
@@ -52,19 +52,6 @@ public class MainTest {
         assertTrue(responseMsg.contains("<applicationtoken>"));
     }
 
-    @Test
-    public void getApplicationCredentialTemplate() {
-        WebResource webResource = restClient.resource(baseUri).path("/applicationcredentialtemplate");
-        String responseMsg = webResource.get(String.class);
-        assertTrue(responseMsg.contains("<applicationcredential>"));
-    }
-
-    @Test
-    public void getUserCredentialTemplate() {
-        WebResource webResource = restClient.resource(baseUri).path("/usercredentialtemplate");
-        String responseMsg = webResource.get(String.class);
-        assertTrue(responseMsg.contains("<usercredential>"));
-    }
 
     /**
      * Test if a WADL document is available at the relative path
