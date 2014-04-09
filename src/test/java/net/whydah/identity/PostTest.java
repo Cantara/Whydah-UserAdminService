@@ -1,9 +1,6 @@
 package net.whydah.identity;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.client.apache.ApacheHttpClient;
+
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import net.whydah.admin.Main;
 import net.whydah.admin.config.ApplicationMode;
@@ -11,10 +8,14 @@ import net.whydah.identity.data.ApplicationCredential;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 public class PostTest {
     private static URI baseUri;
     Client restClient;
+
     private static Main main;
 
     @BeforeClass
@@ -35,7 +37,7 @@ public class PostTest {
 
     @Before
     public void initRun() throws Exception {
-        restClient = ApacheHttpClient.create();
+        restClient = ClientBuilder.newClient();
     }
 
     @AfterClass
@@ -61,11 +63,12 @@ public class PostTest {
     }
 
     private String logonApplication(String appCredential) {
-        WebResource logonResource = restClient.resource(baseUri).path("logon");
+
+        WebTarget logonResource = restClient.target(baseUri).path("logon");
         MultivaluedMap<String,String> formData = new MultivaluedMapImpl();
         formData.add("applicationcredential", appCredential);
-        ClientResponse response = logonResource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, formData);
-        return response.getEntity(String.class);
+        Response response = logonResource.request(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(Entity.entity(formData, MediaType.TEXT_PLAIN));
+        return response.readEntity(String.class);
     }
 
     private String getTokenIdFromAppToken(String appTokenXML) {

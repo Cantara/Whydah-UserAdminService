@@ -1,8 +1,6 @@
 package net.whydah.identity;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.client.apache.ApacheHttpClient;
+
 import net.whydah.admin.Main;
 import net.whydah.admin.config.ApplicationMode;
 import org.junit.AfterClass;
@@ -10,6 +8,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
@@ -30,7 +33,7 @@ public class MainTest {
 
     @Before
     public void initRun() throws Exception {
-        restClient = ApacheHttpClient.create();
+        restClient = ClientBuilder.newClient();
     }
 
     @AfterClass
@@ -40,15 +43,16 @@ public class MainTest {
 
     @Test
     public void getLegalRemark() {
-        WebResource webResource = restClient.resource(baseUri);
-        String responseMsg = webResource.get(String.class);
+        WebTarget logonResource = restClient.target(baseUri).path("logon");
+        Response response = logonResource.request(MediaType.TEXT_HTML).get();
+        String responseMsg =  response.readEntity(String.class);
         assertTrue(responseMsg.contains("Any misuse will be prosecuted."));
     }
 
     @Test
     public void getApplicationTokenTemplate() {
-        WebResource webResource = restClient.resource(baseUri).path("/applicationtokentemplate");
-        String responseMsg = webResource.get(String.class);
+        WebTarget logonResource = restClient.target(baseUri).path("/applicationtokentemplate");
+        String responseMsg = logonResource.request(MediaType.TEXT_HTML).get(String.class);
         assertTrue(responseMsg.contains("<applicationtoken>"));
     }
 
@@ -59,8 +63,8 @@ public class MainTest {
      */
     @Test
     public void testApplicationWadl() {
-        WebResource webResource = restClient.resource(baseUri).path("application.wadl");
-        String responseMsg = webResource.get(String.class);
+        WebTarget logonResource = restClient.target(baseUri).path("application.wadl");
+        String responseMsg = logonResource.request(MediaType.APPLICATION_XML).get(String.class);
         assertTrue(responseMsg.contains("<application"));
         assertTrue(responseMsg.contains("logonApplication"));
     }
