@@ -3,6 +3,7 @@ package net.whydah.admin.application;
 import net.whydah.identity.exception.AuthenticationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
+@Component
 public class UibConnection {
     private static final Logger log = LoggerFactory.getLogger(UibConnection.class);
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();

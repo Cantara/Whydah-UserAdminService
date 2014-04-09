@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 /**
@@ -28,7 +29,7 @@ public class MainWithJetty {
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
-        //LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
+        LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
 
         MainWithJetty main = new MainWithJetty(DEFAULT_PORT_NO);
         main.start();
@@ -42,7 +43,7 @@ public class MainWithJetty {
         this.jettyPort = jettyPort;
         server = new Server(jettyPort);
 
-        URL url = ClassLoader.getSystemResource("webapp/WEB-INF/web.xml");
+        URL url = ClassLoader.getSystemResource("webfiles/WEB-INF/web.xml");
         resourceBase = url.toExternalForm().replace("/WEB-INF/web.xml", "");
     }
 
