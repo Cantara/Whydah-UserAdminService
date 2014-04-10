@@ -1,8 +1,10 @@
 package net.whydah.admin.application;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.BadRequestException;
@@ -26,9 +28,14 @@ public class UibConnection {
     private final WebTarget uib;
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
 
-    public UibConnection() {
+    @Autowired
+    public UibConnection(AppConfig appConfig) {
         Client client = ClientBuilder.newClient();
-        uib = client.target(userIdentityBackendUri);
+//        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
+       // uib = client.target(userIdentityBackendUri);
+        String uibUrl = appConfig.getProperty("userIdentityBackendUri");
+        log.info("Connection to UserIdentityBackend on {}" , uibUrl);
+        uib = client.target(uibUrl);
     }
 
     public Application addApplication(String userAdminServiceTokenId, String userTokenId, String applicationJson) {

@@ -1,21 +1,26 @@
 package net.whydah.admin.application;
 
+import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by baardl on 08.04.14.
  */
 public class UibConnectionTest {
     private static final Logger log = LoggerFactory.getLogger(UibConnectionTest.class);
-    UibConnection uibConnection = null;
+    private static UibConnection uibConnection = null;
 
     public UibConnectionTest(UibConnection uibConnection) {
         this.uibConnection = uibConnection;
     }
 
     public static void main(String[] args) throws Exception {
-        UibConnectionTest uibConnectionTest = new UibConnectionTest(new UibConnection());
+        AppConfig appConfig = mock(AppConfig.class);
+        uibConnection = new UibConnection(appConfig);
+        UibConnectionTest uibConnectionTest = new UibConnectionTest(uibConnection);
         uibConnectionTest.testAddApplication();
         uibConnectionTest.testGetApplication();
     }

@@ -2,6 +2,7 @@ package net.whydah.admin.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +13,7 @@ import java.util.Properties;
 /**
  * Helper methods for reading configurration.
  */
+@Component
 public class AppConfig {
     public final static String IAM_CONFIG_KEY = "IAM_CONFIG";
     private final static Logger logger = LoggerFactory.getLogger(AppConfig.class);
