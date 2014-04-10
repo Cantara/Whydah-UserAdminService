@@ -194,9 +194,6 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
         </dependency>
-
-
-
     </dependencies>
 
 
@@ -206,7 +203,6 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
             </resource>
-
             <!-- Add webapp as resource folder to embed it in the jar file. -->
             <resource>
                 <directory>src/main/webapp</directory>
@@ -218,7 +214,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>net.whydah.admin.Main</mainClass>
+                    <mainClass>net.whydah.admin.MainWithJetty</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -227,7 +223,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>net.whydah.admin.Main</Main-Class>
+                            <Main-Class>net.whydah.admin.MainWithJetty</Main-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -242,6 +238,16 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
@@ -250,6 +256,13 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
                             </transformers>
                         </configuration>
                     </execution>
@@ -271,5 +284,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
