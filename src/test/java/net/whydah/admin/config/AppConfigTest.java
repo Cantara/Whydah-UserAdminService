@@ -1,14 +1,16 @@
 package net.whydah.admin.config;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
+
 
 public class AppConfigTest {
-    @BeforeClass
+    @BeforeMethod
     public static void init() {
         System.setProperty(ApplicationMode.IAM_MODE_KEY, ApplicationMode.TEST);
         System.setProperty(AppConfig.IAM_CONFIG_KEY, "src/test/testconfig.properties");
