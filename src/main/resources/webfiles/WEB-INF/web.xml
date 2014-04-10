@@ -14,4 +14,20 @@
         <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
 
+    <servlet>
+
+        <servlet-name>JerseyApplication</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>net.whydah.admin.JerseyApplication</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- Catch all urls except receiptcontrol -->
+    <servlet-mapping>
+        <servlet-name>JerseyApplication</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>
