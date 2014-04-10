@@ -17,7 +17,7 @@ import java.util.logging.LogManager;
 public class MainWithJetty {
     public static final int DEFAULT_PORT_NO = 9992;
     public static final String CONTEXT_PATH = "/useradminservice";
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger log = LoggerFactory.getLogger(MainWithJetty.class);
 
     private Server server;
     private String resourceBase;
@@ -43,7 +43,7 @@ public class MainWithJetty {
         this.jettyPort = jettyPort;
         server = new Server(jettyPort);
 
-        URL url = ClassLoader.getSystemResource("webfiles/WEB-INF/web.xml");
+        URL url = ClassLoader.getSystemResource("webapp/WEB-INF/web.xml");
         resourceBase = url.toExternalForm().replace("/WEB-INF/web.xml", "");
     }
 

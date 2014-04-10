@@ -1,6 +1,6 @@
 package net.whydah.admin.application;
 
-import net.whydah.identity.exception.AuthenticationFailedException;
+import net.whydah.admin.AuthenticationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

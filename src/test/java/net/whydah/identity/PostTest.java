@@ -1,22 +1,11 @@
 package net.whydah.identity;
 
-
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import net.whydah.admin.Main;
-import net.whydah.admin.config.ApplicationMode;
-import net.whydah.identity.data.ApplicationCredential;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 import static org.junit.Assert.assertTrue;
@@ -25,14 +14,16 @@ public class PostTest {
     private static URI baseUri;
     Client restClient;
 
-    private static Main main;
+   // private static MainWithJetty main;
 
     @BeforeClass
     public static void init() throws Exception {
+        /*
         System.setProperty(ApplicationMode.IAM_MODE_KEY, ApplicationMode.DEV);
-        main = new Main();
+        main = new MainWithJetty();
         main.startServer();
         baseUri = UriBuilder.fromUri("http://localhost" + Main.CONTEXT_PATH).port(main.getPort()).build();
+        */
     }
 
     @Before
@@ -42,7 +33,9 @@ public class PostTest {
 
     @AfterClass
     public static void teardown() throws Exception {
+        /*
         main.stop();
+        */
     }
 
     public void testLogonApplication() {
@@ -56,19 +49,24 @@ public class PostTest {
 
 
     private String getAppToken() {
+        /*
         ApplicationCredential acred = new ApplicationCredential();
         acred.setApplicationID("Styrerommet");
         acred.setApplicationPassord("dummy");
         return logonApplication(acred.toXML());
+        */
+        return null;
     }
 
     private String logonApplication(String appCredential) {
-
+                                /*
         WebTarget logonResource = restClient.target(baseUri).path("logon");
         MultivaluedMap<String,String> formData = new MultivaluedMapImpl();
         formData.add("applicationcredential", appCredential);
         Response response = logonResource.request(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(Entity.entity(formData, MediaType.TEXT_PLAIN));
         return response.readEntity(String.class);
+        */
+        return null;
     }
 
     private String getTokenIdFromAppToken(String appTokenXML) {

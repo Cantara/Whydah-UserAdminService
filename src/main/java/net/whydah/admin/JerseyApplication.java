@@ -15,7 +15,7 @@ public class JerseyApplication extends ResourceConfig {
 
     public JerseyApplication() {
         //https://java.net/jira/browse/JERSEY-2175
-        ResourceConfig resourceConfig = packages("com.tomra.receipt.admin", "com.tomra.receipt.audit");
+        ResourceConfig resourceConfig = packages("net.whydah.admin");
 
         //resourceConfig.register(MultiPartFeature.class);
         log.debug(this.getClass().getSimpleName() + " started!");

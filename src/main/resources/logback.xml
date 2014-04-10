@@ -20,14 +20,12 @@
     </appender>
 
 
-    <logger name="net.whydah" additivity="false">
-        <level value="debug" />
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
-    </logger>
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="org.glassfish.jersey" level="INFO"/>
+    <logger name="net.whydah" level="TRACE"/>
 
     <root>
-        <level value="trace" />
+        <level value="INFO" />
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>

@@ -1,7 +1,6 @@
 package net.whydah.identity;
 
 
-import net.whydah.admin.Main;
 import net.whydah.admin.config.ApplicationMode;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,22 +12,21 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 import static org.junit.Assert.assertTrue;
 
 public class MainTest {
-    private static Main main;
+  //  private static Main main;
     private static URI baseUri;
     Client restClient;
 
     @BeforeClass
     public static void init() throws Exception {
         System.setProperty(ApplicationMode.IAM_MODE_KEY, ApplicationMode.DEV);
-        main = new Main();
-        main.startServer();
-        baseUri = UriBuilder.fromUri("http://localhost" + Main.CONTEXT_PATH).port(main.getPort()).build();
+//        main = new Main();
+//        main.startServer();
+//        baseUri = UriBuilder.fromUri("http://localhost" + Main.CONTEXT_PATH).port(main.getPort()).build();
     }
 
     @Before
@@ -38,7 +36,7 @@ public class MainTest {
 
     @AfterClass
     public static void teardown() throws Exception {
-        main.stop();
+    //    main.stop();
     }
 
     @Test

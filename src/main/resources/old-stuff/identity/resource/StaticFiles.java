@@ -1,6 +1,5 @@
 package net.whydah.identity.resource;
 
-import com.sun.jersey.api.view.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
