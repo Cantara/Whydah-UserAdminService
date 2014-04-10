@@ -34,6 +34,15 @@ public class ApplicationService {
         }
         return application;
     }
+    public Application createApplicationFromXml(String applicationTokenId, String userTokenId,String applicationXml) {
+        Application createdApplication = null;
+        Application application = Application.fromXml(applicationXml);
+        if (application != null) {
+            String applicationJson = application.toJson();
+            createdApplication = createApplication(applicationTokenId, userTokenId, applicationJson);
+        }
+        return createdApplication;
+    }
 
     public Application getApplication(String applicationTokenId, String userTokenId, String applicationId) {
         Application application = null;

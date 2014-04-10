@@ -6,8 +6,19 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +42,7 @@ public class Application {
     private String name;
     private String defaultRole;
     private String defaultOrgid;
-    private List<String> availableOrgIds;
+    private List<String> availableOrgIds = new ArrayList<>();
 
     private Application() {
     }
@@ -51,7 +62,7 @@ public class Application {
         this.name = name;
         this.defaultRole = defaultRole;
         this.defaultOrgid = defaultOrgid;
-        this.availableOrgIds = availableOrgIds;
+        setAvailableOrgIds(availableOrgIds);
     }
 
     /**
@@ -74,23 +85,8 @@ public class Application {
 
             ObjectMapper mapper = new ObjectMapper();
             application = mapper.readValue(applicationJson, Application.class);
-           // JSONObject jsonobj = new JSONObject(applicationJson);
 
-            /*
-            String id = jsonobj.getString("id");
-            String name =  jsonobj.getString("name");
-            String defaultrole = jsonobj.getString("defaultRole");
-            String defaultOrgid = jsonobj.getString("defaultOrgid");
-            JSONArray availableOrgIds = jsonobj.getJSONArray("availableOrgIds");
-
-            application = new Application(id, name, defaultrole, defaultOrgid);
-            for (int i = 0; i < availableOrgIds.length(); i++) {
-                application.addAvailableOrgId((String)availableOrgIds.get(i));
-            }
-            */
             return application;
-       // } catch (JSONException e) {
-         //   throw new IllegalArgumentException("Error parsing json", e);
         } catch (JsonMappingException e) {
             throw new IllegalArgumentException("Error mapping json for " + applicationJson, e);
         } catch (JsonParseException e) {
@@ -124,12 +120,45 @@ public class Application {
 
     private String buildAvailableOrgIsXml() {
         StringBuilder availableXml = new StringBuilder("<availableOrgIs>\n");
+
         for (String availableOrgId : availableOrgIds) {
             availableXml.append("<orgId>" + availableOrgId + "</orgId>\n");
         }
-        availableXml.append("<availableOrgIs>");
+        availableXml.append("</availableOrgIs>");
         return availableXml.toString();
     }
+
+    public static Application fromXml(String applicationXml) {
+        log.debug("Build application from xml {}", applicationXml);
+        Application application = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+            Document doc = documentBuilder.parse(new InputSource(new StringReader(applicationXml)));
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String id = (String) xPath.evaluate("/application/applicationid", doc, XPathConstants.STRING);
+            String name = (String) xPath.evaluate("/application/applicationname", doc, XPathConstants.STRING);
+            String defaultrole = (String) xPath.evaluate("/application/defaultrole", doc, XPathConstants.STRING);
+            String defaultorgid = (String) xPath.evaluate("/application/defaultorgid", doc, XPathConstants.STRING);
+            NodeList availableOrgIds = (NodeList) xPath.evaluate("/application/availableOrgIs/orgId", doc, XPathConstants.NODESET);
+
+            application = new Application(id,name,defaultrole, defaultorgid);
+            if (availableOrgIds != null && availableOrgIds.getLength() > 0) {
+                for (int i = 0; i < availableOrgIds.getLength(); i++) {
+                    Node node = availableOrgIds.item(i);
+                    XPathExpression pathExpr = xPath.compile(".");
+                    String orgId = (String) pathExpr.evaluate(node, XPathConstants.STRING);
+                    log.debug("orgId {}", orgId);
+                    application.addAvailableOrgId(orgId);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Could not create an Application from this xml {}", applicationXml, e);
+        }
+        return application;
+
+    }
+
 
 
     public String getId() {
@@ -196,4 +225,6 @@ public class Application {
     public void setId(String id) {
         this.id = id;
     }
+
+
 }

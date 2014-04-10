@@ -40,8 +40,7 @@ public class ApplicationResource {
         log.trace("createApplication is called with applicationXml={}", applicationXml);
         Application application;
         try {
-            application = applicationService.createApplication(applicationTokenId, userTokenId, applicationXml);
-            //return Response.status(Response.Status.OK).build();
+            application = applicationService.createApplicationFromXml(applicationTokenId, userTokenId, applicationXml);
 
         } catch (IllegalArgumentException iae) {
             log.error("createApplication: Invalid xml={}", applicationXml, iae);
@@ -55,7 +54,7 @@ public class ApplicationResource {
         }
 
         if (application != null) {
-            String applicationCreatedXml = buildApplicationJson(application);
+            String applicationCreatedXml = application.toXML();
             return Response.ok(applicationCreatedXml).build();
         } else {
             return Response.status(Response.Status.NO_CONTENT).build();
