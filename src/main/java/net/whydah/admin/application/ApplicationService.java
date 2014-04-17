@@ -15,20 +15,20 @@ import java.text.SimpleDateFormat;
 public class ApplicationService {
     private static final Logger log = LoggerFactory.getLogger(ApplicationService.class);
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd hh:mm");
-    private final UibConnection uibConnection;
+    private final UibApplicationConnection uibApplicationConnection;
     private final CredentialStore credentialStore;
 
 
     @Autowired
-    public ApplicationService(UibConnection uibConnection, CredentialStore credentialStore) {
-        this.uibConnection = uibConnection;
+    public ApplicationService(UibApplicationConnection uibApplicationConnection, CredentialStore credentialStore) {
+        this.uibApplicationConnection = uibApplicationConnection;
         this.credentialStore = credentialStore;
     }
 
     public Application createApplication(String applicationTokenId, String userTokenId,String applicationJson) {
         Application application = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            application = uibConnection.addApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationJson);
+            application = uibApplicationConnection.addApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationJson);
         } else {
             //FIXME handle no access to this method.
         }
@@ -47,7 +47,7 @@ public class ApplicationService {
     public Application getApplication(String applicationTokenId, String userTokenId, String applicationId) {
         Application application = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            application = uibConnection.getApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationId);
+            application = uibApplicationConnection.getApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationId);
         } else {
             //FIXME handle no access to this method.
         }

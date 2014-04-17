@@ -19,8 +19,8 @@ import javax.ws.rs.core.Response;
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 @Component
-public class UibConnection {
-    private static final Logger log = LoggerFactory.getLogger(UibConnection.class);
+public class UibApplicationConnection {
+    private static final Logger log = LoggerFactory.getLogger(UibApplicationConnection.class);
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
 
@@ -29,7 +29,7 @@ public class UibConnection {
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
 
     @Autowired
-    public UibConnection(AppConfig appConfig) {
+    public UibApplicationConnection(AppConfig appConfig) {
         Client client = ClientBuilder.newClient();
 //        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
        // uib = client.target(userIdentityBackendUri);
