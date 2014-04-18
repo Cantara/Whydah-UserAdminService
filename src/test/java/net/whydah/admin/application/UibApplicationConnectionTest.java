@@ -9,20 +9,20 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by baardl on 08.04.14.
  */
-public class UibConnectionTest {
-    private static final Logger log = LoggerFactory.getLogger(UibConnectionTest.class);
+public class UibApplicationConnectionTest {
+    private static final Logger log = LoggerFactory.getLogger(UibApplicationConnectionTest.class);
     private static UibApplicationConnection uibApplicationConnection = null;
 
-    public UibConnectionTest(UibApplicationConnection uibApplicationConnection) {
+    public UibApplicationConnectionTest(UibApplicationConnection uibApplicationConnection) {
         this.uibApplicationConnection = uibApplicationConnection;
     }
 
     public static void main(String[] args) throws Exception {
         AppConfig appConfig = mock(AppConfig.class);
         uibApplicationConnection = new UibApplicationConnection(appConfig);
-        UibConnectionTest uibConnectionTest = new UibConnectionTest(uibApplicationConnection);
-        uibConnectionTest.testAddApplication();
-        uibConnectionTest.testGetApplication();
+        UibApplicationConnectionTest uibApplicationConnectionTest = new UibApplicationConnectionTest(uibApplicationConnection);
+        uibApplicationConnectionTest.testAddApplication();
+        uibApplicationConnectionTest.testGetApplication();
     }
     public void testAddApplication() throws Exception {
 
