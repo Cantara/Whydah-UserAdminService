@@ -94,11 +94,6 @@
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-spring</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
@@ -127,9 +122,19 @@
         </dependency>
         <!-- https://jersey.java.net/documentation/latest/spring.html -->
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-spring</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-spring3</artifactId>
             <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -209,11 +214,13 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>net.whydah.identity</groupId>
             <artifactId>UserAdminWebapp</artifactId>
             <version>0.3-SNAPSHOT</version>
         </dependency>
+        -->
     </dependencies>
 
 

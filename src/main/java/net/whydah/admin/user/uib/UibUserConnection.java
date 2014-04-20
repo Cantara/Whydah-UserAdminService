@@ -4,8 +4,6 @@ import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -18,7 +16,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by baardl on 17.04.14.
  */
-@Component
+//@Component
 public class UibUserConnection {
 
     private static final Logger log = LoggerFactory.getLogger(UibUserConnection.class);
@@ -29,7 +27,7 @@ public class UibUserConnection {
     private final WebTarget uib;
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
 
-    @Autowired
+    //@Autowired
     public UibUserConnection(AppConfig appConfig) {
         Client client = ClientBuilder.newClient();
 //        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
