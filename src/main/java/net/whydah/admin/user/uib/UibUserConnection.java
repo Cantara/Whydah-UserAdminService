@@ -4,6 +4,8 @@ import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -16,7 +18,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by baardl on 17.04.14.
  */
-//@Component
+@Component
 public class UibUserConnection {
 
     private static final Logger log = LoggerFactory.getLogger(UibUserConnection.class);
@@ -27,7 +29,7 @@ public class UibUserConnection {
     private final WebTarget uib;
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
 
-    //@Autowired
+    @Autowired
     public UibUserConnection(AppConfig appConfig) {
         Client client = ClientBuilder.newClient();
 //        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
@@ -37,15 +39,16 @@ public class UibUserConnection {
         uib = client.target(uibUrl);
     }
 
-    public UserAggregateRepresentation addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
+    public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
-        UserAggregateRepresentation userAggregate = null;
+        UserAggregate userAggregate = null;
+        UserAggregateRepresentation userAggregateRepresentation = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userAggregateJson, MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("Response form Uib {}", response.readEntity(String.class));
-                userAggregate = UserAggregateRepresentation.fromJson(userAggregateJson);
+                userAggregateRepresentation = UserAggregateRepresentation.fromJson(userAggregateJson);
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
@@ -54,6 +57,30 @@ public class UibUserConnection {
                 log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
                 throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
         }
+        userAggregate = userAggregateRepresentation.getUserAggregate();
         return userAggregate;
+    }
+
+    public UserIdentity createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
+        UserIdentity userIdentity = null;
+        UserAggregateRepresentation userAggregateRepresentation = null;
+        Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
+        int statusCode = response.getStatus();
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("Response form Uib {}", response.readEntity(String.class));
+                userIdentity = UserIdentity.fromJson(response.readEntity(String.class));
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+//FIXME bli:                throw new BadRequestException("BadRequest for Json " + userIdentityJson + ",  Status code " + response.getStatus());
+                userIdentity = UserIdentity.fromJson(userIdentityJson);
+                break;
+            default:
+                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
+        }
+        return userIdentity;
     }
 }

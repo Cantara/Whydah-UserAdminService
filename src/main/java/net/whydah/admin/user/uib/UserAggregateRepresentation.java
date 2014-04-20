@@ -22,6 +22,7 @@ public class UserAggregateRepresentation {
     private String password;    //TODO include this in response?
 
     private List<RoleRepresentation> roles;
+    private UserAggregate userAggregate;
 
     private UserAggregateRepresentation() {
     }
@@ -116,5 +117,25 @@ public class UserAggregateRepresentation {
     }
     public List<RoleRepresentation> getRoles() {
         return roles;
+    }
+
+    public UserAggregate getUserAggregate() {
+        UserIdentity userIdentity = new UserIdentity(getUid(), getUsername(), getFirstName(), getLastName(), getPersonRef(), getEmail(), getCellPhone(),getPassword());
+        List<UserPropertyAndRole> userPropertiesAndRoles = new ArrayList<>();
+        List<RoleRepresentation> roles = getRoles();
+        for (RoleRepresentation role : roles) {
+            UserPropertyAndRole userPropertyAndRole = new UserPropertyAndRole();
+            userPropertyAndRole.setId(role.getId());
+            userPropertyAndRole.setOrganizationId(role.getOrganizationId());
+            userPropertyAndRole.setOrganizationName(role.getOrganizationName());
+            userPropertyAndRole.setApplicationId(role.getApplicationId());
+            userPropertyAndRole.setApplicationName(role.getApplicationName());
+
+            userPropertyAndRole.setApplicationRoleName(role.getApplicationRoleName());
+            userPropertyAndRole.setApplicationRoleValue(role.getApplicationRoleValue());
+            userPropertiesAndRoles.add(userPropertyAndRole);
+        }
+        userAggregate = new UserAggregate(userIdentity, userPropertiesAndRoles);
+        return userAggregate;
     }
 }

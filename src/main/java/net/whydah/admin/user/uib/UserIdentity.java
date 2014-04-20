@@ -1,5 +1,6 @@
 package net.whydah.admin.user.uib;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -16,11 +17,13 @@ import java.io.Serializable;
  *
  * @author totto
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class UserIdentity extends UserIdentityRepresentation implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(UserIdentity.class);
     private static final long serialVersionUID = 1;
 
     private String uid;
+
 
     public UserIdentity() {
     }
@@ -152,6 +155,18 @@ public class UserIdentity extends UserIdentityRepresentation implements Serializ
             e.printStackTrace();
         }
         return userIdentity;
+    }
+
+    public String toJson() {
+        String userJson = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            userJson =  mapper.writeValueAsString(this);
+            logger.debug("toJson: {}", userJson);
+        } catch (IOException e) {
+            logger.info("Could not create json from this object {}", toString(), e);
+        }
+        return userJson;
     }
 
     private static String replacePlusWithEmpty(String email){
