@@ -90,6 +90,32 @@ public class UserResource {
         }
     }
 
+    @POST
+    @Path("/{userId}/role")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                            @PathParam("userId") String userId, String roleXml) {
+        log.trace("addRole is called with userId={}, roleXml {}", userId, roleXml);
+
+        try {
+            UserPropertyAndRole role = UserPropertyAndRole.fromXml(roleXml);
+            UserAggregate userAggregate = userService.addUserRole(role.getApplicationId(), role.getApplicationName(),
+                    role.getOrganizationId(), role.getApplicationRoleName(), role.getApplicationRoleValue());
+            //Application application = userService.getUser(applicationTokenId, userTokenId, userId);
+            //String applicationCreatedXml = buildApplicationXml(application);
+            return Response.ok(roleXml).build();
+        } catch (IllegalArgumentException iae) {
+            log.error("getUser: Invalid xml={}", userId, iae);
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (IllegalStateException ise) {
+            log.error(ise.getMessage());
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)

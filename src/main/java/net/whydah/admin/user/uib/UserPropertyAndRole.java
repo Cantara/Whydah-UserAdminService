@@ -1,5 +1,17 @@
 package net.whydah.admin.user.uib;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import java.io.StringReader;
+
 /**
  * A Java representation for a user's properties and roles as it is stored in a RDBMS.
  *
@@ -24,6 +36,8 @@ package net.whydah.admin.user.uib;
  * @since 1/11/11
  */
 public class UserPropertyAndRole {
+
+    private static final Logger log = LoggerFactory.getLogger(UserPropertyAndRole.class);
     private String id;
 
     private String uid;
@@ -147,4 +161,34 @@ public class UserPropertyAndRole {
     public String getApplicationRoleValue() {
         return applicationRoleValue;
     }
+
+    public static UserPropertyAndRole fromXml(String roleXml) {
+        log.debug("Build UserPropertyAndRole from xml {}", roleXml);
+        UserPropertyAndRole userPropertyAndRole = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+            Document doc = documentBuilder.parse(new InputSource(new StringReader(roleXml)));
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String id = (String) xPath.evaluate("/application/appId", doc, XPathConstants.STRING);
+            String name = (String) xPath.evaluate("/application/applicationName", doc, XPathConstants.STRING);
+            String orgID = (String) xPath.evaluate("/application/orgID", doc, XPathConstants.STRING);
+            String roleName = (String) xPath.evaluate("/application/roleName", doc, XPathConstants.STRING);
+            String roleValue = (String) xPath.evaluate("/application/roleValue", doc, XPathConstants.STRING);
+
+            userPropertyAndRole = new UserPropertyAndRole();
+            userPropertyAndRole.setId(id);
+            userPropertyAndRole.setApplicationName(name);
+            userPropertyAndRole.setOrganizationId(orgID);
+            userPropertyAndRole.setApplicationRoleName(roleName);
+            userPropertyAndRole.setApplicationRoleValue(roleValue);
+
+        } catch (Exception e) {
+            log.warn("Could not create an UserPropertyAndRole from this xml {}", roleXml, e);
+        }
+        return userPropertyAndRole;
+
+    }
+
+
 }

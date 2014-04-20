@@ -45,6 +45,7 @@ public class UserService {
     }
 
     public UserAggregate addUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {
+        //FIXME bli: Start here
         return null;
     }
 
