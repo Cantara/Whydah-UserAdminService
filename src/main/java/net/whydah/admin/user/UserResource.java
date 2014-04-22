@@ -33,7 +33,11 @@ public class UserResource {
     }
 
     /**
-     * Create a new user from xml
+     * Create a new user from xml.
+     *
+     *
+     * Password is left out deliberately. A password belong to user credential as in user login. We will support multiple ways for logging in,
+     * where uid/passord is one. Another login is via FB and Windows AD tokens.
      *
      * @param userXml xml representing a User
      * @return Application

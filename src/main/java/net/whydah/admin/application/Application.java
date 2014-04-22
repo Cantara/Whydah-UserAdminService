@@ -119,12 +119,12 @@ public class Application {
     }
 
     private String buildAvailableOrgIsXml() {
-        StringBuilder availableXml = new StringBuilder("<availableOrgIs>\n");
+        StringBuilder availableXml = new StringBuilder("<availableOrgIds>\n");
 
         for (String availableOrgId : availableOrgIds) {
             availableXml.append("<orgId>" + availableOrgId + "</orgId>\n");
         }
-        availableXml.append("</availableOrgIs>");
+        availableXml.append("</availableOrgIds>");
         return availableXml.toString();
     }
 
@@ -140,7 +140,7 @@ public class Application {
             String name = (String) xPath.evaluate("/application/applicationname", doc, XPathConstants.STRING);
             String defaultrole = (String) xPath.evaluate("/application/defaultrole", doc, XPathConstants.STRING);
             String defaultorgid = (String) xPath.evaluate("/application/defaultorgid", doc, XPathConstants.STRING);
-            NodeList availableOrgIds = (NodeList) xPath.evaluate("/application/availableOrgIs/orgId", doc, XPathConstants.NODESET);
+            NodeList availableOrgIds = (NodeList) xPath.evaluate("/application/availableOrgIds/orgId", doc, XPathConstants.NODESET);
 
             application = new Application(id,name,defaultrole, defaultorgid);
             if (availableOrgIds != null && availableOrgIds.getLength() > 0) {
