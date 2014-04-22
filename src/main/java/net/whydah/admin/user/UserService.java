@@ -21,6 +21,7 @@ public class UserService {
     public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore) {
         this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
+        credentialStore.setUserAdminServiceTokenId("ed8b5101b9592e90bcb25c760275f9c2");
     }
 
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
@@ -34,14 +35,24 @@ public class UserService {
         return createdUser;
     }
 
-    private UserIdentity createUser(String applicationTokenId, String userTokenId, String userJson) {
+    private UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) {
         UserIdentity userIdentity = null;
-        if (hasAccess(applicationTokenId, userTokenId)) {
-            userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), userTokenId, userJson);
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userJson);
         } else {
             //FIXME handle no access to this method.
         }
         return userIdentity;
+    }
+
+    public boolean changePassword(String applicationTokenId, String adminUserTokenId, String userName, String password) {
+        boolean isUpdated = false;
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            isUpdated = uibUserConnection.changePassword(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userName, password);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return isUpdated;
     }
 
     public UserAggregate addUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {

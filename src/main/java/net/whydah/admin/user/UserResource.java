@@ -72,6 +72,25 @@ public class UserResource {
         }
     }
 
+    @POST
+    @Path("/changePassword/{username}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_XML)
+    public Response changePassword(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                                   @PathParam("username") String userName, String password) {
+        log.trace("changePassword is called with username={}", userName);
+        boolean isPasswordUpdated = false;
+        try {
+            isPasswordUpdated = userService.changePassword(applicationTokenId, userTokenId, userName, password);
+
+        } catch (RuntimeException e) {
+            log.error("", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+            return Response.ok(isPasswordUpdated).build();
+    }
+
     @GET
     @Path("/{userId}")
     @Produces(MediaType.APPLICATION_XML)
