@@ -43,7 +43,6 @@ public class UibUserConnection {
         uib = client.target(uibUrl);
     }
 
-    /*
     public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
         UserAggregate userAggregate = null;
@@ -65,7 +64,6 @@ public class UibUserConnection {
         userAggregate = userAggregateRepresentation.getUserAggregate();
         return userAggregate;
     }
-    */
 
     public UserIdentity createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
@@ -145,5 +143,29 @@ public class UibUserConnection {
         }
         return role;
 
+    }
+
+    public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String userId, UserPropertyAndRole userPropertyAndRole) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role");
+        UserAggregate updatedUser = null;
+        UserAggregateRepresentation userAggregateRepresentation = null;
+        Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userPropertyAndRole.toJson(), MediaType.APPLICATION_JSON));
+        int statusCode = response.getStatus();
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("addPropertyOrRole-Response form Uib {}", response.readEntity(String.class));
+                userAggregateRepresentation = UserAggregateRepresentation.fromJson(response.readEntity(String.class));
+                if (userAggregateRepresentation != null) {
+                    updatedUser = userAggregateRepresentation.getUserAggregate();
+                }
+                break;
+            case STATUS_FORBIDDEN:
+                log.error("addPropertyOrRole-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), response.readEntity(String.class));
+                break;
+            default:
+                log.error("addPropertyOrRole-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                throw new AuthenticationFailedException("addPropertyOrRole failed. Status code " + response.getStatus());
+        }
+        return updatedUser;
     }
 }

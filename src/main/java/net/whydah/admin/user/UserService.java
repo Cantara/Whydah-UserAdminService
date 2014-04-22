@@ -2,9 +2,9 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.application.Application;
-import net.whydah.admin.user.uib.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.whydah.admin.user.uib.UibUserConnection;
+import net.whydah.admin.user.uib.UserAggregate;
+import net.whydah.admin.user.uib.UserIdentity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UibUserConnection uibUserConnection;
     private final CredentialStore credentialStore;
@@ -27,12 +26,10 @@ public class UserService {
 
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
         UserIdentity createdUser = null;
-       // UserAggregate userAggregate = UserAggregate.fromXML(userXml);
-        //UserIdentity userIdentity = userAggregate.getIdentity();
-        UserIdentityRequest userIdentityRequest = UserIdentityRequest.fromXML(userXml);
-        if (userIdentityRequest != null) {
-            String userJson = userIdentityRequest.toJson();
-            log.debug("createUser on userJson {}", userJson);
+        UserAggregate userAggregate = UserAggregate.fromXML(userXml);
+        UserIdentity userIdentity = userAggregate.getIdentity();
+        if (userIdentity != null) {
+            String userJson = userIdentity.toJson();
             createdUser = createUser(applicationTokenId, userTokenId, userJson);
         }
         return createdUser;
@@ -56,6 +53,18 @@ public class UserService {
             //FIXME handle no access to this method.
         }
         return isUpdated;
+    }
+
+    public UserAggregate addUserRoleFromXml(String applicationTokenId, String adminUserTokenId, String userId, String propertyOrRoleXml) {
+
+        UserAggregate updatedUser = null;
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            UserPropertyAndRole userPropertyAndRole = UserPropertyAndRole.fromXml(propertyOrRoleXml);
+            updatedUser = uibUserConnection.addPropertyOrRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userId, userPropertyAndRole);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return updatedUser;
     }
 
 
@@ -85,6 +94,4 @@ public class UserService {
         //FIXME validate user and applciation trying to create a new user.
         return true;
     }
-
-
 }

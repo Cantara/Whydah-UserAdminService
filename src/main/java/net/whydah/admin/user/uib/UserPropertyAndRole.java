@@ -1,5 +1,6 @@
 package net.whydah.admin.user.uib;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -10,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
 import java.io.StringReader;
 
 /**
@@ -191,4 +193,14 @@ public class UserPropertyAndRole {
     }
 
 
+    public String toJson() {
+        String propertyOrRoleJson = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            propertyOrRoleJson =  mapper.writeValueAsString(this);
+        } catch (IOException e) {
+            log.info("Could not create json from this object {}", toString(), e);
+        }
+        return propertyOrRoleJson;
+    }
 }

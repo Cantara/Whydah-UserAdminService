@@ -67,7 +67,8 @@ public class UserResource {
         }
 
         if (createdUser != null) {
-            String createdUserXml = createdUser.toXML();
+            UserAggregate userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
+            String createdUserXml = userAggregate.toXML();
             return Response.ok(createdUserXml).build();
         } else {
             return Response.status(Response.Status.NO_CONTENT).build();
