@@ -2,9 +2,9 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.application.Application;
-import net.whydah.admin.user.uib.UserAggregate;
+import net.whydah.admin.user.uib.RoleRepresentation;
+import net.whydah.admin.user.uib.RoleRepresentationRequest;
 import net.whydah.admin.user.uib.UserIdentity;
-import net.whydah.admin.user.uib.UserPropertyAndRole;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
@@ -68,8 +67,7 @@ public class UserResource {
         }
 
         if (createdUser != null) {
-            UserAggregate userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
-            String createdUserXml = userAggregate.toXML();
+            String createdUserXml = createdUser.toXML();
             return Response.ok(createdUserXml).build();
         } else {
             return Response.status(Response.Status.NO_CONTENT).build();
@@ -126,20 +124,17 @@ public class UserResource {
         log.trace("addRole is called with userId={}, roleXml {}", userId, roleXml);
 
         try {
-            UserPropertyAndRole role = UserPropertyAndRole.fromXml(roleXml);
-            UserAggregate userAggregate = userService.addUserRole(role.getApplicationId(), role.getApplicationName(),
-                    role.getOrganizationId(), role.getApplicationRoleName(), role.getApplicationRoleValue());
-            //Application application = userService.getUser(applicationTokenId, userTokenId, userId);
-            //String applicationCreatedXml = buildApplicationXml(application);
-            return Response.ok(roleXml).build();
+            RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromXml(roleXml);
+            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+            return Response.ok(roleRepresentation.toXML()).build();
         } catch (IllegalArgumentException iae) {
-            log.error("getUser: Invalid xml={}", userId, iae);
+            log.error("addRole: Invalid xml={}, userId {}", roleXml,userId, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
+            log.error("addRole: IllegalStateException xml={}, userId {}", roleXml,userId, ise);
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("", e);
+            log.error("addRole: RuntimeException xml={}, userId {}", roleXml,userId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

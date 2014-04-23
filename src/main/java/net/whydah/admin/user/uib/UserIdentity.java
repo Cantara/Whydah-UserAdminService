@@ -169,4 +169,18 @@ public class UserIdentity extends UserIdentityRepresentation implements Serializ
         return email;
     }
 
+    public String toXML() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<whydahuser>\n" +
+                "    <identity>\n" +
+                "        <username>" + getUsername() + "</username>\n" +
+                "        <cellPhone>" + (getCellPhone() != null ? getCellPhone() : "") + "</cellPhone>\n" +
+                "        <email>" + getEmail() + "</email>\n" +
+                "        <firstname>" + getFirstName() + "</firstname>\n" +
+                "        <lastname>" + getLastName() + "</lastname>\n" +
+                "        <personRef>" + (getPersonRef() != null ? getPersonRef() : "") + "</personRef>\n" +
+                "        <UID>" + getUid() + "</UID>\n" +
+                "    </identity>\n" +
+                "</whydahuser>";
+    }
 }

@@ -25,4 +25,17 @@ public class RoleRepresentation extends RoleRepresentationRequest {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String toXML() {
+        return "<application>" +
+                "            <id>" + id + "</id>\n" +
+                "            <appId>" + getApplicationId() + "</appId>\n" +
+                "            <applicationName>" + getApplicationName() + "</applicationName>\n" +
+                "            <orgID>" + getOrganizationId() + "</orgID>\n" +
+                "            <orgName>" + getOrganizationName() + "</orgName>\n" +
+                "            <roleName>" + getApplicationRoleName() + "</roleName>\n" +
+                "            <roleValue>" + getApplicationRoleValue() + "</roleValue>\n" +
+                "        </application>";
+    }
+
 }

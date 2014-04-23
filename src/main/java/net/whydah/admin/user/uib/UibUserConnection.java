@@ -73,23 +73,24 @@ public class UibUserConnection {
         UserAggregateRepresentation userAggregateRepresentation = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
+        String userJson = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("createUser-Response form Uib {}", response.readEntity(String.class));
-                userIdentity = UserIdentity.fromJson(response.readEntity(String.class));
+                log.trace("createUser-Response form Uib {}", userJson);
+                userIdentity = UserIdentity.fromJson(userJson);
                 break;
             case STATUS_CREATED:
-                log.trace("createUser-userCreated {}", response.readEntity(String.class));
-                userIdentity = UserIdentity.fromJson(response.readEntity(String.class));
+                log.trace("createUser-userCreated {}", userJson);
+                userIdentity = UserIdentity.fromJson(userJson);
                 break;
             case STATUS_CONFLICT:
                 log.info("Duplicate creation of user attempted on {}", userIdentityJson);
                 throw new ConflictExeption("DuplicateCreateAttempted on " + userIdentityJson);
             case STATUS_BAD_REQUEST:
-                log.error("createUser-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.error("createUser-Response from UIB: {}: {}", response.getStatus(), userJson);
                 throw new BadRequestException("BadRequest for Json " + userIdentityJson + ",  Status code " + response.getStatus());
             default:
-                log.error("createUser-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.error("createUser-Response from UIB: {}: {}", response.getStatus(), userJson);
                 throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
         }
         return userIdentity;
@@ -100,18 +101,49 @@ public class UibUserConnection {
         boolean updatedOk = false;
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(password, MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
+        String passwordJson = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("changePassword-Response form Uib {}", response.readEntity(String.class));
+                log.trace("changePassword-Response form Uib {}", passwordJson);
                 updatedOk = true;
                 break;
             case STATUS_FORBIDDEN:
-                log.error("changePassword-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), response.readEntity(String.class));
+                log.error("changePassword-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), passwordJson);
                 break;
             default:
-                log.error("changePassword-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.error("changePassword-Response from UIB: {}: {}", response.getStatus(), passwordJson);
                 throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
         }
         return updatedOk;
+    }
+
+    public RoleRepresentation addRole(String userAdminServiceTokenId, String adminUserTokenId,String userId, RoleRepresentationRequest roleRequest) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
+        Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
+        String roleJson = response.readEntity(String.class);
+        RoleRepresentation role = null;
+        int statusCode = response.getStatus();
+
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("addRole-Response form Uib {}", roleJson);
+                role = RoleRepresentation.fromJson(roleJson);
+                break;
+            case STATUS_CREATED:
+                log.trace("addRole-userCreated {}", roleJson);
+                role = RoleRepresentation.fromJson(roleJson);
+                break;
+            case STATUS_CONFLICT:
+                log.info("Duplicate creation of role attempted on {}", roleJson);
+                throw new ConflictExeption("DuplicateCreateAttempted on " + roleJson);
+            case STATUS_BAD_REQUEST:
+                log.error("addRole-Response from UIB: {}: {}",statusCode, roleJson);
+                throw new BadRequestException("BadRequest for Json " + roleJson + ",  Status code " + statusCode);
+            default:
+                log.error("addRole-Response from UIB: {}: {}", statusCode, roleJson);
+                throw new AuthenticationFailedException("Authentication failed. Status code " + statusCode);
+        }
+        return role;
+
     }
 }

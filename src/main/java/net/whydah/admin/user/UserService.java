@@ -2,10 +2,7 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.application.Application;
-import net.whydah.admin.user.uib.UibUserConnection;
-import net.whydah.admin.user.uib.UserAggregate;
-import net.whydah.admin.user.uib.UserIdentity;
-import net.whydah.admin.user.uib.UserIdentityRequest;
+import net.whydah.admin.user.uib.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +58,15 @@ public class UserService {
         return isUpdated;
     }
 
-    public UserAggregate addUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {
-        //FIXME bli: Start here
-        return null;
+
+    public RoleRepresentation addUserRole(String applicationTokenId, String adminUserTokenId, String userId, RoleRepresentationRequest roleRequest) {
+        RoleRepresentation role = null;
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            role = uibUserConnection.addRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userId, roleRequest);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return role;
     }
 
     public UserAggregate updateUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {
@@ -82,4 +85,6 @@ public class UserService {
         //FIXME validate user and applciation trying to create a new user.
         return true;
     }
+
+
 }
