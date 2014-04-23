@@ -1,5 +1,6 @@
 package net.whydah.admin.user;
 
+import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.application.Application;
 import net.whydah.admin.user.uib.UserAggregate;
 import net.whydah.admin.user.uib.UserIdentity;
@@ -56,7 +57,10 @@ public class UserResource {
             log.error("createUser: Invalid xml={}", userXml, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
+            log.info(ise.getMessage());
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (ConflictExeption ce) {
+            log.info(ce.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
             log.error("", e);

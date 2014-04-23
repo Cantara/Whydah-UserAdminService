@@ -5,6 +5,9 @@ import net.whydah.admin.application.Application;
 import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.admin.user.uib.UserAggregate;
 import net.whydah.admin.user.uib.UserIdentity;
+import net.whydah.admin.user.uib.UserIdentityRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UibUserConnection uibUserConnection;
     private final CredentialStore credentialStore;
@@ -26,10 +30,12 @@ public class UserService {
 
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
         UserIdentity createdUser = null;
-        UserAggregate userAggregate = UserAggregate.fromXML(userXml);
-        UserIdentity userIdentity = userAggregate.getIdentity();
-        if (userIdentity != null) {
-            String userJson = userIdentity.toJson();
+       // UserAggregate userAggregate = UserAggregate.fromXML(userXml);
+        //UserIdentity userIdentity = userAggregate.getIdentity();
+        UserIdentityRequest userIdentityRequest = UserIdentityRequest.fromXML(userXml);
+        if (userIdentityRequest != null) {
+            String userJson = userIdentityRequest.toJson();
+            log.debug("createUser on userJson {}", userJson);
             createdUser = createUser(applicationTokenId, userTokenId, userJson);
         }
         return createdUser;

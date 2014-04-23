@@ -138,4 +138,5 @@ public class UserAggregateRepresentation {
         userAggregate = new UserAggregate(userIdentity, userPropertiesAndRoles);
         return userAggregate;
     }
+
 }

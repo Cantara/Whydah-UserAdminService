@@ -1,6 +1,7 @@
 package net.whydah.admin.user.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class UibUserConnection {
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
     private static final int STATUS_FORBIDDEN = 403;
+    private static final int STATUS_CREATED = 201;
+    private static final int STATUS_CONFLICT = 409;
 
 
     private final WebTarget uib;
@@ -40,6 +43,7 @@ public class UibUserConnection {
         uib = client.target(uibUrl);
     }
 
+    /*
     public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
         UserAggregate userAggregate = null;
@@ -61,6 +65,7 @@ public class UibUserConnection {
         userAggregate = userAggregateRepresentation.getUserAggregate();
         return userAggregate;
     }
+    */
 
     public UserIdentity createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
@@ -73,11 +78,16 @@ public class UibUserConnection {
                 log.trace("createUser-Response form Uib {}", response.readEntity(String.class));
                 userIdentity = UserIdentity.fromJson(response.readEntity(String.class));
                 break;
+            case STATUS_CREATED:
+                log.trace("createUser-userCreated {}", response.readEntity(String.class));
+                userIdentity = UserIdentity.fromJson(response.readEntity(String.class));
+                break;
+            case STATUS_CONFLICT:
+                log.info("Duplicate creation of user attempted on {}", userIdentityJson);
+                throw new ConflictExeption("DuplicateCreateAttempted on " + userIdentityJson);
             case STATUS_BAD_REQUEST:
                 log.error("createUser-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
-//FIXME bli:                throw new BadRequestException("BadRequest for Json " + userIdentityJson + ",  Status code " + response.getStatus());
-                userIdentity = UserIdentity.fromJson(userIdentityJson);
-                break;
+                throw new BadRequestException("BadRequest for Json " + userIdentityJson + ",  Status code " + response.getStatus());
             default:
                 log.error("createUser-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
                 throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());

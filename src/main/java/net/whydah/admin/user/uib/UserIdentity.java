@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class UserIdentity extends UserIdentityRepresentation implements Serializable {
-    private static final Logger logger = LoggerFactory.getLogger(UserIdentity.class);
+    private static final Logger log = LoggerFactory.getLogger(UserIdentity.class);
     private static final long serialVersionUID = 1;
 
     private String uid;
@@ -42,19 +42,19 @@ public class UserIdentity extends UserIdentityRepresentation implements Serializ
 
     public boolean validate() {
         if (uid == null || uid.length() < 2) {
-            logger.error("UID {} not valid", uid);
+            log.error("UID {} not valid", uid);
             return false;
         }
         if (username == null || username.length() < 3) {
-            logger.error("username {} not valid", username);
+            log.error("username {} not valid", username);
             return false;
         }
         if (firstName == null || firstName.length() < 2) {
-            logger.error("firstName {} not valid", firstName);
+            log.error("firstName {} not valid", firstName);
             return false;
         }
         if (lastName == null || lastName.length() < 2) {
-            logger.error("lastName {} not valid", lastName);
+            log.error("lastName {} not valid", lastName);
             return false;
         }
         return true;
@@ -155,18 +155,6 @@ public class UserIdentity extends UserIdentityRepresentation implements Serializ
             e.printStackTrace();
         }
         return userIdentity;
-    }
-
-    public String toJson() {
-        String userJson = null;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            userJson =  mapper.writeValueAsString(this);
-            logger.debug("toJson: {}", userJson);
-        } catch (IOException e) {
-            logger.info("Could not create json from this object {}", toString(), e);
-        }
-        return userJson;
     }
 
     private static String replacePlusWithEmpty(String email){

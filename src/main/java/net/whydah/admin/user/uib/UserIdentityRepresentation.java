@@ -1,9 +1,16 @@
 package net.whydah.admin.user.uib;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
 /**
  * @author totto
  */
 public class UserIdentityRepresentation {
+    private static final Logger log = LoggerFactory.getLogger(UserIdentityRepresentation.class);
     protected String username;
     protected String firstName;
     protected String lastName;
@@ -58,5 +65,17 @@ public class UserIdentityRepresentation {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String toJson() {
+        String userJson = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            userJson =  mapper.writeValueAsString(this);
+            log.debug("toJson: {}", userJson);
+        } catch (IOException e) {
+            log.info("Could not create json from this object {}", toString(), e);
+        }
+        return userJson;
     }
 }
