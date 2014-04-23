@@ -92,7 +92,8 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-            return Response.ok(isPasswordUpdated).build();
+        String passwdOk = "<passwordUpdated><username>" + userName +"</username><status>" + isPasswordUpdated+"</status></passwordUpdated>";
+            return Response.ok(passwdOk).build();
     }
 
     @GET
