@@ -5,6 +5,7 @@ package net.whydah.admin.user.uib;
  */
 public class RoleRepresentation extends RoleRepresentationRequest {
     private String id;
+    private String uid;
 
     public static RoleRepresentation fromUserPropertyAndRole(UserPropertyAndRole role) {
         RoleRepresentation representation = new RoleRepresentation();
@@ -26,9 +27,18 @@ public class RoleRepresentation extends RoleRepresentationRequest {
         this.id = id;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public String toXML() {
         return "<application>" +
                 "            <id>" + id + "</id>\n" +
+                "            <uid>" + uid + "</uid>\n" +
                 "            <appId>" + getApplicationId() + "</appId>\n" +
                 "            <applicationName>" + getApplicationName() + "</applicationName>\n" +
                 "            <orgID>" + getOrganizationId() + "</orgID>\n" +

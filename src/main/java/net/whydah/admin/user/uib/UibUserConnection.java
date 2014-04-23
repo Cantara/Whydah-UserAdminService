@@ -118,7 +118,7 @@ public class UibUserConnection {
     }
 
     public RoleRepresentation addRole(String userAdminServiceTokenId, String adminUserTokenId,String userId, RoleRepresentationRequest roleRequest) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role");
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         String roleJson = response.readEntity(String.class);
         RoleRepresentation role = null;
