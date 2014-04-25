@@ -130,7 +130,7 @@ public class UibUserConnection {
                 role = RoleRepresentation.fromJson(roleJson);
                 break;
             case STATUS_CREATED:
-                log.trace("addRole-userCreated {}", roleJson);
+                log.trace("addRole-roleCreated {}", roleJson);
                 role = RoleRepresentation.fromJson(roleJson);
                 break;
             case STATUS_CONFLICT:
