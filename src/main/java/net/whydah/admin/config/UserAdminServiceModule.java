@@ -30,8 +30,8 @@ public class UserAdminServiceModule  {       //extends AbstractModule
             bind(UserAuthenticator.class).to(TestUserAuthenticator.class);
         } else {
             bind(UserAuthenticator.class).to(UserAuthenticatorImpl.class);
-            URI useridbackendUri = URI.create(appConfig.getProperty("useridbackendUri"));
-            bind(URI.class).annotatedWith(Names.named("useridbackendUri")).toInstance(useridbackendUri);
+            URI useridentitybackend = URI.create(appConfig.getProperty("useridentitybackend"));
+            bind(URI.class).annotatedWith(Names.named("useridentitybackend")).toInstance(useridentitybackend);
         }
         */
     }
