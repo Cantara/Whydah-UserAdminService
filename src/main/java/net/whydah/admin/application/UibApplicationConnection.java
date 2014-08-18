@@ -31,9 +31,9 @@ public class UibApplicationConnection {
     @Autowired
     public UibApplicationConnection(AppConfig appConfig) {
         Client client = ClientBuilder.newClient();
-//        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
+//        URI useridbackendUri = URI.create(appConfig.getProperty("useridentitybackend"));
        // uib = client.target(userIdentityBackendUri);
-        String uibUrl = appConfig.getProperty("userIdentityBackendUri");
+        String uibUrl = appConfig.getProperty("useridentitybackend");
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
     }
