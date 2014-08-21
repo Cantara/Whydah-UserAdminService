@@ -2,9 +2,7 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.application.Application;
-import net.whydah.admin.user.uib.RoleRepresentation;
-import net.whydah.admin.user.uib.RoleRepresentationRequest;
-import net.whydah.admin.user.uib.UserIdentity;
+import net.whydah.admin.user.uib.*;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>

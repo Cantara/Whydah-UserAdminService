@@ -2,9 +2,7 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.application.Application;
-import net.whydah.admin.user.uib.UibUserConnection;
-import net.whydah.admin.user.uib.UserAggregate;
-import net.whydah.admin.user.uib.UserIdentity;
+import net.whydah.admin.user.uib.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
