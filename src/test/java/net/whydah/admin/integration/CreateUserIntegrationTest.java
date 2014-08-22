@@ -25,10 +25,33 @@ public class CreateUserIntegrationTest {
     }
 
 
+    /**
+     * Authorization info is found in:
+     * https://github.com/altran/Whydah-UserIdentityBackend/blob/master/src/main/resources/prodInitData/users.csv
+     * https://github.com/altran/Whydah-UserIdentityBackend/blob/master/src/main/resources/prodInitData/applications.csv
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        CreateUserIntegrationTest userTest = new CreateUserIntegrationTest();
+        String result = userTest.logonUAS();
+        log.info("Logon UAS: {} ", result );
+        String userResult = userTest.logonUserAdmin();
+        log.info("Logonuser {}", userResult);
+    }
+
     public String logonUAS() {
         target = uasPath().path("/logon");
         Response response = target.request(MediaType.APPLICATION_XML).post(Entity.entity(uasCredentialXml(),MediaType.APPLICATION_FORM_URLENCODED));
         String responseBody = readResponse("UserAdminService", response);
+
+        return responseBody;
+    }
+
+    public String logonUserAdmin() {
+        target = uasPath().path("/logon");
+        Response response = target.request(MediaType.APPLICATION_XML).post(Entity.entity(userAdminCredentialXml(),MediaType.APPLICATION_FORM_URLENCODED));
+        String responseBody = readResponse("UserAdmin", response);
 
         return responseBody;
     }
@@ -41,6 +64,14 @@ public class CreateUserIntegrationTest {
                 "         <applicationSecret>9ju592A4t8dzz8mz7a5QQJ7P</applicationSecret>\n" +
                 "      </params>\n" +
                 "   </applicationcredential>";
+    }
+    private String userAdminCredentialXml() {
+        return "<usercredential>\n" +
+                "   <params>\n" +
+                "      <username>admin</username>\n" +
+                "      <password>whydahadmin</password>\n" +
+                "   </params>\n" +
+                "</usercredential>";
     }
 
 
@@ -76,9 +107,5 @@ public class CreateUserIntegrationTest {
         return false;
     }
 
-    public static void main(String[] args) {
-        CreateUserIntegrationTest userTest = new CreateUserIntegrationTest();
-        String result = userTest.logonUAS();
-        log.info("Logonresult: {} ", result );
-    }
+
 }
