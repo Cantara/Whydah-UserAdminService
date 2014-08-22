@@ -1,10 +1,12 @@
 package net.whydah.admin.integration;
 
+import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 /**
@@ -34,13 +36,15 @@ public class CreateUserIntegrationTest {
      */
     public static void main(String[] args) {
         CreateUserIntegrationTest userTest = new CreateUserIntegrationTest();
-        String result = userTest.logonUAS();
-        log.info("Logon UAS: {} ", result );
-        String userResult = userTest.logonUserAdmin();
-        log.info("Logonuser {}", userResult);
+        String result = userTest.logonApplication();
+        log.info("Logon Application: {} ", result );
+        // FIXME  get the tokenID :)
+        String applicationToken="d41d8cd98f00b204e9800998ecf8427e";
+        String userResult = userTest.logonUserAdmin(applicationToken);
+        log.info("Logon User {}", userResult);
     }
 
-    public String logonUAS() {
+    public String logonApplication() {
         target = uasPath().path("/logon");
         Response response = target.request(MediaType.APPLICATION_XML).post(Entity.entity(uasCredentialXml(),MediaType.APPLICATION_FORM_URLENCODED));
         String responseBody = readResponse("UserAdminService", response);
@@ -48,9 +52,18 @@ public class CreateUserIntegrationTest {
         return responseBody;
     }
 
-    public String logonUserAdmin() {
-        target = uasPath().path("/logon");
-        Response response = target.request(MediaType.APPLICATION_XML).post(Entity.entity(userAdminCredentialXml(),MediaType.APPLICATION_FORM_URLENCODED));
+    public String logonUserAdmin(String appTokenID) {
+        //     @Path("/{applicationtokenid}/usertoken")
+        //    public Response getUserToken(@PathParam("applicationtokenid") String applicationtokenid,
+        //        @FormParam("apptoken") String appTokenXml,
+        //        @FormParam("usercredential") String userCredentialXml) {
+
+        target = uasPath().path("/token/"+appTokenID+"/usertoken");
+        MultivaluedMap<String,String> formData = new MultivaluedMapImpl();
+        formData.add("apptoken", uasCredentialXml());
+        formData.add("ticket", userAdminCredentialXml());
+
+        Response response = target.request(MediaType.APPLICATION_XML).post(Entity.entity(formData, MediaType.APPLICATION_FORM_URLENCODED));
         String responseBody = readResponse("UserAdmin", response);
 
         return responseBody;
