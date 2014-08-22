@@ -85,6 +85,34 @@ public class ApplicationResource {
         }
     }
 
+    /**
+     * Create a new applcation from json
+     * Add default
+     *
+     * @param applicationXml json representing an Application
+     * @return Application
+     */
+    @POST
+    @Path("/auth")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_XML)
+    public Response authenticateApplication(@PathParam("applicationtokenid") String applicationTokenId,  String applicationXml) {
+        log.trace("authenticateApplication is called with applicationXml={} from applicationtokenid={}", applicationXml,applicationTokenId);
+
+        // FIXME verify that the request come from STS, which is the only application who has access to auth
+        // FIXME ask UIB for to verify applicationSecret
+        // FIXME Build and return application.toXML()
+
+        boolean authOK=true;
+        if (authOK) {
+            String applicationCreatedXml ="";// application.toXML();
+            return Response.ok(applicationCreatedXml).build();
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+    }
+
+
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)
