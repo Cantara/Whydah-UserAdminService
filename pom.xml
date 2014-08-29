@@ -355,7 +355,7 @@
                                 <extraArguments>
                                     <extraArgument>-XX:PermSize=32m</extraArgument>
                                     <extraArgument>-XX:MaxPermSize=32m</extraArgument>
-                                    <extraArgument>-DIAM-MODE=PROD</extraArgument>
+                                    <extraArgument>-DIAM_MODE=PROD</extraArgument>
                                     <extraArgument>-DIAM_CONFIG=config_override/useradminservice.PROD.properties</extraArgument>
                                     <!--<extraArgument>-Dlogback.configurationFile=file:config_override/logback.xml</extraArgument>-->
                                 </extraArguments>
