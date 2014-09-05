@@ -1,10 +1,12 @@
 package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.application.Application;
 import net.whydah.admin.user.uib.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by baardl on 18.04.14.
@@ -84,8 +86,16 @@ public class UserService {
         return null;
     }
 
-    public Application getUser(String applicationTokenId, String userTokenId, String userId) {
-        return null;
+    public UserAggregate getUser(String applicationTokenId, String userTokenId, String userId) {
+        UserIdentity userIdentity = new UserIdentity("uid","username","first", "last", "", "first.last@example.com", "12234", "");
+        List<UserPropertyAndRole> roles = new ArrayList<>();
+        roles.add(buildStubRole());
+        UserAggregate userAggregate = new UserAggregate(userIdentity, roles);
+        return userAggregate;
+    }
+
+    private UserPropertyAndRole buildStubRole() {
+        return new UserPropertyAndRole("id", "uid", "1", "appname","2", "orgName", "user", "true");
     }
 
     boolean hasAccess(String applicationTokenId, String userTokenId) {

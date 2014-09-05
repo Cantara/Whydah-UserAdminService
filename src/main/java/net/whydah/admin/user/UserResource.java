@@ -3,6 +3,8 @@ package net.whydah.admin.user;
 import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.application.Application;
 import net.whydah.admin.user.uib.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
@@ -96,24 +98,72 @@ public class UserResource {
 
     @GET
     @Path("/{userId}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
     public Response getUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                   @PathParam("userId") String userId) {
+                                   @PathParam("userId") String userId, @Context Request req) {
         log.trace("userId is called with userId={}", userId);
+        MediaType responseMediaType = findPreferedResponseType(req);
+        log.trace("Prefered mediatype from client {}", responseMediaType.toString());
+
+        String userResponse = "";
+        UserAggregate userAggregate = null;
+
         try {
-            Application application = userService.getUser(applicationTokenId, userTokenId, userId);
-            String applicationCreatedXml = buildApplicationXml(application);
-            return Response.ok(applicationCreatedXml).build();
+            userAggregate = userService.getUser(applicationTokenId, userTokenId, userId);
+            if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
+                userResponse = mapper.writeValueAsString(userAggregate);
+            } else {
+                userResponse = buildUserXml(userAggregate);
+            }
+            return Response.ok(userResponse).build();
         } catch (IllegalArgumentException iae) {
             log.error("getUser: Invalid xml={}", userId, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
+        } catch (JsonMappingException e) {
+            log.warn("Could not create json from {}", userAggregate.toString());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (JsonGenerationException e) {
+            log.warn("Could not create json from {}", userAggregate.toString());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (IOException e) {
+            log.warn("Could not responseobject from {}", userAggregate.toString());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private MediaType findPreferedResponseType(Request req) {
+        /**
+         * /* This method builds a list of possible variants. */
+        /* You must call Variant.VariantListBuilder.add() object before calling the Variant.VariantListBuilder.build() object. */
+        List<Variant> responseVariants =
+                Variant
+                        .mediaTypes(
+                                MediaType.valueOf(MediaType.APPLICATION_XML ),
+                                MediaType.valueOf(MediaType.APPLICATION_XML ),
+                                MediaType
+                                        .valueOf(MediaType.APPLICATION_JSON))
+//                        .encodings("gzip", "identity", "deflate").languages(Locale.ENGLISH,
+//                        Locale.FRENCH,
+//                        Locale.US)
+                            .add().build();
+
+          /* Based on the Accept* headers, an acceptable response variant is chosen.  If there is no acceptable variant,
+          selectVariant will return a null value. */
+
+        Variant bestResponseVariant = req.selectVariant(responseVariants);
+//        if(bestResponseVariant == null) {
+//
+//             /* Based on results, the optimal response variant can not be determined from the list given.  */
+//
+//            return Response.notAcceptable().build();
+//        }
+        return bestResponseVariant.getMediaType();
     }
 
     @POST
@@ -155,11 +205,11 @@ public class UserResource {
         }
         return applicationCreatedJson;
     }
-    protected String buildApplicationXml(Application application) {
-        String applicationCreatedXml = null;
-        if (application != null) {
-            applicationCreatedXml = application.toXML();
+    protected String buildUserXml(UserAggregate userAggregate) {
+        String userXml = null;
+        if (userAggregate != null) {
+            userXml = userAggregate.toXML();
         }
-        return applicationCreatedXml;
+        return userXml;
     }
 }

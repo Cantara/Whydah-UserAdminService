@@ -53,6 +53,20 @@ public class UserPropertyAndRole {
     private String applicationRoleName;
     private String applicationRoleValue;
 
+    public UserPropertyAndRole() {
+    }
+
+    public UserPropertyAndRole(String id, String uid, String applicationId, String applicationName, String organizationId, String organizationName, String applicationRoleName, String applicationRoleValue) {
+        this.id = id;
+        this.uid = uid;
+        this.applicationId = applicationId;
+        this.applicationName = applicationName;
+        this.organizationId = organizationId;
+        this.organizationName = organizationName;
+        this.applicationRoleName = applicationRoleName;
+        this.applicationRoleValue = applicationRoleValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
