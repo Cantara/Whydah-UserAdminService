@@ -100,7 +100,7 @@ public class CreateUserIntegrationTest {
         return "<usercredential>\n" +
                 "   <params>\n" +
                 "      <username>bardl</username>\n" +
-                "      <password>xxxxx</password>\n" +
+                "      <password>Asker2014</password>\n" +
                 "   </params>\n" +
                 "</usercredential>";
     }

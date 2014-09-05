@@ -232,4 +232,12 @@ public class UserAggregate {
         }
         return userJson;
     }
+
+    @Override
+    public String toString() {
+        return "UserAggregate{" +
+                "identity=" + identity.toString() +
+                ", roles=" + roles.toString() +
+                '}';
+    }
 }

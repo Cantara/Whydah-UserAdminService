@@ -104,7 +104,6 @@ public class UserResource {
         log.trace("userId is called with userId={}", userId);
         MediaType responseMediaType = findPreferedResponseType(req);
         log.trace("Prefered mediatype from client {}", responseMediaType.toString());
-
         String userResponse = "";
         UserAggregate userAggregate = null;
 

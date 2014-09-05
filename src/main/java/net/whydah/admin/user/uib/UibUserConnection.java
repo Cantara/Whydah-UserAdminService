@@ -31,7 +31,6 @@ public class UibUserConnection {
 
 
     private final WebTarget uib;
-    private final String userIdentityBackendUri = "http://localhost:9995/uib";
 
     @Autowired
     public UibUserConnection(AppConfig appConfig) {
@@ -167,5 +166,29 @@ public class UibUserConnection {
                 throw new AuthenticationFailedException("addPropertyOrRole failed. Status code " + response.getStatus());
         }
         return updatedUser;
+    }
+
+    public UserAggregate getUser(String userAdminServiceTokenId, String adminUserTokenId, String userId) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
+        UserAggregate userAggregate = null;
+        UserAggregateRepresentation userAggregateRepresentation = null;
+        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("getUser-Response form Uib {}", response.readEntity(String.class));
+                userAggregateRepresentation = UserAggregateRepresentation.fromJson(response.readEntity(String.class));
+                if (userAggregateRepresentation != null) {
+                    userAggregate = userAggregateRepresentation.getUserAggregate();
+                }
+                break;
+            case STATUS_FORBIDDEN:
+                log.error("getUser-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), response.readEntity(String.class));
+                break;
+            default:
+                log.error("getUser-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                throw new AuthenticationFailedException("getUser failed. Status code " + response.getStatus());
+        }
+        return userAggregate;
     }
 }

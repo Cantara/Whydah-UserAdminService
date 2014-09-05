@@ -2,17 +2,20 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.user.uib.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.ws.rs.NotAuthorizedException;
 
 /**
  * Created by baardl on 18.04.14.
  */
 @Service
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UibUserConnection uibUserConnection;
     private final CredentialStore credentialStore;
@@ -21,7 +24,7 @@ public class UserService {
     public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore) {
         this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
-        credentialStore.setUserAdminServiceTokenId("ed8b5101b9592e90bcb25c760275f9c2");
+        credentialStore.setUserAdminServiceTokenId("2ff16f110b320dcbacf050b3b9062465");
     }
 
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
@@ -40,7 +43,7 @@ public class UserService {
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userJson);
         } else {
-            //FIXME handle no access to this method.
+            throw new NotAuthorizedException("Not Authorized to create user");
         }
         return userIdentity;
     }
@@ -50,7 +53,7 @@ public class UserService {
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             isUpdated = uibUserConnection.changePassword(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userName, password);
         } else {
-            //FIXME handle no access to this method.
+            throw new NotAuthorizedException("Not Authorized to change password");
         }
         return isUpdated;
     }
@@ -62,7 +65,7 @@ public class UserService {
             UserPropertyAndRole userPropertyAndRole = UserPropertyAndRole.fromXml(propertyOrRoleXml);
             updatedUser = uibUserConnection.addPropertyOrRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userId, userPropertyAndRole);
         } else {
-            //FIXME handle no access to this method.
+            throw new NotAuthorizedException("Not Authorized to add user role()");
         }
         return updatedUser;
     }
@@ -73,24 +76,34 @@ public class UserService {
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             role = uibUserConnection.addRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userId, roleRequest);
         } else {
-            //FIXME handle no access to this method.
+            throw new NotAuthorizedException("Not Authorized to add user role()");
         }
         return role;
     }
 
     public UserAggregate updateUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {
-        return null;
+        throw new NotImplementedException();
     }
 
     public UserAggregate deleteUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName) {
-        return null;
+        throw new NotImplementedException();
     }
 
     public UserAggregate getUser(String applicationTokenId, String userTokenId, String userId) {
+        log.trace("getUser by userId {}", userId);
+        UserAggregate userAggregate = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            userAggregate = uibUserConnection.getUser(credentialStore.getUserAdminServiceTokenId(),userTokenId, userId);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to getUser()");
+        }
+        /*
         UserIdentity userIdentity = new UserIdentity("uid","username","first", "last", "", "first.last@example.com", "12234", "");
         List<UserPropertyAndRole> roles = new ArrayList<>();
         roles.add(buildStubRole());
-        UserAggregate userAggregate = new UserAggregate(userIdentity, roles);
+        userAggregate = new UserAggregate(userIdentity, roles);
+        */
+        log.trace("found UserAggregate {}", userAggregate.toString());
         return userAggregate;
     }
 
