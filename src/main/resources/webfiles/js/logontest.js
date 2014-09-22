@@ -21,8 +21,8 @@ function submitAppLogon(event) {
             $("#apptokenid").html("Application tokenID: " + apptokenid);
             $("#userlogonform").attr("action", "iam/" + apptokenid + "/usertoken");
             $("#userlogonformurl").html("iam/" + apptokenid + "/usertoken");
-            $("#getusertokenform").attr("action", "iam/" + apptokenid + "/getusertokenbytokenid");
-            $("#getusertokenformurl").html("iam/" + apptokenid + "/getusertokenbytokenid");
+            $("#getusertokenform").attr("action", "iam/" + apptokenid + "/get_usertoken_by_usertokenid");
+            $("#getusertokenformurl").html("iam/" + apptokenid + "/get_usertoken_by_usertokenid");
         }, "xml");
 }
 
@@ -38,7 +38,7 @@ function submitUserLogon(event) {
 
         $("#usertokendiv1").fadeIn('slow', function() {});
         $.post( url, { apptoken: apptoken,  usercredential: usercredential} , function(usertokenXMLObjectResponse) {
-            var usertokenID = $(usertokenXMLObjectResponse).find("token").attr("id");
+            var usertokenID = $(usertokenXMLObjectResponse).find("usertoken").attr("id");
             var usertokenXML = usertokenXMLObjectResponse.xml ? usertokenXMLObjectResponse.xml : (new XMLSerializer()).serializeToString(usertokenXMLObjectResponse);
             $("#usertokenidparam").val(usertokenID);
             $("#usertoken1").text(usertokenXML);

@@ -20,7 +20,7 @@ import java.util.Date;
  * @author Gunnar Skjold
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
-@XmlRootElement(name = "token")
+@XmlRootElement(name = "applicationtoken")
 public class WhydahLogonToken {
     private static final Logger log = LoggerFactory.getLogger(WhydahLogonToken.class);
 
@@ -75,13 +75,13 @@ public class WhydahLogonToken {
             DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
             Document doc = documentBuilder.parse(new InputSource(new StringReader(logonResult)));
             XPath xPath = XPathFactory.newInstance().newXPath();
-            String applicationtokenId = (String) xPath.evaluate("/token/params/applicationtokenID", doc, XPathConstants.STRING);
+            String applicationtokenId = (String) xPath.evaluate("/applicationtoken/params/applicationtokenID", doc, XPathConstants.STRING);
             logonToken.getParams().setApplicationtokenID(applicationtokenId);
-            String applicationid = (String) xPath.evaluate("/token/params/applicationid", doc, XPathConstants.STRING);
+            String applicationid = (String) xPath.evaluate("/applicationtoken/params/applicationid", doc, XPathConstants.STRING);
             logonToken.getParams().setApplicationid(applicationid);
-            String applicationName = (String) xPath.evaluate("/token/params/applicationname", doc, XPathConstants.STRING);
+            String applicationName = (String) xPath.evaluate("/applicationtoken/params/applicationname", doc, XPathConstants.STRING);
             logonToken.getParams().setApplicationname(applicationName);
-            String expires = (String ) xPath.evaluate("/token/params/expires", doc, XPathConstants.STRING);
+            String expires = (String ) xPath.evaluate("/applicationtoken/params/expires", doc, XPathConstants.STRING);
             if (expires != null && !expires.isEmpty()) {
                 Long longDate = new Long(expires);
                 logonToken.getParams().setExpires(new Date(longDate));
@@ -108,14 +108,14 @@ public class WhydahLogonToken {
 
     public String toXml() {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?> \n " +
-                " <token>\n" +
+                " <applicationtoken>\n" +
                 "     <params>\n" +
                 "         <applicationtoken>" + params.getApplicationtokenID() + "</applicationtoken>\n" +
                 "         <applicationid>" + params.getApplicationid() + "</applicationid>\n" +
                 "         <applicationname>" + params.getApplicationname() + "</applicationname>\n" +
                 "         <expires>" + params.getExpires().getTime() + "</expires>\n" +
                 "     </params> \n" +
-                " </token>\n";
+                " </applicationtoken>\n";
     }
 
     private static class WhydahTokenParams {
