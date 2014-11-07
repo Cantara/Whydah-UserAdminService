@@ -38,7 +38,7 @@ public class UserService {
         return createdUser;
     }
 
-    private UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) {
+    public UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) {
         UserIdentity userIdentity = null;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userJson);
@@ -115,4 +115,6 @@ public class UserService {
         //FIXME validate user and applciation trying to create a new user.
         return true;
     }
+
+
 }

@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -21,7 +21,7 @@ import java.util.List;
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 @Path("/{applicationtokenid}/{userTokenId}/user")
-@Component
+@Controller
 public class UserResource {
     private static final Logger log = LoggerFactory.getLogger(UserResource.class);
     UserService userService;
@@ -45,14 +45,36 @@ public class UserResource {
      */
     @POST
     @Path("/")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response createUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String userXml) {
+    @Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+    public Response createUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
         log.trace("createUser is called with userXml={}", userXml);
+        MediaType responseMediaType = findPreferedResponseType(request);
         UserIdentity createdUser = null;
+        String userResponse = null;
+        UserAggregate userAggregate = null;
         try {
-            createdUser = userService.createUserFromXml(applicationTokenId, userTokenId, userXml);
+            if (isXmlContent(userXml)) {
+                createdUser = userService.createUserFromXml(applicationTokenId, userTokenId, userXml);
+            } else {
+                createdUser = userService.createUser(applicationTokenId, userTokenId, userXml);
+            }
 
+
+
+
+        if (createdUser != null) {
+            userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
+            if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
+                userResponse = mapper.writeValueAsString(userAggregate);
+            } else {
+                userResponse = buildUserXml(userAggregate);
+            }
+
+            return Response.ok(userResponse).build();
+        } else {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
         } catch (IllegalArgumentException iae) {
             log.error("createUser: Invalid xml={}", userXml, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -62,18 +84,27 @@ public class UserResource {
         } catch (ConflictExeption ce) {
             log.info(ce.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
+        }  catch (JsonMappingException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (JsonGenerationException e) {
+            log.error("Could not map created user to Json. User: {}", userAggregate.toString(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (IOException e) {
+            log.error("Could not map created user to Json. User: {}", userAggregate.toString(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException e) {
+            log.error("Unkonwn error.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
 
-        if (createdUser != null) {
-            UserAggregate userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
-            String createdUserXml = userAggregate.toXML();
-            return Response.ok(createdUserXml).build();
-        } else {
-            return Response.status(Response.Status.NO_CONTENT).build();
+    private boolean isXmlContent(String userXml) {
+        boolean isXml = false;
+        if (userXml != null) {
+          isXml = userXml.trim().startsWith("<");
         }
+        return isXml;
     }
 
     @POST
@@ -136,6 +167,35 @@ public class UserResource {
         }
     }
 
+
+    private MediaType findPreferedContentType(Request req) {
+        /**
+         * /* This method builds a list of possible variants. */
+        /* You must call Variant.VariantListBuilder.add() object before calling the Variant.VariantListBuilder.build() object. */
+        List<Variant> contentVariants =
+                Variant
+                        .mediaTypes(
+                                MediaType.valueOf(MediaType.APPLICATION_XML ),
+                                MediaType.valueOf(MediaType.APPLICATION_XML ),
+                                MediaType
+                                        .valueOf(MediaType.APPLICATION_JSON))
+//                        .encodings("gzip", "identity", "deflate").languages(Locale.ENGLISH,
+//                        Locale.FRENCH,
+//                        Locale.US)
+                        .add().build();
+
+          /* Based on the Accept* headers, an acceptable response variant is chosen.  If there is no acceptable variant,
+          selectVariant will return a null value. */
+
+        Variant bestResponseVariant = req.selectVariant(contentVariants);
+//        if(bestResponseVariant == null) {
+//
+//             /* Based on results, the optimal response variant can not be determined from the list given.  */
+//
+//            return Response.notAcceptable().build();
+//        }
+        return bestResponseVariant.getMediaType();
+    }
     private MediaType findPreferedResponseType(Request req) {
         /**
          * /* This method builds a list of possible variants. */
