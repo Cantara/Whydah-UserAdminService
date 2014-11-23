@@ -27,6 +27,12 @@ public class AppConfig {
     public AppConfig() {
         try {
             properties = readProperties(ApplicationMode.getApplicationMode());
+
+            // Property-overwrite of SSL verification to support weak ssl certificates
+            if ("disabled".equalsIgnoreCase(properties.getProperty("sslverification"))) {
+                SSLTool.disableCertificateValidation();
+
+            }
         } catch (IOException e) {
             throw new RuntimeException(e.getLocalizedMessage(), e);
         }
