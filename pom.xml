@@ -235,6 +235,11 @@
                         <manifestEntries>
                             <Main-Class>net.whydah.admin.MainWithJetty</Main-Class>
                         </manifestEntries>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+
                     </archive>
                 </configuration>
             </plugin>
