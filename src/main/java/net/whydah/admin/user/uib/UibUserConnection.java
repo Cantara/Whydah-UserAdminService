@@ -68,6 +68,7 @@ public class UibUserConnection {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
         UserIdentity userIdentity = null;
         UserAggregateRepresentation userAggregateRepresentation = null;
+       // userIdentityJson = "{\"username\":\"per\",\"firstName\":\"per\",\"lastName\":\"per\",\"email\":\"per.per@example.com\",\"cellPhone\":\"123456789\",\"personRef\":\"ref\"}";
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         String userJson = response.readEntity(String.class);
