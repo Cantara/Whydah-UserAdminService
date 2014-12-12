@@ -12,7 +12,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
@@ -28,8 +28,8 @@ public class VerifyUserAdminServiceMain {
     public VerifyUserAdminServiceMain() {
         Client client = ClientBuilder.newClient();
         AppConfig appConfig = new AppConfig();
-        String uibUrl = appConfig.getProperty("useridentitybackend");
-        log.info("Connection to UserIdentityBackend on {}" , uibUrl);
+        String uibUrl = appConfig.getProperty("myuri");
+        log.info("Connection to UserAdminService on {}" , uibUrl);
         userAdminService = client.target(uibUrl);
     }
 
@@ -37,7 +37,7 @@ public class VerifyUserAdminServiceMain {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
         verificator.findUserByQuery();
-        verificator.findUserByQueryRestAssured();
+        //verificator.findUserByQueryRestAssured();
     }
 
     public void findUserByQuery() {
@@ -47,6 +47,7 @@ public class VerifyUserAdminServiceMain {
         WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
         int statusCode = response.getStatus();
+        log.info("StatusCode {}", statusCode);
     }
 
     public void findUserByQueryRestAssured() {
@@ -55,6 +56,7 @@ public class VerifyUserAdminServiceMain {
         RestAssured.port = 9992;
         RestAssured.urlEncodingEnabled = false;
         //Response response = get("/useradminservice/1/2/user/3");
+        given().contentType("application/json").
         expect().
                 statusCode(200).
                 body("lotto.lottoId", equalTo(6)).
