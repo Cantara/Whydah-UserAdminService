@@ -1,7 +1,6 @@
 package net.whydah.admin;
 
 import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
 import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +35,8 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        verificator.findUserByQuery();
-        //verificator.findUserByQueryRestAssured();
+        //verificator.findUserByQuery();
+        verificator.findUserByQueryRestAssured();
     }
 
     public void findUserByQuery() {
@@ -55,30 +54,17 @@ public class VerifyUserAdminServiceMain {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 9992;
         RestAssured.urlEncodingEnabled = false;
-        //Response response = get("/useradminservice/1/2/user/3");
-        given().contentType("application/json").
-        expect().
+        //String json = given().accept("application/json").get("/useradminservice/1/2/user/useradmin").asString();
+        given().
+        when().
+                accept(MediaType.APPLICATION_JSON).
+                get("/useradminservice/1/2/user/useradmin").
+        then().
+                contentType(MediaType.APPLICATION_JSON).
                 statusCode(200).
-                body("lotto.lottoId", equalTo(6)).
-                when().contentType(ContentType.JSON).
-                get("/useradminservice/1/2/user/useradmin");
-        //log.info("Response: {}", response.as(String.class));
+                body("identity.username", equalTo("admin"));
+        log.info("findUser by Json OK.");
 
-        /*
-        esponse response =
-given().
-        param("param_name", "param_value").
-when().
-        get("/title").
-then().
-        contentType(JSON).
-        body("title", equalTo("My Title")).
-extract().
-        response();
-
-String nextTitleLink = response.path("_links.next.href");
-String headerValue = response.header("headerName");
-         */
 
 
     }

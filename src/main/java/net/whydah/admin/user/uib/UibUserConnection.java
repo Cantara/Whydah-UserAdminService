@@ -175,19 +175,20 @@ public class UibUserConnection {
         UserAggregateRepresentation userAggregateRepresentation = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
         int statusCode = response.getStatus();
+        String responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("getUser-Response form Uib {}", response.readEntity(String.class));
-                userAggregateRepresentation = UserAggregateRepresentation.fromJson(response.readEntity(String.class));
+                log.trace("getUser-Response form Uib {}", responseBody);
+                userAggregateRepresentation = UserAggregateRepresentation.fromJson(responseBody);
                 if (userAggregateRepresentation != null) {
                     userAggregate = userAggregateRepresentation.getUserAggregate();
                 }
                 break;
             case STATUS_FORBIDDEN:
-                log.error("getUser-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), response.readEntity(String.class));
+                log.error("getUser-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
                 break;
             default:
-                log.error("getUser-Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.error("getUser-Response from UIB: {}: {}", response.getStatus(), responseBody);
                 throw new AuthenticationFailedException("getUser failed. Status code " + response.getStatus());
         }
         return userAggregate;

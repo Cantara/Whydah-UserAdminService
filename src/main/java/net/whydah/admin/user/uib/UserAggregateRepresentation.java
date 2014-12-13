@@ -1,6 +1,9 @@
 package net.whydah.admin.user.uib;
 
+import net.whydah.admin.MisconfigurationExeption;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -12,8 +15,10 @@ import java.util.List;
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 12/04/14
  */
 public class UserAggregateRepresentation {
+    private static final Logger log = LoggerFactory.getLogger(UserAggregateRepresentation.class);
     private String uid;
     private String username;
+    private String personName;
     private String firstName;
     private String lastName;
     private String personRef;
@@ -56,7 +61,8 @@ public class UserAggregateRepresentation {
         try {
             userAggregate =  objectMapper.readValue(userAggregateJson, UserAggregateRepresentation.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("Could not create json string from {}. Error Msg {}", userAggregateJson, e.getMessage());
+            throw new MisconfigurationExeption("Could not create json from json input: " + userAggregateJson,e);
         }
         return userAggregate;
     }
@@ -91,6 +97,14 @@ public class UserAggregateRepresentation {
         this.roles = roles;
     }
 
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
+    }
+
     public String getUid() {
         return uid;
     }
@@ -116,6 +130,9 @@ public class UserAggregateRepresentation {
         return password;
     }
     public List<RoleRepresentation> getRoles() {
+        if (roles == null) {
+            roles = new ArrayList<>();
+        }
         return roles;
     }
 

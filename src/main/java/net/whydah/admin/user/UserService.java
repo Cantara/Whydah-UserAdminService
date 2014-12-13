@@ -103,7 +103,7 @@ public class UserService {
         roles.add(buildStubRole());
         userAggregate = new UserAggregate(userIdentity, roles);
         */
-        log.trace("found UserAggregate {}", userAggregate.toString());
+        log.trace("found UserAggregate {}", userAggregate);
         return userAggregate;
     }
 
