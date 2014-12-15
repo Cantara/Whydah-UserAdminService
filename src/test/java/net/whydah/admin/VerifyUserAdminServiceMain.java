@@ -21,6 +21,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
  */
 public class VerifyUserAdminServiceMain {
     private static final Logger log = LoggerFactory.getLogger(VerifyUserAdminServiceMain.class);
+    private static final String UIB_USER_AUTHENTICATION_PATH = "/authenticate/user";
+    private static final String UIB_CREATE_AND_LOGON_OPERATION = "createandlogon";
 
     private WebTarget userAdminService;
 
@@ -49,6 +51,7 @@ public class VerifyUserAdminServiceMain {
         log.info("StatusCode {}", statusCode);
     }
 
+
     public void findUserByQueryRestAssured() {
         //"users/find/"+query
         RestAssured.baseURI = "http://localhost";
@@ -65,7 +68,62 @@ public class VerifyUserAdminServiceMain {
                 body("identity.username", equalTo("admin"));
         log.info("findUser by Json OK.");
 
+    }
+
+    /**
+     * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
+     */
+    public void stsUserInterface() {
+        //logonUser
+        //- WebResource webResource = uibResource.path(applicationTokenId).path(UIB_USER_AUTHENTICATION_PATH);
+        //- ClientResponse response = webResource.type(UIB_MediaType.APPLICATION_XML).post(ClientResponse.class, userCredentialXml);
+        //createAndLogonUser
+        //- WebResource webResource = uibResource.path(applicationtokenid).path(UIB_USER_AUTHENTICATION_PATH).path(UIB_CREATE_AND_LOGON_OPERATION);
+        //- logger.debug("createAndLogonUser - Calling createandlogon " + webResource.toString());
+        //- ClientResponse response = webResource.type(MediaType.APPLICATION_XML).post(ClientResponse.class, fbUserXml);
+
+        //getUserToken
+
+    }
+
+    /**
+     * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
+     */
+    public void stsApplicationInterface() {
+        //logonApplication
+        //-  WebResource webResource = restClient.resource(useridbackendUri).path("logon");
+        //- ClientResponse response = webResource.type(MediaType.APPLICATION_XML).post(ClientResponse.class, applicationCredential.toXML());
 
 
+    }
+
+    /**
+     * FIXME implement Interfaces and proxy methods supporting UserAdminWebapp
+     */
+    public void userAdminWebappInterface() {
+        //getApplications
+        //- String url = getUibUrl(apptokenid, usertokenid, "applications");
+        //resetPassword
+        //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
+        //putUserRole
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
+        //deleteUserRole
+        //-  String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
+        //postUserRole
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/");
+        //getUserRoles
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/roles");
+        //postUser
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/");
+        //putUser
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/" + uid);
+        //deleteUser
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
+        //getUserAggregate
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
+        //getUser
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
+        //findUsers
+        //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
     }
 }
