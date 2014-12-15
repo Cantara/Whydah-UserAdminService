@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 /**
  * Verify that every interface of UserAdminService respond in a propper way.
  * See https://code.google.com/p/rest-assured/wiki/GettingStarted
+ *
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 public class VerifyUserAdminServiceMain {
@@ -30,7 +31,7 @@ public class VerifyUserAdminServiceMain {
         Client client = ClientBuilder.newClient();
         AppConfig appConfig = new AppConfig();
         String uibUrl = appConfig.getProperty("myuri");
-        log.info("Connection to UserAdminService on {}" , uibUrl);
+        log.info("Connection to UserAdminService on {}", uibUrl);
         userAdminService = client.target(uibUrl);
     }
 
@@ -59,10 +60,10 @@ public class VerifyUserAdminServiceMain {
         RestAssured.urlEncodingEnabled = false;
         //String json = given().accept("application/json").get("/useradminservice/1/2/user/useradmin").asString();
         given().
-        when().
+                when().
                 accept(MediaType.APPLICATION_JSON).
                 get("/useradminservice/1/2/user/useradmin").
-        then().
+                then().
                 contentType(MediaType.APPLICATION_JSON).
                 statusCode(200).
                 body("identity.username", equalTo("admin"));
@@ -72,7 +73,7 @@ public class VerifyUserAdminServiceMain {
 
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
-     *
+     * <p/>
      * FIXME  Pri 1.
      */
     public void stsUserInterface() {
@@ -89,9 +90,8 @@ public class VerifyUserAdminServiceMain {
 
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
-     *
+     * <p/>
      * FIXME  Pri 9.  (Maybe STS should havdle the applicationsessions, just querying UIB for the application config
-     *
      */
     public void stsApplicationInterface() {
         //logonApplication
@@ -103,9 +103,9 @@ public class VerifyUserAdminServiceMain {
 
     /**
      * FIXME implement Interfaces and proxy methods supporting UserAdminWebapp
-     *
-     *
-     * FIXME  Pri 2.
+     * <p/>
+     * <p/>
+     * FIXME  Pri 3.
      */
     public void userAdminWebAppInterface() {
         //getApplications
@@ -115,7 +115,15 @@ public class VerifyUserAdminServiceMain {
 
 
     }
-        public void userAdminWebUserInterface() {
+
+
+    /**
+     * FIXME implement Interfaces and proxy methods supporting UserAdminWebapp
+     * <p/>
+     * <p/>
+     * FIXME  Pri 2.
+     */
+    public void userAdminWebUserInterface() {
         //resetPassword
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
         //putUserRole
