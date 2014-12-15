@@ -102,6 +102,18 @@ public class VerifyUserAdminServiceMain {
     }
 
     /**
+     * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
+     * <p/>
+     * FIXME  Pri 4.  (Maybe STS should havdle the applicationsessions, just querying UIB for the application config
+     */
+    public void appUserInterface() {
+        //userSearch
+        //
+
+
+    }
+
+    /**
      * FIXME implement Interfaces and proxy methods supporting UserAdminWebapp
      * <p/>
      * <p/>
