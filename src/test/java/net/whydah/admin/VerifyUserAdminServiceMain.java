@@ -72,6 +72,8 @@ public class VerifyUserAdminServiceMain {
 
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
+     *
+     * FIXME  Pri 1.
      */
     public void stsUserInterface() {
         //logonUser
@@ -82,12 +84,14 @@ public class VerifyUserAdminServiceMain {
         //- logger.debug("createAndLogonUser - Calling createandlogon " + webResource.toString());
         //- ClientResponse response = webResource.type(MediaType.APPLICATION_XML).post(ClientResponse.class, fbUserXml);
 
-        //getUserToken
 
     }
 
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
+     *
+     * FIXME  Pri 9.  (Maybe STS should havdle the applicationsessions, just querying UIB for the application config
+     *
      */
     public void stsApplicationInterface() {
         //logonApplication
@@ -99,10 +103,19 @@ public class VerifyUserAdminServiceMain {
 
     /**
      * FIXME implement Interfaces and proxy methods supporting UserAdminWebapp
+     *
+     *
+     * FIXME  Pri 2.
      */
-    public void userAdminWebappInterface() {
+    public void userAdminWebAppInterface() {
         //getApplications
         //- String url = getUibUrl(apptokenid, usertokenid, "applications");
+        // FIXME This API need to be reworked to new DomainModel for Applications and full REST methods for applications
+        //       Exiting API is just a temporary bolt-on for the missing API
+
+
+    }
+        public void userAdminWebUserInterface() {
         //resetPassword
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
         //putUserRole
