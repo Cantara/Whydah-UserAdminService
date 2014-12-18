@@ -1,7 +1,6 @@
 package net.whydah.admin.users;
 
 import net.whydah.admin.application.Application;
-import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
