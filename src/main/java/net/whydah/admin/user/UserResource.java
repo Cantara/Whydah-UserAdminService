@@ -63,18 +63,18 @@ public class UserResource {
 
 
 
-        if (createdUser != null) {
-            userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
-            if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
-                userResponse = mapper.writeValueAsString(userAggregate);
-            } else {
-                userResponse = buildUserXml(userAggregate);
-            }
+            if (createdUser != null) {
+                userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
+                if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
+                    userResponse = mapper.writeValueAsString(userAggregate);
+                } else {
+                    userResponse = buildUserXml(userAggregate);
+                }
 
-            return Response.ok(userResponse).build();
-        } else {
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }
+                return Response.ok(userResponse).build();
+            } else {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            }
         } catch (IllegalArgumentException iae) {
             log.error("createUser: Invalid xml={}", userXml, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();

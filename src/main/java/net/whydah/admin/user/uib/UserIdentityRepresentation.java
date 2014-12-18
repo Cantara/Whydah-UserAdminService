@@ -19,6 +19,22 @@ public class UserIdentityRepresentation {
     protected String cellPhone;
     protected transient String password;
 
+    public UserIdentityRepresentation() {
+    }
+
+    public UserIdentityRepresentation(String username) {
+        this.username = username;
+    }
+
+    public UserIdentityRepresentation(String username, String firstName, String lastName, String personRef, String email, String cellPhone) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.personRef = personRef;
+        this.email = email;
+        this.cellPhone = cellPhone;
+    }
+
     public String getPersonName() {
         return firstName + ' ' + lastName;
     }
