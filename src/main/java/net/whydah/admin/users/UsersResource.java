@@ -30,7 +30,7 @@ public class UsersResource {
     ObjectMapper mapper = new ObjectMapper();
 
     @GET
-    @Path("/")
+    @Path("/{q}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response findUsers(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("q") String query) {
@@ -70,7 +70,7 @@ public class UsersResource {
             users.add(stubUser("UserExtra" + i, "FirstName " + i));
         }
 
-        return null;
+        return users;
     }
 
     private UserIdentityRepresentation stubUser(String username, String firstName) {

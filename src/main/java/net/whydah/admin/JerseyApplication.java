@@ -6,6 +6,7 @@ import net.whydah.admin.application.UibApplicationConnection;
 import net.whydah.admin.config.AppConfig;
 import net.whydah.admin.user.UserResource;
 import net.whydah.admin.user.UserService;
+import net.whydah.admin.users.UsersResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class JerseyApplication extends ResourceConfig {
         register(ApplicationResource.class);
         register(UserService.class);
         register(UserResource.class);
+        register(UsersResource.class);
         //register(SpringRequestResource.class);
         //register(CustomExceptionMapper.class);
         //https://java.net/jira/browse/JERSEY-2175
