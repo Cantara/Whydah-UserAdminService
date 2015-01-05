@@ -24,6 +24,7 @@ public class LogonController {
         log.trace("logon is called with credentialsXml={}", credentialsXml);
         String userToken = bulidStubUserToken();
             return Response.ok(userToken).build();
+        //FIXME real implementation to UIB.
         }
 
     private String bulidStubUserToken() {
