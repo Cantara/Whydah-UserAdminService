@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -30,16 +31,18 @@ public class VerifyUserAdminServiceMain {
     public VerifyUserAdminServiceMain() {
         Client client = ClientBuilder.newClient();
         AppConfig appConfig = new AppConfig();
-        String uibUrl = appConfig.getProperty("myuri");
-        log.info("Connection to UserAdminService on {}", uibUrl);
-        userAdminService = client.target(uibUrl);
+        String uasUrl = appConfig.getProperty("myuri");
+        log.info("Connection to UserAdministrationService on {}", uasUrl);
+        userAdminService = client.target(uasUrl);
     }
 
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
+        verificator.logonUserByQuery();
         //verificator.findUserByQuery();
-        verificator.findUserByQueryRestAssured();
+        //verificator.findUserByQueryRestAssured();
+        //verificator.stsUserInterface();
     }
 
     public void findUserByQuery() {
@@ -71,13 +74,32 @@ public class VerifyUserAdminServiceMain {
 
     }
 
+    public void logonUserByQuery() {
+        String userAdminServiceTokenId = "1";
+        String userId = "useradmin";
+        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/auth/logon"); // + adminUserTokenId + "/user").path(userId);
+        Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialXml(), MediaType.APPLICATION_XML_TYPE));
+        int statusCode = response.getStatus();
+        log.info("StatusCode {}", statusCode);
+    }
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
      * <p/>
      * FIXME  Pri 1.
      */
     public void stsUserInterface() {
+        RestAssured.baseURI = "http://localhost/useradminservice";
+        RestAssured.port = 9992;
+        RestAssured.urlEncodingEnabled = false;
         //logonUser
+        given().
+                when().
+                accept(MediaType.APPLICATION_XML).
+                post("/1/auth/logon/", userCredentialXml()).
+        then().
+                contentType(MediaType.APPLICATION_XML).
+                statusCode(200).
+                body("xml\\path", equalTo("ok"));
         //- WebResource webResource = uibResource.path(applicationTokenId).path(UIB_USER_AUTHENTICATION_PATH);
         //- ClientResponse response = webResource.type(UIB_MediaType.APPLICATION_XML).post(ClientResponse.class, userCredentialXml);
         //createAndLogonUser
@@ -86,6 +108,15 @@ public class VerifyUserAdminServiceMain {
         //- ClientResponse response = webResource.type(MediaType.APPLICATION_XML).post(ClientResponse.class, fbUserXml);
 
 
+    }
+
+    private String userCredentialXml() {
+        return "<usercredential>\n" +
+                "   <params>\n" +
+                "      <username>admin</username>\n" +
+                "      <password>admin</password>\n" +
+                "   </params>\n" +
+                "</usercredential>";
     }
 
     /**
