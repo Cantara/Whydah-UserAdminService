@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.testng.AssertJUnit.assertEquals;
 
 /**
  * Verify that every interface of UserAdminService respond in a propper way.
@@ -39,7 +40,7 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        verificator.logonUserByQuery();
+        verificator.logonUser();
         //verificator.findUserByQuery();
         //verificator.findUserByQueryRestAssured();
         //verificator.stsUserInterface();
@@ -74,13 +75,14 @@ public class VerifyUserAdminServiceMain {
 
     }
 
-    public void logonUserByQuery() {
+    public void logonUser() {
         String userAdminServiceTokenId = "1";
         String userId = "useradmin";
-        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/auth/logon"); // + adminUserTokenId + "/user").path(userId);
+        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/auth/logon");
         Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialXml(), MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
         log.info("StatusCode {}", statusCode);
+        assertEquals("Could not logon user via UserAdminService", statusCode, 200);
     }
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
