@@ -2,6 +2,7 @@ package net.whydah.admin.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
@@ -16,8 +17,15 @@ import javax.ws.rs.core.Response;
 public class LogonController {
     private static final Logger log = LoggerFactory.getLogger(LogonController.class);
 
+    private final UibAuthConnection uibAuthConnection;
+
+    @Autowired
+    public LogonController(UibAuthConnection uibAuthConnection) {
+        this.uibAuthConnection = uibAuthConnection;
+    }
+
     @POST
-    @Path("/logon")
+    @Path("logon")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response logon(@PathParam("applicationtokenid") String applicationTokenId, String credentialsXml) {
@@ -26,6 +34,17 @@ public class LogonController {
             return Response.ok(userToken).build();
         //FIXME real implementation to UIB.
         }
+
+    @POST
+    @Path("/logon/user")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_XML)
+    public Response logonUser(@PathParam("applicationtokenid") String applicationTokenId, String userCredentialsXml) {
+        log.trace("logon is called with credentialsXml={}", userCredentialsXml);
+        String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
+        return Response.ok(userXml).build();
+    }
+
 
     private String bulidStubUserToken() {
         return "<xml><usertoken><params><name>admin</name></params></usertoken></xml>";

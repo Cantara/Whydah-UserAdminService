@@ -1,6 +1,5 @@
 package net.whydah.admin;
 
-import com.jayway.restassured.RestAssured;
 import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +11,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.testng.AssertJUnit.assertEquals;
 
 /**
@@ -24,7 +21,7 @@ import static org.testng.AssertJUnit.assertEquals;
  */
 public class VerifyUserAdminServiceMain {
     private static final Logger log = LoggerFactory.getLogger(VerifyUserAdminServiceMain.class);
-    private static final String UIB_USER_AUTHENTICATION_PATH = "/authenticate/user";
+    private static final String USER_AUTHENTICATION_PATH = "auth/logon/user";
     private static final String UIB_CREATE_AND_LOGON_OPERATION = "createandlogon";
     private final String uasUrl;
 
@@ -41,48 +38,23 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-      //  verificator.logonUser();
+        verificator.logonUser();
         verificator.stsUserInterface();
         //verificator.findUserByQuery();
         //verificator.findUserByQueryRestAssured();
-        //verificator.stsUserInterface();
-    }
-
-    public void findUserByQuery() {
-        String userAdminServiceTokenId = "1";
-        String adminUserTokenId = "2";
-        String userId = "useradmin";
-        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
-        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
-        int statusCode = response.getStatus();
-        log.info("StatusCode {}", statusCode);
     }
 
 
-    public void findUserByQueryRestAssured() {
-        //"users/find/"+query
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 9992;
-        RestAssured.urlEncodingEnabled = false;
-        //String json = given().accept("application/json").get("/useradminservice/1/2/user/useradmin").asString();
-        given().
-                when().
-                accept(MediaType.APPLICATION_JSON).
-                get("/useradminservice/1/2/user/useradmin").
-                then().
-                contentType(MediaType.APPLICATION_JSON).
-                statusCode(200).
-                body("identity.username", equalTo("admin"));
-        log.info("findUser by Json OK.");
-
-    }
 
     public void logonUser() {
         String userAdminServiceTokenId = "1";
-        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/auth/logon");
-        Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialXml(), MediaType.APPLICATION_XML_TYPE));
+        WebTarget userLogonResource = userAdminService.path("/" + userAdminServiceTokenId).path(USER_AUTHENTICATION_PATH);
+
+        String credentials = userCredentialXml();
+        log.info("Logging on the user by url {}, credentials {}", userLogonResource.getUri().toString(), credentials);
+        Response response = userLogonResource.request(MediaType.APPLICATION_XML).post(Entity.entity(credentials, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
-        log.info("logonUser,StatusCode {}", statusCode);
+        log.info("logonUser ,StatusCode {}", statusCode);
         assertEquals("Could not logon user via UserAdminService", 200, statusCode);
     }
 
@@ -99,23 +71,14 @@ public class VerifyUserAdminServiceMain {
         assertEquals("Could not  crated and logon user via UserAdminService", 200,statusCode);
     }
     /**
-     * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
-     * <p/>
-     * FIXME  Pri 1.
+     * Interfaces and proxy methods supporting SecurityTokenService
      */
     public void stsUserInterface() {
 
         //1. Logon existing user via xml
-       //FIXME logonUser();
+        logonUser();
         //2. Create and Logon new user via xml
         createAndLogonUser();
-        //- WebResource webResource = uibResource.path(applicationTokenId).path(UIB_USER_AUTHENTICATION_PATH);
-        //- ClientResponse response = webResource.type(UIB_MediaType.APPLICATION_XML).post(ClientResponse.class, userCredentialXml);
-        //createAndLogonUser
-        //- WebResource webResource = uibResource.path(applicationtokenid).path(UIB_USER_AUTHENTICATION_PATH).path(UIB_CREATE_AND_LOGON_OPERATION);
-        //- logger.debug("createAndLogonUser - Calling createandlogon " + webResource.toString());
-        //- ClientResponse response = webResource.type(MediaType.APPLICATION_XML).post(ClientResponse.class, fbUserXml);
-
 
     }
 
