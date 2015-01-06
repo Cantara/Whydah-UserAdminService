@@ -102,8 +102,8 @@ public class VerifyUserAdminServiceMain {
     private String userCredentialXml() {
         return "<usercredential>\n" +
                 "   <params>\n" +
-                "      <username>admin</username>\n" +
-                "      <password>admin</password>\n" +
+                "      <username>testMe</username>\n" +
+                "      <password>testMe1234</password>\n" +
                 "   </params>\n" +
                 "</usercredential>";
     }
@@ -178,5 +178,9 @@ public class VerifyUserAdminServiceMain {
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //findUsers
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
+    }
+
+    public void getUserRoles() {
+
     }
 }
