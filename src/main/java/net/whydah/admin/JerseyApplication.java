@@ -5,6 +5,7 @@ import net.whydah.admin.application.ApplicationService;
 import net.whydah.admin.application.UibApplicationConnection;
 import net.whydah.admin.auth.LogonController;
 import net.whydah.admin.config.AppConfig;
+import net.whydah.admin.createlogon.CreateLogonUserController;
 import net.whydah.admin.user.UserResource;
 import net.whydah.admin.user.UserService;
 import net.whydah.admin.users.UsersResource;
@@ -34,6 +35,7 @@ public class JerseyApplication extends ResourceConfig {
         register(UserResource.class);
         register(UsersResource.class);
         register(LogonController.class);
+        register(CreateLogonUserController.class);
         //register(SpringRequestResource.class);
         //register(CustomExceptionMapper.class);
         //https://java.net/jira/browse/JERSEY-2175

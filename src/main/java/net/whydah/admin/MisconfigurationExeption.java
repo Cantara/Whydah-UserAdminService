@@ -1,7 +1,7 @@
 package net.whydah.admin;
 
 /**
- * Thrown when authentication fails.
+ * Thrown when configuration fails.
  */
 public class MisconfigurationExeption extends RuntimeException{
     public MisconfigurationExeption() {

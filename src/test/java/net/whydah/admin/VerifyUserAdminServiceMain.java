@@ -26,13 +26,14 @@ public class VerifyUserAdminServiceMain {
     private static final Logger log = LoggerFactory.getLogger(VerifyUserAdminServiceMain.class);
     private static final String UIB_USER_AUTHENTICATION_PATH = "/authenticate/user";
     private static final String UIB_CREATE_AND_LOGON_OPERATION = "createandlogon";
+    private final String uasUrl;
 
     private WebTarget userAdminService;
 
     public VerifyUserAdminServiceMain() {
         Client client = ClientBuilder.newClient();
         AppConfig appConfig = new AppConfig();
-        String uasUrl = appConfig.getProperty("myuri");
+        uasUrl = appConfig.getProperty("myuri");
         log.info("Connection to UserAdministrationService on {}", uasUrl);
         userAdminService = client.target(uasUrl);
     }
@@ -40,7 +41,8 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        verificator.logonUser();
+      //  verificator.logonUser();
+        verificator.stsUserInterface();
         //verificator.findUserByQuery();
         //verificator.findUserByQueryRestAssured();
         //verificator.stsUserInterface();
@@ -77,12 +79,24 @@ public class VerifyUserAdminServiceMain {
 
     public void logonUser() {
         String userAdminServiceTokenId = "1";
-        String userId = "useradmin";
         WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId + "/auth/logon");
         Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialXml(), MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
-        log.info("StatusCode {}", statusCode);
-        assertEquals("Could not logon user via UserAdminService", statusCode, 200);
+        log.info("logonUser,StatusCode {}", statusCode);
+        assertEquals("Could not logon user via UserAdminService", 200, statusCode);
+    }
+
+    public void createAndLogonUser() {
+        String userAdminServiceTokenId = "1";
+        String createAndLogonPath = "/createlogon/user"; //createandlogon
+        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId +"/111").path(createAndLogonPath);
+        String userId = "createValidTest-" + System.currentTimeMillis();
+        String userName = userId;
+        String fbUserXml = fbUserXml(userId, userName);
+        Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
+        int statusCode = response.getStatus();
+        log.info("createAndLogonUser url {}, StatusCode {}",webResource.getUri(), statusCode);
+        assertEquals("Could not  crated and logon user via UserAdminService", 200,statusCode);
     }
     /**
      * FIXME implement Interfaces and proxy methods supporting SecurityTokenService
@@ -90,18 +104,11 @@ public class VerifyUserAdminServiceMain {
      * FIXME  Pri 1.
      */
     public void stsUserInterface() {
-        RestAssured.baseURI = "http://localhost/useradminservice";
-        RestAssured.port = 9992;
-        RestAssured.urlEncodingEnabled = false;
-        //logonUser
-        given().
-                when().
-                accept(MediaType.APPLICATION_XML).
-                post("/1/auth/logon/", userCredentialXml()).
-        then().
-                contentType(MediaType.APPLICATION_XML).
-                statusCode(200).
-                body("xml\\path", equalTo("ok"));
+
+        //1. Logon existing user via xml
+       //FIXME logonUser();
+        //2. Create and Logon new user via xml
+        createAndLogonUser();
         //- WebResource webResource = uibResource.path(applicationTokenId).path(UIB_USER_AUTHENTICATION_PATH);
         //- ClientResponse response = webResource.type(UIB_MediaType.APPLICATION_XML).post(ClientResponse.class, userCredentialXml);
         //createAndLogonUser
@@ -110,6 +117,23 @@ public class VerifyUserAdminServiceMain {
         //- ClientResponse response = webResource.type(MediaType.APPLICATION_XML).post(ClientResponse.class, fbUserXml);
 
 
+    }
+
+    private String fbUserXml(String userId, String userName) {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?> \n" +
+                "     <user>\n" +
+                "        <params>\n" +
+                "            <fbAccessToken>accessMe1234567</fbAccessToken>\n" +
+                "            <userId>" + userId + "</userId>\n" +
+                "            <firstName>validFirstName</firstName>\n" +
+                "            <lastName>validLastName</lastName>\n" +
+                "            <username>" + userName + "</username>\n" +
+                "            <gender>male</gender>\n" +
+                "            <email>" + userName +"@example.com</email>\n" +
+                "            <birthday></birthday>\n" +
+                "            <hometown>Oslo</hometown>\n" +
+                "        </params> \n" +
+                "    </user>";
     }
 
     private String userCredentialXml() {

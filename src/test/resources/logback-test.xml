@@ -7,7 +7,7 @@
     </appender>
 
     <logger name="org.apache.directory" level="WARN" />
-    <logger name="net.whydah" level="DEBUG" />
+    <logger name="net.whydah" level="trace" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
