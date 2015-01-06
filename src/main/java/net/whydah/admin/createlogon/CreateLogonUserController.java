@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
  */
-@Path("/{applicationtokenid}/{usertokenid}")
+@Path("/{applicationtokenid}/")
 @Component
 public class CreateLogonUserController {
     private static final Logger log = LoggerFactory.getLogger(CreateLogonUserController.class);
@@ -56,7 +56,7 @@ public class CreateLogonUserController {
      * @return
      */
     @POST
-    @Path("/createlogon/user")
+    @Path("/create_logon_facebook_user")
     @Consumes({MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_XML})
     public Response createAndLogonUser(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("usertokenid") String userTokenId, String fbUserXml ) {

@@ -88,8 +88,8 @@ public class VerifyUserAdminServiceMain {
 
     public void createAndLogonUser() {
         String userAdminServiceTokenId = "1";
-        String createAndLogonPath = "/createlogon/user"; //createandlogon
-        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId +"/111").path(createAndLogonPath);
+        String createAndLogonPath = "create_logon_facebook_user"; // "/createlogon/user"; //createandlogon
+        WebTarget webResource = userAdminService.path("/" + userAdminServiceTokenId).path(createAndLogonPath);
         String userId = "createValidTest-" + System.currentTimeMillis();
         String userName = userId;
         String fbUserXml = fbUserXml(userId, userName);
