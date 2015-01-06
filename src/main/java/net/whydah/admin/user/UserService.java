@@ -117,4 +117,13 @@ public class UserService {
     }
 
 
+    public String getRolesAsString(String applicationTokenId, String userTokenId, String userId) {
+        String roles = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            roles = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(),userTokenId, userId);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to getRolesAsString()");
+        }
+        return roles;
+    }
 }

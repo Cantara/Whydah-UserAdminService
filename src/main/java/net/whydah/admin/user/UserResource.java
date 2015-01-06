@@ -168,6 +168,18 @@ public class UserResource {
     }
 
 
+    @GET
+    @Path("/{userId}/roles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("userId") String userId) {
+        log.trace("getRoles, uid={}", userId);
+
+        String roles = userService.getRolesAsString(applicationTokenId, userTokenId,userId);
+
+        return Response.ok(roles).build();
+    }
+
+
     private MediaType findPreferedContentType(Request req) {
         /**
          * /* This method builds a list of possible variants. */

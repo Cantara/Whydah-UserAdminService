@@ -38,10 +38,9 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        verificator.logonUser();
-        verificator.stsUserInterface();
-        //verificator.findUserByQuery();
-        //verificator.findUserByQueryRestAssured();
+        //verificator.logonUser();
+        //verificator.stsUserInterface();
+        verificator.userAdminWebUserInterface();
     }
 
 
@@ -164,7 +163,7 @@ public class VerifyUserAdminServiceMain {
         //-  String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
         //postUserRole
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/");
-        //getUserRoles
+        getUserRoles();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/roles");
         //postUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
@@ -181,6 +180,15 @@ public class VerifyUserAdminServiceMain {
     }
 
     public void getUserRoles() {
+        String userAdminServiceTokenId = "1";
+        String userTokenId = "1";
+        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/test.me@example.com/roles");
+
+        log.info("GetUserRoles by url {}, ", userRolesResource.getUri().toString());
+        Response response = userRolesResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        log.info("getUserRoles ,StatusCode {}", statusCode);
+        assertEquals("Could not find user-roles via UserAdminService", 200, statusCode);
 
     }
 }

@@ -193,4 +193,31 @@ public class UibUserConnection {
         }
         return userAggregate;
     }
+
+    public String getRolesAsString(String userAdminServiceTokenId, String userTokenId, String userId) {
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(userId).path("roles");
+        String responseBody = null;
+        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        responseBody = findResponseBody("getRolesAsString",response);
+        return responseBody;
+    }
+
+    private String findResponseBody(String methodName, Response response) {
+        String responseBody = null;
+        int statusCode = response.getStatus();
+        responseBody = response.getEntity().toString();
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("{}-Response form Uib {}", methodName,responseBody);
+                break;
+            case STATUS_FORBIDDEN:
+                log.error("{}-Not allowed from UIB: {}: {} ", methodName,response.getStatus(), responseBody);
+                responseBody = null;
+                break;
+            default:
+                log.error("{}-Response from UIB: {}: {}", methodName,response.getStatus(), responseBody);
+                throw new AuthenticationFailedException("getUser failed. Status code " + response.getStatus());
+        }
+        return responseBody;
+    }
 }
