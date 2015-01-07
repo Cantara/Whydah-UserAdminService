@@ -3,6 +3,7 @@ package net.whydah.admin;
 import net.whydah.admin.config.AppConfig;
 import net.whydah.admin.user.uib.RoleRepresentation;
 import net.whydah.admin.user.uib.RoleRepresentationRequest;
+import net.whydah.admin.user.uib.UserIdentity;
 import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,21 +187,20 @@ public class VerifyUserAdminServiceMain {
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
     }
 
-    private void addUser() {
+    private String addUser() {
 
-            WebTarget userResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
-            String userJson = buildStubUser().toJson();
-            log.info("AddUser by url {}, ", userResource.getUri().toString());
-            Response response = userResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userJson, MediaType.APPLICATION_JSON));
-            int statusCode = response.getStatus();
-            log.info("addUserRole ,StatusCode {}", statusCode);
-            assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
-            String output = response.readEntity(String.class);
-        /*
-            RoleRepresentation createdRole = RoleRepresentation.fromJson(output);
-            String roleId = createdRole.getId();
-            assertNotNull(roleId);
-            */
+        WebTarget userResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
+        String userJson = buildStubUser().toJson();
+        log.info("AddUser by url {}, ", userResource.getUri().toString());
+        Response response = userResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userJson, MediaType.APPLICATION_JSON));
+        int statusCode = response.getStatus();
+        log.info("addUserRole ,StatusCode {}", statusCode);
+        assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
+        String output = response.readEntity(String.class);
+        UserIdentity createdUserIdentity = UserIdentity.fromJson(output);
+        String userId = createdUserIdentity.getUid();
+        assertNotNull(userId);
+        return userId;
 
     }
 
