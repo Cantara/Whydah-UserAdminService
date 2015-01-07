@@ -32,6 +32,10 @@ public class RoleRepresentation extends RoleRepresentationRequest {
         this.id = id;
     }
 
+    public void setRoleId(String id) {
+        this.id = id;
+    }
+
     public String getUid() {
         return uid;
     }
