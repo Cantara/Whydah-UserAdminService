@@ -1,6 +1,7 @@
 package net.whydah.admin;
 
 import net.whydah.admin.config.AppConfig;
+import net.whydah.admin.user.uib.RoleRepresentation;
 import net.whydah.admin.user.uib.RoleRepresentationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * Verify that every interface of UserAdminService respond in a propper way.
@@ -204,7 +206,7 @@ public class VerifyUserAdminServiceMain {
         role.setOrganizationName("Verification");
         role.setApplicationRoleName(roleName);
         role.setApplicationRoleValue("30");
-        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/test.me@example.com/role/");
+        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/" + userId + "/role/");
 
         log.info("AddUserRole by url {}, ", userRolesResource.getUri().toString());
         Response response = userRolesResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(role.toJson(), MediaType.APPLICATION_JSON));
@@ -212,7 +214,9 @@ public class VerifyUserAdminServiceMain {
         log.info("addUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
         String output = response.readEntity(String.class);
-        String roleId = "";
+        RoleRepresentation createdRole = RoleRepresentation.fromJson(output);
+        String roleId = createdRole.getId();
+        assertNotNull(roleId);
         return roleId;
 
     }
