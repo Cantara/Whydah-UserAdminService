@@ -15,6 +15,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
@@ -173,20 +174,33 @@ public class VerifyUserAdminServiceMain {
         deleteUserRole(roleId);
         */
         //postUser
-        String userId = addUser();
-        deleteUser(userId);
+        //String userId = addUser();
+        //deleteUser(userId);
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
-        //putUser
+        //putUser - ignored now not in use?
         //- String url = getUibUrl(apptokenid, usertokenid, "user/" + uid);
 
-        //getUserAggregate
+        getUserAggregate();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //getUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
 
         //findUsers
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
+    }
+
+    private void getUserAggregate() {
+        WebTarget userResource = buildUserPath().path(USER_ID);
+        log.info("getUserAggregate by url {}, ", userResource.getUri().toString());
+        Response response = userResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        log.info("getUserAggregate ,StatusCode {}", statusCode);
+        assertEquals("Could not getUserAggregate via UserAdminService", 200, statusCode);
+        String output = response.readEntity(String.class);
+
+        assertNotNull(output);
+        assertTrue(output.contains(USER_ID));
     }
 
     private String addUser() {
