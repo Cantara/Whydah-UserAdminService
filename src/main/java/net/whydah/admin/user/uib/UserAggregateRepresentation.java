@@ -143,7 +143,6 @@ public class UserAggregateRepresentation {
         for (RoleRepresentation role : roles) {
             UserPropertyAndRole userPropertyAndRole = new UserPropertyAndRole();
             userPropertyAndRole.setId(role.getId());
-            userPropertyAndRole.setOrganizationId(role.getOrganizationId());
             userPropertyAndRole.setOrganizationName(role.getOrganizationName());
             userPropertyAndRole.setApplicationId(role.getApplicationId());
             userPropertyAndRole.setApplicationName(role.getApplicationName());

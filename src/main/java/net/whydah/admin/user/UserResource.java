@@ -239,6 +239,7 @@ public class UserResource {
 
     @POST
     @Path("/{userId}/role")
+    @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("userId") String userId, String roleXml) {
@@ -256,6 +257,44 @@ public class UserResource {
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
             log.error("addRole: RuntimeException xml={}, userId {}", roleXml,userId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     *
+     * @param applicationTokenId
+     * @param userTokenId
+     * @param userId
+     * @param roleJson expect to be on the forme like this
+     *                 {"uid":"test.me@example.com","
+     *                 applicationId":"12",
+     *                 "applicationRoleName":"developer",
+     *                 "applicationRoleValue":"30",
+     *                 "applicationName":"UserAdminService",
+     *                 "organizationName":"Verification"}
+     * @return
+     */
+    @POST
+    @Path("/{userId}/role/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addRoleJson(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                            @PathParam("userId") String userId, String roleJson) {
+        log.trace("addRoleJson is called with userId={}, roleXml {}", userId, roleJson);
+
+        try {
+            RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
+            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+            return Response.ok(roleRepresentation.toXML()).build();
+        } catch (IllegalArgumentException iae) {
+            log.error("addRoleJson: Invalid json={}, userId {}", roleJson,userId, iae);
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (IllegalStateException ise) {
+            log.error("addRoleJson: IllegalStateException json={}, userId {}", roleJson,userId, ise);
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("addRoleJson: RuntimeException json={}, userId {}", roleJson,userId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -24,7 +24,6 @@ public class RoleRepresentationRequest {
     private String applicationId;
     private String applicationName;
 
-    private String organizationId;
     private String organizationName;
 
     private String applicationRoleName;
@@ -36,9 +35,6 @@ public class RoleRepresentationRequest {
     }
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
-    }
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
     }
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
@@ -56,9 +52,6 @@ public class RoleRepresentationRequest {
     }
     public String getApplicationName() {
         return applicationName;
-    }
-    public String getOrganizationId() {
-        return organizationId;
     }
     public String getOrganizationName() {
         return organizationName;
@@ -82,11 +75,11 @@ public class RoleRepresentationRequest {
         return userJson;
     }
 
-    public static RoleRepresentation fromJson(String roleJson) {
-        RoleRepresentation roleRepresentation = null;
+    public static RoleRepresentationRequest fromJson(String roleJson) {
+        RoleRepresentationRequest roleRepresentation = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            roleRepresentation = mapper.readValue(roleJson, RoleRepresentation.class);
+            roleRepresentation = mapper.readValue(roleJson, RoleRepresentationRequest.class);
 
         } catch (JsonMappingException e) {
             throw new IllegalArgumentException("Error mapping json for " + roleJson, e);
@@ -97,6 +90,25 @@ public class RoleRepresentationRequest {
         }
         return roleRepresentation;
     }
+
+//    public String toJson() {
+//        /* return "{\"roleId\":\""+ getId() +"\"," +
+//                "\"uid\":\""+ getUid() +"\"," +
+//                "\"applicationId\":\""+ getApplicationId() +"\"," +
+//                "\"applicationName\":\"" + getApplicationName() + "\","+
+//                "\"applicationRoleName\":\""+ getApplicationRoleName() +"\"," +
+//                "\"applicationRoleValue\":\""+ getApplicationRoleValue() +"\"," +
+//                "\"organizationName\":\""+ getOrganizationName() +"\"}";
+//                */
+//        String json =  "{\"applicationId\":\""+ getApplicationId() +"\"," +
+//                "\"applicationName\":\"" + getApplicationName() + "\","+
+//                "\"applicationRoleName\":\""+ getApplicationRoleName() +"\"," +
+//                "\"applicationRoleValue\":\""+ getApplicationRoleValue() +"\"," +
+//                "\"organizationName\":\""+ getOrganizationName() +"\"}";
+//
+//        return json;
+//
+//    }
 
     public static RoleRepresentationRequest fromXml(String roleXml) {
         log.debug("Build UserPropertyAndRole from xml {}", roleXml);
@@ -116,8 +128,7 @@ public class RoleRepresentationRequest {
             userPropertyAndRole = new RoleRepresentationRequest();
             userPropertyAndRole.setApplicationId(appId);
             userPropertyAndRole.setApplicationName(appName);
-            userPropertyAndRole.setOrganizationId(orgID);
-            userPropertyAndRole.setOrganizationId(orgName);
+            userPropertyAndRole.setOrganizationName(orgName);
             userPropertyAndRole.setApplicationRoleName(roleName);
             userPropertyAndRole.setApplicationRoleValue(roleValue);
 

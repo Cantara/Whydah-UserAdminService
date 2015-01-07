@@ -1,6 +1,7 @@
 package net.whydah.admin;
 
 import net.whydah.admin.config.AppConfig;
+import net.whydah.admin.user.uib.RoleRepresentationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,7 +162,7 @@ public class VerifyUserAdminServiceMain {
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
         //deleteUserRole
         //-  String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
-        //postUserRole
+        addUserRole();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/");
         getUserRoles();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/roles");
@@ -189,6 +190,34 @@ public class VerifyUserAdminServiceMain {
         int statusCode = response.getStatus();
         log.info("getUserRoles ,StatusCode {}", statusCode);
         assertEquals("Could not find user-roles via UserAdminService", 200, statusCode);
+
+    }
+
+    public void addUserRole() {
+        String userAdminServiceTokenId = "1";
+        String userTokenId = "1";
+        String userId = "test.me@example.com";
+        String roleName = "testRole-" + System.currentTimeMillis();
+        RoleRepresentationRequest role = new RoleRepresentationRequest();
+//        role.setId(UUID.randomUUID().toString());
+        role.setApplicationId("12");
+        role.setApplicationName("UserAdminService");
+        role.setOrganizationName("Verification");
+        role.setApplicationRoleName(roleName);
+        role.setApplicationRoleValue("30");
+//        role.setUid("test.me@example.com");
+        String roleJson = "{\"applicationId\":\"12\"," +
+                "  \"applicationRoleName\":\"" + roleName+"\"," +
+                "  \"applicationRoleValue\":\"30\"," +
+                "  \"applicationName\":\"UserAdminService\"," +
+                "  \"organizationName\":\"Verification\"}";
+        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/test.me@example.com/role/");
+
+        log.info("AddUserRole by url {}, ", userRolesResource.getUri().toString());
+        Response response = userRolesResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(role.toJson(), MediaType.APPLICATION_JSON));
+        int statusCode = response.getStatus();
+        log.info("addUserRole ,StatusCode {}", statusCode);
+        assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
 
     }
 }

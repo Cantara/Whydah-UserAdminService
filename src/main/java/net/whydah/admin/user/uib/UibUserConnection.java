@@ -205,7 +205,7 @@ public class UibUserConnection {
     private String findResponseBody(String methodName, Response response) {
         String responseBody = null;
         int statusCode = response.getStatus();
-        responseBody = response.getEntity().toString();
+        responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("{}-Response form Uib {}", methodName,responseBody);
