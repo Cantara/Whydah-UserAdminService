@@ -162,12 +162,13 @@ public class VerifyUserAdminServiceMain {
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
         //putUserRole
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
-        //deleteUserRole
-        //-  String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
-        addUserRole();
-        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/");
         getUserRoles();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/roles");
+
+        String roleId = addUserRole();
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/");
+        deleteUserRole(roleId);
+        //-  String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
         //postUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
         //putUser
@@ -218,6 +219,24 @@ public class VerifyUserAdminServiceMain {
         String roleId = createdRole.getId();
         assertNotNull(roleId);
         return roleId;
+
+    }
+
+    public void deleteUserRole(String roleId) {
+        String userAdminServiceTokenId = "1";
+        String userTokenId = "1";
+        String userId = "test.me@example.com";
+        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/").path(userId).path("/role/").path(roleId);
+
+        log.info("deleteUserRole by url {}, ", userRolesResource.getUri().toString());
+        Response response = userRolesResource.request(MediaType.APPLICATION_JSON).delete();
+        int statusCode = response.getStatus();
+        log.info("deleteUserRole ,StatusCode {}", statusCode);
+        assertEquals("Could not delete user-role via UserAdminService", 204, statusCode);
+        String output = response.readEntity(String.class);
+        //RoleRepresentation createdRole = RoleRepresentation.fromJson(output);
+        //assertNotNull(roleId);
+        //return roleId;
 
     }
 }

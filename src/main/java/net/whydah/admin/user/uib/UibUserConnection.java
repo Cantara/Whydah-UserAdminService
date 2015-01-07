@@ -28,6 +28,7 @@ public class UibUserConnection {
     private static final int STATUS_FORBIDDEN = 403;
     private static final int STATUS_CREATED = 201;
     private static final int STATUS_CONFLICT = 409;
+    private static final int STATUS_NO_CONTENT = 204;
 
 
     private final WebTarget uib;
@@ -145,6 +146,27 @@ public class UibUserConnection {
 
     }
 
+    public void deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String userId, String userRoleId) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role").path(userRoleId);
+        Response response = webResource.request(MediaType.APPLICATION_JSON).delete();
+        int statusCode = response.getStatus();
+
+        switch (statusCode) {
+            case STATUS_NO_CONTENT:
+                log.trace("deleteUserRole-Response form Uib {}", userRoleId);
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("deleteUserRole-Response from UIB: {}: {}",statusCode, userRoleId);
+                throw new BadRequestException("deleteUserRole for userRoleId " + userRoleId + ",  Status code " + statusCode);
+            default:
+                log.error("deleteUserRole-Response from UIB: {}: {}", statusCode, userRoleId);
+                throw new RuntimeException("DeleteUserRole failed. Status code " + statusCode);
+        }
+
+    }
+
+
+
     public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String userId, UserPropertyAndRole userPropertyAndRole) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role");
         UserAggregate updatedUser = null;
@@ -220,4 +242,6 @@ public class UibUserConnection {
         }
         return responseBody;
     }
+
+
 }

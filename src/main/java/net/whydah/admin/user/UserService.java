@@ -81,13 +81,19 @@ public class UserService {
         return role;
     }
 
+    public void deleteUserRole(String applicationTokenId, String adminUserTokenId, String userId, String userRoleId) {
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+           uibUserConnection.deleteUserRole(credentialStore.getUserAdminServiceTokenId(),adminUserTokenId,userId, userRoleId);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to delete user role()");
+        }
+    }
+
     public UserAggregate updateUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {
         throw new NotImplementedException();
     }
 
-    public UserAggregate deleteUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName) {
-        throw new NotImplementedException();
-    }
+
 
     public UserAggregate getUser(String applicationTokenId, String userTokenId, String userId) {
         log.trace("getUser by userId {}", userId);
@@ -126,4 +132,6 @@ public class UserService {
         }
         return roles;
     }
+
+
 }

@@ -299,6 +299,21 @@ public class UserResource {
         }
     }
 
+    @DELETE
+    @Path("/{userId}/role/{roleid}")
+    public Response deleteRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                               @PathParam("userId") String userId, @PathParam("roleid") String roleid) {
+        log.trace("deleteRole, uid={}, roleid={}", userId, roleid);
+
+        try {
+            userService.deleteUserRole(applicationTokenId, userTokenId,userId, roleid);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (RuntimeException e) {
+            log.error("deleteRole-RuntimeException. roleId {}", roleid, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)
