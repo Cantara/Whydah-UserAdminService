@@ -233,10 +233,5 @@ public class VerifyUserAdminServiceMain {
         int statusCode = response.getStatus();
         log.info("deleteUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not delete user-role via UserAdminService", 204, statusCode);
-        String output = response.readEntity(String.class);
-        //RoleRepresentation createdRole = RoleRepresentation.fromJson(output);
-        //assertNotNull(roleId);
-        //return roleId;
-
     }
 }
