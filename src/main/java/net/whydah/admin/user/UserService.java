@@ -134,4 +134,11 @@ public class UserService {
     }
 
 
+    public void deleteUser(String applicationTokenId, String userTokenId, String userId) {
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            uibUserConnection.deleteUser(credentialStore.getUserAdminServiceTokenId(),userTokenId, userId);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to deleteUser()");
+        }
+    }
 }

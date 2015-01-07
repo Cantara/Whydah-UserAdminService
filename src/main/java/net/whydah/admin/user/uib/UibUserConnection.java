@@ -244,4 +244,22 @@ public class UibUserConnection {
     }
 
 
+    public void deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String userId) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
+        Response response = webResource.request(MediaType.APPLICATION_JSON).delete();
+        int statusCode = response.getStatus();
+
+        switch (statusCode) {
+            case STATUS_NO_CONTENT:
+                log.trace("deleteUser-Response form Uib {}", userId);
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("deleteUser-Response from UIB: {}: {}",statusCode, userId);
+                throw new BadRequestException("deleteUserRole for userRoleId " + userId + ",  Status code " + statusCode);
+            default:
+                log.error("deleteUser-Response from UIB: {}: {}", statusCode, userId);
+                throw new RuntimeException("DeleteUser failed. Status code " + statusCode);
+        }
+
+    }
 }

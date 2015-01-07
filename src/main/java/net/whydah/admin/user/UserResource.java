@@ -167,6 +167,21 @@ public class UserResource {
         }
     }
 
+    @DELETE
+    @Path("/{userId}")
+    public Response deleteUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                               @PathParam("userId") String userId) {
+        log.trace("deleteUser, uid={}, roleid={}", userId);
+
+        try {
+            userService.deleteUser(applicationTokenId, userTokenId,userId);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (RuntimeException e) {
+            log.error("deleteUser-RuntimeException. userId {}", userId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     @GET
     @Path("/{userId}/roles")

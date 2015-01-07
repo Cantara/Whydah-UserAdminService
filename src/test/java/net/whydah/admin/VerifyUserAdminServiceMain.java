@@ -173,23 +173,25 @@ public class VerifyUserAdminServiceMain {
         deleteUserRole(roleId);
         */
         //postUser
-        addUser();
+        String userId = addUser();
+        deleteUser(userId);
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
         //putUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/" + uid);
-        //deleteUser
-        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
+
         //getUserAggregate
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //getUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
+
         //findUsers
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
     }
 
     private String addUser() {
 
-        WebTarget userResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
+        WebTarget userResource = buildUserPath();
         String userJson = buildStubUser().toJson();
         log.info("AddUser by url {}, ", userResource.getUri().toString());
         Response response = userResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userJson, MediaType.APPLICATION_JSON));
@@ -202,6 +204,20 @@ public class VerifyUserAdminServiceMain {
         assertNotNull(userId);
         return userId;
 
+    }
+
+    private WebTarget buildUserPath() {
+        return userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
+    }
+
+    public void deleteUser(String userId) {
+        WebTarget userRolesResource = buildUserPath().path(userId);
+
+        log.info("deleteUser by url {}, ", userRolesResource.getUri().toString());
+        Response response = userRolesResource.request(MediaType.APPLICATION_JSON).delete();
+        int statusCode = response.getStatus();
+        log.info("deleteUser ,StatusCode {}", statusCode);
+        assertEquals("Could not delete user via UserAdminService", 204, statusCode);
     }
 
     public void getUserRoles() {
