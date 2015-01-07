@@ -214,9 +214,10 @@ public class UserAggregate {
     public void setCellPhone(String cellPhone) {
         identity.setCellPhone(cellPhone);
     }
-    public void setPassword(String password) {
+   /* public void setPassword(String password) {
         identity.setPassword(password);
     }
+    */
 
     public void setRoles(List<UserPropertyAndRole> roles) {
         this.roles = roles;

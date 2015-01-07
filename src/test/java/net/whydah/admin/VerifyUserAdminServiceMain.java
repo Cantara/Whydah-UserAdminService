@@ -3,6 +3,7 @@ package net.whydah.admin;
 import net.whydah.admin.config.AppConfig;
 import net.whydah.admin.user.uib.RoleRepresentation;
 import net.whydah.admin.user.uib.RoleRepresentationRequest;
+import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +45,8 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        verificator.logonUser();
-        verificator.stsUserInterface();
+        //verificator.logonUser();
+        //verificator.stsUserInterface();
         verificator.userAdminWebUserInterface();
     }
 
@@ -165,9 +166,11 @@ public class VerifyUserAdminServiceMain {
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
         //putUserRole - ignored now not in use?
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
+        /*
         getUserRoles();
         String roleId = addUserRole();
         deleteUserRole(roleId);
+        */
         //postUser
         addUser();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
@@ -184,6 +187,20 @@ public class VerifyUserAdminServiceMain {
     }
 
     private void addUser() {
+
+            WebTarget userResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
+            String userJson = buildStubUser().toJson();
+            log.info("AddUser by url {}, ", userResource.getUri().toString());
+            Response response = userResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userJson, MediaType.APPLICATION_JSON));
+            int statusCode = response.getStatus();
+            log.info("addUserRole ,StatusCode {}", statusCode);
+            assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
+            String output = response.readEntity(String.class);
+        /*
+            RoleRepresentation createdRole = RoleRepresentation.fromJson(output);
+            String roleId = createdRole.getId();
+            assertNotNull(roleId);
+            */
 
     }
 
@@ -204,13 +221,7 @@ public class VerifyUserAdminServiceMain {
 
     public String addUserRole() {
 
-        String roleName = "testRole-" + System.currentTimeMillis();
-        RoleRepresentationRequest role = new RoleRepresentationRequest();
-        role.setApplicationId("12");
-        role.setApplicationName("UserAdminService");
-        role.setOrganizationName("Verification");
-        role.setApplicationRoleName(roleName);
-        role.setApplicationRoleValue("30");
+        RoleRepresentationRequest role = buildStubUserRole();
         WebTarget userRolesResource = buildBasePath().path("role/");
 
         log.info("AddUserRole by url {}, ", userRolesResource.getUri().toString());
@@ -224,6 +235,24 @@ public class VerifyUserAdminServiceMain {
         assertNotNull(roleId);
         return roleId;
 
+    }
+
+    private UserIdentityRepresentation buildStubUser() {
+        String firstName = "firstName-" + System.currentTimeMillis();
+        String email = firstName + "@example.com";
+        UserIdentityRepresentation userIdentity = new UserIdentityRepresentation(email, firstName, "testlastName", "test-personRef", email,"+4793333697");
+        return userIdentity;
+    }
+
+    private RoleRepresentationRequest buildStubUserRole() {
+        String roleName = "testRole-" + System.currentTimeMillis();
+        RoleRepresentationRequest role = new RoleRepresentationRequest();
+        role.setApplicationId("12");
+        role.setApplicationName("UserAdminService");
+        role.setOrganizationName("Verification");
+        role.setApplicationRoleName(roleName);
+        role.setApplicationRoleValue("30");
+        return role;
     }
 
     public void deleteUserRole(String roleId) {

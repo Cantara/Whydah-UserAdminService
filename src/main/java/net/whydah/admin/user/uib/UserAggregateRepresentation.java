@@ -43,7 +43,7 @@ public class UserAggregateRepresentation {
         dto.setPersonRef(id.getPersonRef());
         dto.setEmail(id.getEmail());
         dto.setCellPhone(id.getCellPhone());
-        dto.setPassword(id.getPassword());
+        //dto.setPassword(id.getPassword());
 
         List<UserPropertyAndRole> userPropertyAndRoles = userAggregate.getRoles();
         List<RoleRepresentation> roleRepresentations = new ArrayList<>(userPropertyAndRoles.size());

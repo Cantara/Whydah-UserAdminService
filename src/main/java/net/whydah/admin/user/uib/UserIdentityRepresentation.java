@@ -35,9 +35,6 @@ public class UserIdentityRepresentation {
         this.cellPhone = cellPhone;
     }
 
-    public String getPersonName() {
-        return firstName + ' ' + lastName;
-    }
     public String getPersonRef() {
         return personRef;
     }
@@ -55,9 +52,6 @@ public class UserIdentityRepresentation {
     }
     public String getCellPhone() {
         return cellPhone;
-    }
-    public String getPassword() {
-        return password;
     }
 
 
@@ -78,9 +72,6 @@ public class UserIdentityRepresentation {
     }
     public void setCellPhone(String cellPhone) {
         this.cellPhone = cellPhone;
-    }
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String toJson() {
