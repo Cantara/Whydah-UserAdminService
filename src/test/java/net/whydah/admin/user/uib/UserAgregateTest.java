@@ -16,7 +16,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 public class UserAgregateTest {
     private static final Logger log = LoggerFactory.getLogger(UserAgregateTest.class);
 
-    private String userAgregateTemplate = "{\"uid\":\"uid\",\"username\":\"usernameABC\",\"firstName\":\"firstName\",\"lastName\":\"lastName\",\"personRef\":\"personRef\",\"email\":\"email\",\"cellPhone\":\"12345678\",\"password\":\"password\",\"roles\":[{\"applicationId\":\"applicationId\",\"applicationName\":\"applicationName\",\"organizationId\":\"organizationId\",\"organizationName\":\"organizationName\",\"applicationRoleName\":\"roleName\",\"applicationRoleValue\":\"email\",\"id\":null},{\"applicationId\":\"applicationId123\",\"applicationName\":\"applicationName123\",\"organizationId\":\"organizationId123\",\"organizationName\":\"organizationName123\",\"applicationRoleName\":\"roleName123\",\"applicationRoleValue\":\"roleValue123\",\"id\":null}]}\n";
+    private String userAgregateTemplate = "{\"uid\":\"uid\",\"username\":\"usernameABC\",\"firstName\":\"firstName\",\"lastName\":\"lastName\",\"personRef\":\"personRef\",\"email\":\"email\",\"cellPhone\":\"12345678\",\"password\":\"password\",\"roles\":[{\"applicationId\":\"applicationId\",\"applicationName\":\"applicationName\",\"organizationName\":\"organizationName\",\"applicationRoleName\":\"roleName\",\"applicationRoleValue\":\"email\",\"id\":null},{\"applicationId\":\"applicationId123\",\"applicationName\":\"applicationName123\",\"organizationName\":\"organizationName123\",\"applicationRoleName\":\"roleName123\",\"applicationRoleValue\":\"roleValue123\",\"id\":null}]}\n";
 
     @Test
     public void buildUserAggregate() throws Exception {
@@ -36,7 +36,6 @@ public class UserAgregateTest {
         userPropertyAndRole.setId("id1");
         userPropertyAndRole.setApplicationId("appid1");
         userPropertyAndRole.setApplicationName("appName");
-        userPropertyAndRole.setOrganizationId("orgId");
         userPropertyAndRole.setOrganizationName("orgName");
         userPropertyAndRole.setApplicationRoleName("roleName");
         userPropertyAndRole.setApplicationRoleValue("roleValue");

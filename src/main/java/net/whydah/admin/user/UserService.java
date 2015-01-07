@@ -89,7 +89,7 @@ public class UserService {
         }
     }
 
-    public UserAggregate updateUserRole(String applicationId,String applicationName, String organizationId, String applicationRoleName, String applicationRoleValue) {
+    public UserAggregate updateUserRole(String applicationId,String applicationName, String applicationRoleName, String applicationRoleValue) {
         throw new NotImplementedException();
     }
 
@@ -114,7 +114,7 @@ public class UserService {
     }
 
     private UserPropertyAndRole buildStubRole() {
-        return new UserPropertyAndRole("id", "uid", "1", "appname","2", "orgName", "user", "true");
+        return new UserPropertyAndRole("id", "uid", "1", "appname", "orgName", "user", "true");
     }
 
     boolean hasAccess(String applicationTokenId, String userTokenId) {
@@ -136,7 +136,7 @@ public class UserService {
 
     public void deleteUser(String applicationTokenId, String userTokenId, String userId) {
         if (hasAccess(applicationTokenId, userTokenId)) {
-            uibUserConnection.deleteUser(credentialStore.getUserAdminServiceTokenId(),userTokenId, userId);
+            uibUserConnection.deleteUser(credentialStore.getUserAdminServiceTokenId(), userTokenId, userId);
         } else {
             throw new NotAuthorizedException("Not Authorized to deleteUser()");
         }

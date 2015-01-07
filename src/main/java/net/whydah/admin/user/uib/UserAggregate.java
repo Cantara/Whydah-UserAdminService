@@ -50,7 +50,6 @@ public class UserAggregate {
                     "        <application>\n" +
                     "            <appId>" + u.getApplicationId() + "</appId>\n" +
                     "            <applicationName>" + u.getApplicationName() + "</applicationName>\n" +
-                    "            <orgID>" + u.getOrganizationId() + "</orgID>\n" +
                     "            <roleName>" + u.getApplicationRoleName() + "</roleName>\n" +
                     "            <roleValue>" + u.getApplicationRoleValue() + "</roleValue>\n" +
                     "        </application>\n"

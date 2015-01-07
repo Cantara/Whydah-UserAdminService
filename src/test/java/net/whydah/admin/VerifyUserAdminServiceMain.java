@@ -158,36 +158,38 @@ public class VerifyUserAdminServiceMain {
 
 
     /**
-     * FIXME implement Interfaces and proxy methods supporting UserAdminWebapp
-     * <p/>
-     * <p/>
-     * FIXME  Pri 2.
+     * Implement Interfaces and proxy methods supporting UserAdminWebapp
      */
     public void userAdminWebUserInterface() {
-        //resetPassword
-        //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
-        //putUserRole - ignored now not in use?
-        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
+
         /*
+
+        //UserRoles
         getUserRoles();
         String roleId = addUserRole();
         deleteUserRole(roleId);
+        //User
+        String userId = addUser();
+        deleteUser(userId);
+        getUserAggregate();
         */
-        //postUser
-        //String userId = addUser();
-        //deleteUser(userId);
+
+        //FIXME BLI findUsers();
+        //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
+        //resetPassword
+        //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
+
+        //IGNORED
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
+        //putUserRole - ignored now not in use?
+        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
         //putUser - ignored now not in use?
         //- String url = getUibUrl(apptokenid, usertokenid, "user/" + uid);
-
-        getUserAggregate();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
         //getUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
 
-        //findUsers
-        //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
     }
 
     private void getUserAggregate() {
