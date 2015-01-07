@@ -286,7 +286,7 @@ public class UserResource {
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
             RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
-            return Response.ok(roleRepresentation.toXML()).build();
+            return Response.ok(roleRepresentation.toJson()).build();
         } catch (IllegalArgumentException iae) {
             log.error("addRoleJson: Invalid json={}, userId {}", roleJson,userId, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();

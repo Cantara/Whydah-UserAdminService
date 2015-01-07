@@ -193,24 +193,17 @@ public class VerifyUserAdminServiceMain {
 
     }
 
-    public void addUserRole() {
+    public String addUserRole() {
         String userAdminServiceTokenId = "1";
         String userTokenId = "1";
         String userId = "test.me@example.com";
         String roleName = "testRole-" + System.currentTimeMillis();
         RoleRepresentationRequest role = new RoleRepresentationRequest();
-//        role.setId(UUID.randomUUID().toString());
         role.setApplicationId("12");
         role.setApplicationName("UserAdminService");
         role.setOrganizationName("Verification");
         role.setApplicationRoleName(roleName);
         role.setApplicationRoleValue("30");
-//        role.setUid("test.me@example.com");
-        String roleJson = "{\"applicationId\":\"12\"," +
-                "  \"applicationRoleName\":\"" + roleName+"\"," +
-                "  \"applicationRoleValue\":\"30\"," +
-                "  \"applicationName\":\"UserAdminService\"," +
-                "  \"organizationName\":\"Verification\"}";
         WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/test.me@example.com/role/");
 
         log.info("AddUserRole by url {}, ", userRolesResource.getUri().toString());
@@ -218,6 +211,9 @@ public class VerifyUserAdminServiceMain {
         int statusCode = response.getStatus();
         log.info("addUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
+        String output = response.readEntity(String.class);
+        String roleId = "";
+        return roleId;
 
     }
 }
