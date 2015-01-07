@@ -29,6 +29,9 @@ public class VerifyUserAdminServiceMain {
     private final String uasUrl;
 
     private WebTarget userAdminService;
+    public static final String USER_ADMIN_SERVICE_TOKEN_ID = "1";
+    public static final String USER_TOKEN_ID = "1";
+    public static final String USER_ID = "test.me@example.com";
 
     public VerifyUserAdminServiceMain() {
         Client client = ClientBuilder.newClient();
@@ -41,8 +44,8 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        //verificator.logonUser();
-        //verificator.stsUserInterface();
+        verificator.logonUser();
+        verificator.stsUserInterface();
         verificator.userAdminWebUserInterface();
     }
 
@@ -160,16 +163,13 @@ public class VerifyUserAdminServiceMain {
     public void userAdminWebUserInterface() {
         //resetPassword
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
-        //putUserRole
+        //putUserRole - ignored now not in use?
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
         getUserRoles();
-        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/roles");
-
         String roleId = addUserRole();
-        //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/");
         deleteUserRole(roleId);
-        //-  String url = getUibUrl(apptokenid, usertokenid, "user/"+uid+"/role/"+roleId);
         //postUser
+        addUser();
         //- String url = getUibUrl(apptokenid, usertokenid, "user/");
         //putUser
         //- String url = getUibUrl(apptokenid, usertokenid, "user/" + uid);
@@ -183,10 +183,12 @@ public class VerifyUserAdminServiceMain {
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
     }
 
+    private void addUser() {
+
+    }
+
     public void getUserRoles() {
-        String userAdminServiceTokenId = "1";
-        String userTokenId = "1";
-        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/test.me@example.com/roles");
+        WebTarget userRolesResource = buildBasePath().path("roles");
 
         log.info("GetUserRoles by url {}, ", userRolesResource.getUri().toString());
         Response response = userRolesResource.request(MediaType.APPLICATION_JSON).get();
@@ -196,10 +198,12 @@ public class VerifyUserAdminServiceMain {
 
     }
 
+    private WebTarget buildBasePath() {
+        return userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user").path(USER_ID);
+    }
+
     public String addUserRole() {
-        String userAdminServiceTokenId = "1";
-        String userTokenId = "1";
-        String userId = "test.me@example.com";
+
         String roleName = "testRole-" + System.currentTimeMillis();
         RoleRepresentationRequest role = new RoleRepresentationRequest();
         role.setApplicationId("12");
@@ -207,7 +211,7 @@ public class VerifyUserAdminServiceMain {
         role.setOrganizationName("Verification");
         role.setApplicationRoleName(roleName);
         role.setApplicationRoleValue("30");
-        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/" + userId + "/role/");
+        WebTarget userRolesResource = buildBasePath().path("role/");
 
         log.info("AddUserRole by url {}, ", userRolesResource.getUri().toString());
         Response response = userRolesResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(role.toJson(), MediaType.APPLICATION_JSON));
@@ -223,10 +227,7 @@ public class VerifyUserAdminServiceMain {
     }
 
     public void deleteUserRole(String roleId) {
-        String userAdminServiceTokenId = "1";
-        String userTokenId = "1";
-        String userId = "test.me@example.com";
-        WebTarget userRolesResource = userAdminService.path(userAdminServiceTokenId).path(userTokenId).path("user/").path(userId).path("/role/").path(roleId);
+        WebTarget userRolesResource = buildBasePath().path("/role/").path(roleId);
 
         log.info("deleteUserRole by url {}, ", userRolesResource.getUri().toString());
         Response response = userRolesResource.request(MediaType.APPLICATION_JSON).delete();
