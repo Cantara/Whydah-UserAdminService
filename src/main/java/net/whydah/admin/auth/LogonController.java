@@ -41,6 +41,11 @@ public class LogonController {
     @Produces(MediaType.APPLICATION_XML)
     public Response logonUser(@PathParam("applicationtokenid") String applicationTokenId, String userCredentialsXml) {
         log.trace("logon is called with usercredentialsXml={}", userCredentialsXml);
+
+        // TODO This method should only be abailable for STS to use...
+        //         if (isSTS()) {
+
+
         String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
         return Response.ok(userXml).build();
     }
