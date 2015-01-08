@@ -1,7 +1,7 @@
 UserAdminService
 ====================
 
-The optional component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
+The component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
 
 
 ![Architectural Overview](https://raw2.github.com/altran/Whydah-SSOLoginWebApp/master/Whydah%20infrastructure.png)
@@ -11,10 +11,11 @@ Installation
 ============
 
 
-
 * create a user for the service
 * run start_service.sh
+* ..or use the ansible provisioning project to create a Whydah installation
 * ..or create the files from info below:
+
 
 ```
 #!/bin/sh
@@ -27,7 +28,8 @@ JARFILE=$A-$V.jar
 
 pkill -f $A
 
-wget --user=altran --password=l1nkSys -O $JARFILE "http://mvnrepo.cantara.no/service/local/artifact/maven/content?r=snapshots&g=net.whydah.identity&a=$A&v=$V&p=jar"
+
+wget  -O $JARFILE "http://mvnrepo.cantara.no/service/local/artifact/maven/content?r=snapshots&g=net.whydah.identity&a=$A&v=$V&p=jar"
 nohup java -jar -DIAM_CONFIG=useradminservice.TEST.properties $JARFILE &
 
 
@@ -57,7 +59,6 @@ Typical apache setup
                 Allow from all
         </Proxy>
         ProxyPreserveHost on
-                ProxyPass /tokenservice http://localhost:9998/tokenservice
                 ProxyPass /useradminservice http://localhost:9992/uas
 </VirtualHost>
 ```
