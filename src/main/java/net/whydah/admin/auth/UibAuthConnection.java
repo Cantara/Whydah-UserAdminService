@@ -39,7 +39,7 @@ public class UibAuthConnection {
 
     public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
         WebTarget logonUserResource = uib.path("/" + userAdminServiceTokenId).path("authenticate/user");
-        Response response = logonUserResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialsXml,MediaType.APPLICATION_XML_TYPE));
+        Response response = logonUserResource.request(MediaType.APPLICATION_XML).get();
         int statusCode = response.getStatus();
         String userXml = null;
         switch (statusCode) {
