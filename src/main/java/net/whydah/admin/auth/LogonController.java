@@ -42,8 +42,10 @@ public class LogonController {
     public Response logonUser(@PathParam("applicationtokenid") String applicationTokenId, String userCredentialsXml) {
         log.trace("logon is called with usercredentialsXml={}", userCredentialsXml);
 
-        // TODO This method should only be abailable for STS to use...
-        //         if (isSTS()) {
+        // TODO This method should only be available for STS to use...
+        if (!isSTS()) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
 
 
         String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
@@ -55,5 +57,9 @@ public class LogonController {
         return "<xml><usertoken><params><name>admin</name></params></usertoken></xml>";
     }
 
+    private boolean isSTS(){
+        // TODO This method should only be available for STS to use...
+        return true;
+    }
 
 }
