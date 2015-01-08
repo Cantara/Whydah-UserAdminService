@@ -53,4 +53,23 @@ public class UibAuthConnection {
         }
         return userXml;
     }
+
+    public String resetPassword(String userAdminServiceTokenId, String username) {
+        WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username);
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).get();
+        int statusCode = response.getStatus();
+        String output = response.readEntity(String.class);
+        switch (statusCode) {
+            case STATUS_OK:
+                log.info("Reset password request ok for username {}", username);
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                throw new BadRequestException("BadRequest for resetPassword " + response.toString() + ",  Status code " + response.getStatus());
+            default:
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                throw new AuthenticationFailedException("ResetPassword failed. Status code " + response.getStatus());
+        }
+        return output;
+    }
 }

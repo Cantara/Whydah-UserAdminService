@@ -174,9 +174,9 @@ public class VerifyUserAdminServiceMain {
         getUserAggregate();
         */
 
-        findUsers();
+        //findUsers();
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
-        //resetPassword
+        resetPassword();
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
 
         //IGNORED
@@ -317,5 +317,17 @@ public class VerifyUserAdminServiceMain {
         assertEquals("Could find via UserAdminService", 200, statusCode);
         String output = response.readEntity(String.class);
         assertTrue(output.contains(USER_ID));
+    }
+
+    /*
+    Reset Password
+     */
+    public void resetPassword() {
+        WebTarget resetPasswordResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path("auth/password/reset/username").path(USER_ID);
+        log.info("resetPassword by url {}, ", resetPasswordResource.getUri().toString());
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        log.info("resetPassword ,StatusCode {}", statusCode);
+        assertEquals("Could resetPassword via UserAdminService", 200, statusCode);
     }
 }
