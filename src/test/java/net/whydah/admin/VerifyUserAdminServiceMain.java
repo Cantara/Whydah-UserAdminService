@@ -300,7 +300,7 @@ public class VerifyUserAdminServiceMain {
 
 
     /*
-    Find users...  search for users using query and retuen a list of user identities
+    Find users... UAWA - search for users using query and return a list of user aggregates
      */
     public void findUsers() {
         String query = "test";
@@ -314,6 +314,23 @@ public class VerifyUserAdminServiceMain {
         String output = response.readEntity(String.class);
         assertTrue(output.contains(USER_ID));
     }
+
+    /*
+    Search users... 3Part application directory search  using query and return a list of user identities
+     */
+    public void searchUsers() {
+        String query = "test";
+        WebTarget findResource = buildUsersPath().path("search").path(query);
+
+        log.info("searchUsers by url {}, ", findResource.getUri().toString());
+        Response response = findResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        log.info("searchUsers ,StatusCode {}", statusCode);
+        assertEquals("Could search via UserAdminService", 200, statusCode);
+        String output = response.readEntity(String.class);
+        assertTrue(output.contains(USER_ID));
+    }
+
 
     /*
     Reset Password
