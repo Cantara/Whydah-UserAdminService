@@ -28,8 +28,8 @@ public class LogonController {
     @Path("logon")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
-    public Response logon(@PathParam("applicationtokenid") String applicationTokenId, String credentialsXml) {
-        log.trace("logon is called with credentialsXml={}", credentialsXml);
+    public Response logon(@PathParam("applicationtokenid") String applicationTokenId, String usercredentialsXml) {
+        log.trace("logon is called with usercredentialsXml={}", usercredentialsXml);
         String userToken = bulidStubUserToken();
             return Response.ok(userToken).build();
         //FIXME real implementation to UIB.
@@ -40,7 +40,7 @@ public class LogonController {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response logonUser(@PathParam("applicationtokenid") String applicationTokenId, String userCredentialsXml) {
-        log.trace("logon is called with credentialsXml={}", userCredentialsXml);
+        log.trace("logon is called with usercredentialsXml={}", userCredentialsXml);
         String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
         return Response.ok(userXml).build();
     }
