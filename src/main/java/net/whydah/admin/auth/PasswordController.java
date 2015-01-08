@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -27,13 +24,25 @@ public class PasswordController {
         this.uibAuthConnection = uibAuthConnection;
     }
 
-    @GET
+    @POST
     @Path("/reset/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) {
         log.trace("username is called username={}", username);
         String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
         return Response.ok(username).build();
-        //FIXME real implementation to UIB.
     }
+
+
+    @POST
+    @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username,@PathParam("passwordChangeToken") String passwordChangeToken,@FormParam("password") String password) {
+
+        log.trace("username is called username={}", username);
+        String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken,password);
+        return Response.ok(username).build();
+    }
+
+
 }
