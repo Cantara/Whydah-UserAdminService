@@ -64,7 +64,7 @@ public class UsersResource {
 
         String usersJson = null;
         try {
-            usersJson = usersService.findUsers(applicationTokenId, userTokenId, query);
+            usersJson = usersService.searchUsers(applicationTokenId, userTokenId, query);
             if (usersJson != null) {
                 return Response.ok(usersJson).build();
             } else {
