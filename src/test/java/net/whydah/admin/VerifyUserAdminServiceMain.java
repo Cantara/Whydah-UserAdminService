@@ -336,7 +336,7 @@ public class VerifyUserAdminServiceMain {
     Reset Password
      */
     public void resetPassword() {
-        WebTarget resetPasswordResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path("auth/password/reset/username").path(USER_ID);
+        WebTarget resetPasswordResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path("auth/password/reset/username").path("change.me@example.com");
         log.info("resetPassword by url {}, ", resetPasswordResource.getUri().toString());
         Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).get();
         int statusCode = response.getStatus();

@@ -23,6 +23,7 @@ public class UibAuthConnection {
     private static final Logger log = LoggerFactory.getLogger(UibAuthConnection.class);
 
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
+    public static final int FORBIDDEN = 403;
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
 
     private final WebTarget uib;
@@ -47,9 +48,12 @@ public class UibAuthConnection {
             case STATUS_BAD_REQUEST:
                 log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
                 throw new BadRequestException("BadRequest for Json " + response.toString() + ",  Status code " + response.getStatus());
+            case FORBIDDEN:
+                log.trace("LogonUser failed, not allowed from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                throw new AuthenticationFailedException("LogonUser request not allowed.");
             default:
                 log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
-                throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
+                throw new RuntimeException("LogonUser failed. Status code " + response.getStatus());
         }
         return userXml;
     }
