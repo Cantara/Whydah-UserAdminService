@@ -47,8 +47,8 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        //verificator.logonUser();
-        //verificator.stsUserInterface();
+        verificator.logonUser();
+        verificator.stsUserInterface();
         verificator.userAdminWebUserInterface();
     }
 
@@ -162,7 +162,6 @@ public class VerifyUserAdminServiceMain {
      */
     public void userAdminWebUserInterface() {
 
-        /*
 
         //UserRoles
         getUserRoles();
@@ -172,12 +171,9 @@ public class VerifyUserAdminServiceMain {
         String userId = addUser();
         deleteUser(userId);
         getUserAggregate();
-        */
 
-        //findUsers();
-        //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
-        resetPassword();
-        //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
+        findUsers();
+        resetPassword(); //This one will probably give an error, when mail-sender might not be configured in DEV mode.
 
         //IGNORED
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
