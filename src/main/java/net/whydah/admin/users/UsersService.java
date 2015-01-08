@@ -26,20 +26,20 @@ public class UsersService {
         credentialStore.setUserAdminServiceTokenId("2ff16f110b320dcbacf050b3b9062465");
     }
 
-    public String findUsers(String applicationTokenId, String adminUserTokenId, String query) {
+    public String findUsers(String applicationTokenId, String userTokenId, String query) {
         String usersJson = null;
-        if (hasAccess("findUsers",applicationTokenId, adminUserTokenId)) {
-           usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, query);
+        if (hasAccess("findUsers",applicationTokenId, userTokenId)) {
+           usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), userTokenId, query);
         } else {
             throw new NotAuthorizedException("Not Authorized to findUsers");
         }
         return usersJson;
     }
 
-    public String searchUsers(String applicationTokenId, String adminUserTokenId, String query) {
+    public String searchUsers(String applicationTokenId, String userTokenId, String query) {
         String usersJson = null;
-        if (hasAccess("searchUsers",applicationTokenId, adminUserTokenId)) {
-            usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, query);
+        if (hasAccess("searchUsers",applicationTokenId, userTokenId)) {
+            usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), userTokenId, query);
             // TODO map to useridentity or implement new function in UIB for this (last is better)
         } else {
             throw new NotAuthorizedException("Not Authorized to searchUsers");
