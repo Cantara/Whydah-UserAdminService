@@ -31,7 +31,18 @@ public class UsersService {
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
            usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, query);
         } else {
-            throw new NotAuthorizedException("Not Authorized to change password");
+            throw new NotAuthorizedException("Not Authorized to findUsers");
+        }
+        return usersJson;
+    }
+
+    public String searchUsers(String applicationTokenId, String adminUserTokenId, String query) {
+        String usersJson = null;
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, query);
+            // TODO map to useridentity or implement new function in UIB for this (last is better)
+        } else {
+            throw new NotAuthorizedException("Not Authorized to searchUsers");
         }
         return usersJson;
     }

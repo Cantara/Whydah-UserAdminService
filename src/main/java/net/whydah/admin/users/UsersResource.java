@@ -28,11 +28,14 @@ public class UsersResource {
         this.usersService = usersService;
     }
 
+    /**
+     * UserAdmin Find, return UserAggregate
+     */
     @GET
     @Path("/find/{q}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response findUsers(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("q") String query) {
+                              @PathParam("q") String query) {
 
         String usersJson = null;
         try {
@@ -43,11 +46,35 @@ public class UsersResource {
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
 
-        }  catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("Unkonwn error.", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
+    }
+
+    /**
+     * Directory search, return only UserIdentity
+     */
+    @GET
+    @Path("/search/{q}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response searchUsers(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                                @PathParam("q") String query) {
+
+        String usersJson = null;
+        try {
+            usersJson = usersService.findUsers(applicationTokenId, userTokenId, query);
+            if (usersJson != null) {
+                return Response.ok(usersJson).build();
+            } else {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            }
+
+        } catch (RuntimeException e) {
+            log.error("Unkonwn error.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
 
 
     }

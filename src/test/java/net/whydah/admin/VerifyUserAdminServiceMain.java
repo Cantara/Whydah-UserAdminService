@@ -300,7 +300,7 @@ public class VerifyUserAdminServiceMain {
 
 
     /*
-    Find
+    Find users...  search for users using query and retuen a list of user identities
      */
     public void findUsers() {
         String query = "test";
