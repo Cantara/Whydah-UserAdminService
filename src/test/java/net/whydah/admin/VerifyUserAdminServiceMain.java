@@ -174,7 +174,7 @@ public class VerifyUserAdminServiceMain {
         getUserAggregate();
         */
 
-        //FIXME BLI findUsers();
+        findUsers();
         //- String url = getUibUrl(apptokenid, usertokenid, "users/find/"+query);
         //resetPassword
         //- String url = uibUrl + "password/" + apptokenid +"/reset/username/" + username;
@@ -222,10 +222,6 @@ public class VerifyUserAdminServiceMain {
 
     }
 
-    private WebTarget buildUserPath() {
-        return userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
-    }
-
     public void deleteUser(String userId) {
         WebTarget userRolesResource = buildUserPath().path(userId);
 
@@ -235,6 +231,7 @@ public class VerifyUserAdminServiceMain {
         log.info("deleteUser ,StatusCode {}", statusCode);
         assertEquals("Could not delete user via UserAdminService", 204, statusCode);
     }
+
 
     public void getUserRoles() {
         WebTarget userRolesResource = buildBasePath().path("roles");
@@ -249,6 +246,14 @@ public class VerifyUserAdminServiceMain {
 
     private WebTarget buildBasePath() {
         return userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user").path(USER_ID);
+    }
+
+    private WebTarget buildUserPath() {
+        return userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("user/");
+    }
+
+    private WebTarget buildUsersPath() {
+        return userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("users");
     }
 
     public String addUserRole() {
@@ -295,5 +300,22 @@ public class VerifyUserAdminServiceMain {
         int statusCode = response.getStatus();
         log.info("deleteUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not delete user-role via UserAdminService", 204, statusCode);
+    }
+
+
+    /*
+    Find
+     */
+    public void findUsers() {
+        String query = "test";
+        WebTarget findResource = buildUsersPath().path("find").path(query);
+
+        log.info("findUsers by url {}, ", findResource.getUri().toString());
+        Response response = findResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        log.info("findUsers ,StatusCode {}", statusCode);
+        assertEquals("Could find via UserAdminService", 200, statusCode);
+        String output = response.readEntity(String.class);
+        assertTrue(output.contains(USER_ID));
     }
 }
