@@ -2,7 +2,6 @@ package net.whydah.admin.auth;
 
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.config.AppConfig;
-import org.glassfish.jersey.client.ClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class UibAuthConnection {
 
     public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
         WebTarget logonUserResource = uib.path("/" + userAdminServiceTokenId).path("authenticate/user");
-        Response response = logonUserResource.request(MediaType.APPLICATION_XML).get();
+        Response response = logonUserResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
         String userXml = null;
         switch (statusCode) {
@@ -82,7 +81,7 @@ public class UibAuthConnection {
     public String setPasswordByToken(String userAdminServiceTokenId, String username,String passwordToken,String password) {
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username).path("newpassword").path(passwordToken);
 
-        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).post(Entity.entity("{\"newpassword\":\"" + password + "\"}",MediaType.MULTIPART_FORM_DATA));
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.MULTIPART_FORM_DATA));
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         switch (statusCode) {
