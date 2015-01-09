@@ -47,11 +47,11 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        verificator.logonUser();
-        verificator.stsUserInterface();
-        verificator.userAdminWebUserInterface();
+        //verificator.logonUser();
+        //verificator.stsUserInterface();
+        //verificator.userAdminWebUserInterface();
+        verificator.userAdminWebApplicationInterface();
     }
-
 
 
     public void logonUser() {
@@ -187,6 +187,7 @@ public class VerifyUserAdminServiceMain {
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
 
     }
+
 
     private void getUserAggregate() {
         WebTarget userResource = buildUserPath().path(USER_ID);
@@ -329,6 +330,23 @@ public class VerifyUserAdminServiceMain {
         assertEquals("Could search via UserAdminService", 200, statusCode);
         String output = response.readEntity(String.class);
         assertTrue(output.contains(USER_ID));
+    }
+
+    /*
+    Application(s) list and edit applications.
+     */
+    private void userAdminWebApplicationInterface() {
+        String query = "test";
+        WebTarget findResource = userAdminService.path(USER_ADMIN_SERVICE_TOKEN_ID).path(USER_TOKEN_ID).path("applications");
+
+        log.info("listAllApplications by url {}, ", findResource.getUri().toString());
+        Response response = findResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        log.info("listAllApplications ,StatusCode {}", statusCode);
+        assertEquals("listAllApplications via UserAdminService", 200, statusCode);
+        String output = response.readEntity(String.class);
+        assertTrue(output.contains("UserAdminService"));
+
     }
 
 

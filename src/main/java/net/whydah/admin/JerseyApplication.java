@@ -3,6 +3,7 @@ package net.whydah.admin;
 import net.whydah.admin.application.ApplicationResource;
 import net.whydah.admin.application.ApplicationService;
 import net.whydah.admin.application.UibApplicationConnection;
+import net.whydah.admin.applications.ApplicationsResource;
 import net.whydah.admin.auth.LogonController;
 import net.whydah.admin.auth.PasswordController;
 import net.whydah.admin.config.AppConfig;
@@ -32,6 +33,7 @@ public class JerseyApplication extends ResourceConfig {
 
         register(ApplicationService.class);
         register(ApplicationResource.class);
+        register(ApplicationsResource.class);
         register(UserService.class);
         register(UserResource.class);
         register(UsersResource.class);
