@@ -26,6 +26,14 @@ public class UsersService {
         credentialStore.setUserAdminServiceTokenId("2ff16f110b320dcbacf050b3b9062465");
     }
 
+    /**
+     * Internal function for administration of users and roles
+     *
+     * @param applicationTokenId
+     * @param userTokenId
+     * @param query searchstring to be matched against UserAggregate values
+     * @return Json formatted string of UserAggregates
+     */
     public String findUsers(String applicationTokenId, String userTokenId, String query) {
         String usersJson = null;
         if (hasAccess("findUsers",applicationTokenId, userTokenId)) {
@@ -36,6 +44,14 @@ public class UsersService {
         return usersJson;
     }
 
+    /**
+     * Directory function for 3.party applications
+     *
+     * @param applicationTokenId
+     * @param userTokenId
+     * @param query searchstring to be matched against UserIdentity values
+     * @return Json formatted string of Useridentities
+     */
     public String searchUsers(String applicationTokenId, String userTokenId, String query) {
         String usersJson = null;
         if (hasAccess("searchUsers",applicationTokenId, userTokenId)) {
