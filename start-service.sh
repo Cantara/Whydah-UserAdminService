@@ -1,15 +1,5 @@
 #!/bin/sh
 
-export IAM_MODE=TEST
-
-A=UserAdminService
-V=LATEST
-JARFILE=$A-$V.jar
-
-pkill -f $A
-
-wget  -O $JARFILE "http://mvnrepo.cantara.no/service/local/artifact/maven/content?r=snapshots&g=net.whydah.identity&a=$A&v=$V&p=jar"
-nohup java -jar -DIAM_CONFIG=useradminservice.TEST.properties $JARFILE &
+nohup /usr/bin/java -DIAM_MODE=PROD -DIAM_CONFIG=/home/UserAdminService/useradminservice.PROD.properties -jar /home/UserAdminService/UserAdminService.jar &
 
 
-tail -f nohup.out
