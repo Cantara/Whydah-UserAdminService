@@ -11,7 +11,7 @@ if [ -z "$IAM_CONFIG" ]; then
 fi
 
 # If Version is from source, find the artifact
-if [ $Version = "FROM_SOURCE" ]; then 
+if [ "$Version" = "FROM_SOURCE" ]; then 
     # Find the bult artifact
     Version=$(find target/* -name *.jar | grep SNAPSHOT | grep -v original | grep -v lib)
 else
