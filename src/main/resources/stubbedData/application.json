@@ -1,0 +1,38 @@
+{
+  "id": "id1",
+  "name": "webtest",
+  "applicationUrl": "https://webtest.example.com",
+  "applicationLogo": "https://webtest.exapmle.com/test.png",
+  "applicationDescription": "Web enabled proscess admin tool.",
+  "applicationAuditLevel": 0,
+  "userTokenFilter": true,
+  "defaults": {
+    "defaultRoleName": "user",
+    "defaultOrgName": "example"
+  },
+  "organisationNames": [
+    "example",
+    "example.com",
+    "webtest"
+  ],
+  "roleNames": [
+    "employee",
+    "manager",
+    "editor",
+    "moderator"
+  ],
+  "security": {
+    "minimumSecurityLevel": 2,
+    "minimumDEFCON": 4,
+    "minimumUpdateFrequency": "60d",
+    "crypto": [
+      {
+        "cryptoId": "asdfaddsgasd1234",
+        "algorithm": "forwardHash128",
+        "seed": "adsfsadf",
+        "secret": "asdfdlkflsljløfdsplk",
+        "applicationSecret": "ggogogogogogogog999"
+      }
+    ]
+  }
+}
