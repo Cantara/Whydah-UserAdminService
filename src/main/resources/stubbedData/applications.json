@@ -1,31 +1,29 @@
 
 [
   {
-    "id": "id1",
-    "name": "webtest",
+    "id": "11",
+    "name": "SecurityTokenService",
     "applicationUrl": "https://webtest.example.com",
     "applicationLogo": "https://webtest.exapmle.com/test.png",
     "applicationDescription": "Web enabled proscess admin tool.",
     "applicationAuditLevel": 0,
     "userTokenFilter": true,
     "defaults": {
-      "defaultRoleName": "user",
-      "defaultOrgName": "example"
+      "defaultRoleName": "SSOApplication",
+      "defaultOrgName": "Whydah"
     },
     "organisationNames": [
-      "example",
-      "example.com",
-      "webtest"
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
     ],
     "roleNames": [
-      "employee",
-      "manager",
-      "editor",
-      "moderator"
+      "WhydahAdmin",
+      "WhydahUser"
     ],
     "security": {
-      "minimumSecurityLevel": 2,
-      "minimumDEFCON": 4,
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
       "minimumUpdateFrequency": "60d",
       "crypto": [
         {
@@ -33,37 +31,35 @@
           "algorithm": "forwardHash128",
           "seed": "adsfsadf",
           "secret": "asdfdlkflsljløfdsplk",
-          "applicationSecret": "ggogogogogogogog999"
+          "applicationSecret": "6r46g3q986Ep6By7B9J46m96D"
         }
       ]
     }
   },
   {
-    "id": "id2",
-    "name": "processService",
+    "id": "12",
+    "name": "UserAdminSerevice",
     "applicationUrl": "https://processService.example.com",
     "applicationLogo": "https://processService.exapmle.com/process.png",
     "applicationDescription": "Process engine.",
     "applicationAuditLevel": 0,
     "userTokenFilter": true,
     "defaults": {
-      "defaultRoleName": "user",
-      "defaultOrgName": "example"
+      "defaultRoleName": "SSOApplication",
+      "defaultOrgName": "Whydah"
     },
     "organisationNames": [
-      "example",
-      "example.com",
-      "webtest"
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
     ],
     "roleNames": [
-      "employee",
-      "manager",
-      "editor",
-      "moderator"
+      "WhydahAdmin",
+      "WhydahUser"
     ],
     "security": {
-      "minimumSecurityLevel": 2,
-      "minimumDEFCON": 4,
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
       "minimumUpdateFrequency": "60d",
       "crypto": [
         {
@@ -71,7 +67,187 @@
           "algorithm": "forwardHash128",
           "seed": "321adsfsadf",
           "secret": "321asdfdlkflsljløfdsplk",
-          "applicationSecret": "321ggogogogogogogog999"
+          "applicationSecret": "9ju592A4t8dzz8mz7a5QQJ7Px"
+        }
+      ]
+    }
+  },
+  {
+    "id": "15",
+    "name": "SSOLoginWebApplication",
+    "applicationUrl": "https://processService.example.com",
+    "applicationLogo": "https://processService.exapmle.com/process.png",
+    "applicationDescription": "Process engine.",
+    "applicationAuditLevel": 0,
+    "userTokenFilter": true,
+    "defaults": {
+      "defaultRoleName": "WhydahUserAdmin",
+      "defaultOrgName": "Whydah"
+    },
+    "organisationNames": [
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
+    ],
+    "roleNames": [
+      "WhydahAdmin",
+      "WhydahUser"
+    ],
+    "security": {
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
+      "minimumUpdateFrequency": "60d",
+      "crypto": [
+        {
+          "cryptoId": "321asdfaddsgasd",
+          "algorithm": "forwardHash128",
+          "seed": "321adsfsadf",
+          "secret": "321asdfdlkflsljløfdsplk",
+          "applicationSecret": "9EH5u5wJFKsUvJFmhypwK7j6D"
+        }
+      ]
+    }
+  },
+  {
+    "id": "19",
+    "name": "UserAdminWebApp",
+    "applicationUrl": "https://processService.example.com",
+    "applicationLogo": "https://processService.exapmle.com/process.png",
+    "applicationDescription": "Process engine.",
+    "applicationAuditLevel": 0,
+    "userTokenFilter": true,
+    "defaults": {
+      "defaultRoleName": "WhydahUserAdmin",
+      "defaultOrgName": "Whydah"
+    },
+    "organisationNames": [
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
+    ],
+    "roleNames": [
+      "WhydahAdmin",
+      "WhydahUser"
+    ],
+    "security": {
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
+      "minimumUpdateFrequency": "60d",
+      "crypto": [
+        {
+          "cryptoId": "321asdfaddsgasd",
+          "algorithm": "forwardHash128",
+          "seed": "321adsfsadf",
+          "secret": "321asdfdlkflsljløfdsplk",
+          "applicationSecret": "9ju592A4t8dzz8mz7a5QQJ7Px"
+        }
+      ]
+    }
+  },
+  {
+    "id": "99",
+    "name": "WhydahTestWebApplication",
+    "applicationUrl": "https://processService.example.com",
+    "applicationLogo": "https://processService.exapmle.com/process.png",
+    "applicationDescription": "Process engine.",
+    "applicationAuditLevel": 0,
+    "userTokenFilter": true,
+    "defaults": {
+      "defaultRoleName": "WhydahUserAdmin",
+      "defaultOrgName": "Whydah"
+    },
+    "organisationNames": [
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
+    ],
+    "roleNames": [
+      "WhydahAdmin",
+      "WhydahUser"
+    ],
+    "security": {
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
+      "minimumUpdateFrequency": "60d",
+      "crypto": [
+        {
+          "cryptoId": "321asdfaddsgasd",
+          "algorithm": "forwardHash128",
+          "seed": "321adsfsadf",
+          "secret": "321asdfdlkflsljløfdsplk",
+          "applicationSecret": "33879936R6Jr47D4Hj5R6p9qT"
+        }
+      ]
+    }
+  },
+  {
+    "id": "100",
+    "name": "ACS",
+    "applicationUrl": "https://processService.example.com",
+    "applicationLogo": "https://processService.exapmle.com/process.png",
+    "applicationDescription": "Process engine.",
+    "applicationAuditLevel": 0,
+    "userTokenFilter": true,
+    "defaults": {
+      "defaultRoleName": "Employee",
+      "defaultOrgName": "ACSOrganization"
+    },
+    "organisationNames": [
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
+    ],
+    "roleNames": [
+      "WhydahAdmin",
+      "WhydahUser"
+    ],
+    "security": {
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
+      "minimumUpdateFrequency": "60d",
+      "crypto": [
+        {
+          "cryptoId": "321asdfaddsgasd",
+          "algorithm": "forwardHash128",
+          "seed": "321adsfsadf",
+          "secret": "321asdfdlkflsljløfdsplk",
+          "applicationSecret": "45fhRM6nbKZ2wfC6RMmMuzXpk"
+        }
+      ]
+    }
+  },
+  {
+    "id": "2001",
+    "name": "m2Circle",
+    "applicationUrl": "https://processService.example.com",
+    "applicationLogo": "https://processService.exapmle.com/process.png",
+    "applicationDescription": "Process engine.",
+    "applicationAuditLevel": 0,
+    "userTokenFilter": true,
+    "defaults": {
+      "defaultRoleName": "member",
+      "defaultOrgName": "Whydah"
+    },
+    "organisationNames": [
+      "whydah.org",
+      "getwhydah.com",
+      "cantara.no"
+    ],
+    "roleNames": [
+      "WhydahAdmin",
+      "WhydahUser"
+    ],
+    "security": {
+      "minimumSecurityLevel": 0,
+      "minimumDEFCON": 3,
+      "minimumUpdateFrequency": "60d",
+      "crypto": [
+        {
+          "cryptoId": "321asdfaddsgasd",
+          "algorithm": "forwardHash128",
+          "seed": "321adsfsadf",
+          "secret": "321asdfdlkflsljløfdsplk",
+          "applicationSecret": "YKHH54bNpnvQEF2vCJSWtctB"
         }
       ]
     }
