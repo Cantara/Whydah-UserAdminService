@@ -16,6 +16,9 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 /**
+ * Accessable in DEV mode:
+ *  - http://localhost:9992/useradminservice/1/1/applications
+ *  - http://localhost:9992/useradminservice/1/1/applications/1
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 @Path("/{applicationtokenid}/{userTokenId}/applications")
@@ -38,8 +41,26 @@ public class ApplicationsResource {
     public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
         log.trace("listAll is called ");
         try {
-            String applicationCreatedXml = applicationsService.listAll(applicationTokenId, userTokenId);
-            return Response.ok(applicationCreatedXml).build();
+            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            return Response.ok(applications).build();
+        } catch (IllegalStateException ise) {
+            log.error(ise.getMessage());
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("Failed to list all.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GET
+    @Path("/{applicationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findByName(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                            @PathParam("applicationName") String applicationName) {
+        log.trace("findByName is called ");
+        try {
+            String application = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
+            return Response.ok(application).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
             return Response.status(Response.Status.CONFLICT).build();

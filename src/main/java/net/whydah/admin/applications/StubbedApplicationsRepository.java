@@ -25,6 +25,8 @@ public class StubbedApplicationsRepository {
     }
 
     protected void readStubbedFiles() {
+        applicationJson = readFile("stubbedData/application.json");
+        applicationListJson = readFile("stubbedData/applications.json");
 
 
     }
@@ -37,5 +39,13 @@ public class StubbedApplicationsRepository {
             log.info("Failed to read file: " + fileName);
         }
         return content;
+    }
+
+    public String findAll() {
+        return applicationListJson;
+    }
+
+    public String findByName(String applicationName) {
+        return applicationJson;
     }
 }

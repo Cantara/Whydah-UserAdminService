@@ -17,18 +17,32 @@ public class ApplicationsService {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd hh:mm");
     private final UibApplicationsConnection uibApplicationsConnection;
     private final CredentialStore credentialStore;
+    private final StubbedApplicationsRepository applicationsRepository;
 
 
     @Autowired
-    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore) {
+    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore, StubbedApplicationsRepository applicationsRepository) {
         this.uibApplicationsConnection = uibApplicationsConnection;
         this.credentialStore = credentialStore;
+        this.applicationsRepository = applicationsRepository;
     }
 
     public String listAll(String applicationTokenId, String userTokenId) {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
+//            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
+            applications = applicationsRepository.findAll();
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return applications;
+    }
+
+    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
+        String applications = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+//            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
+            applications = applicationsRepository.findByName(applicationName);
         } else {
             //FIXME handle no access to this method.
         }
