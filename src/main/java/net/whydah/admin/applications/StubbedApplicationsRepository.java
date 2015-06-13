@@ -42,7 +42,7 @@ public class StubbedApplicationsRepository {
         }
     }
 
-    protected String readFile(String fileName) {
+    public String readFile(String fileName) {
         String content = "";
         try  {
             content = IOUtils.toString(new ClassPathResource(fileName).getInputStream());
@@ -62,5 +62,13 @@ public class StubbedApplicationsRepository {
 
     public String findById(String id) {
         return applications.get(id);
+    }
+
+    public void addApplication(String applicationJson) {
+        JSONObject application = new JSONObject(applicationJson);
+        String id = application.getString("id");
+        if (id != null) {
+            applications.put(id, applicationJson);
+        }
     }
 }
