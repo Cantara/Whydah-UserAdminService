@@ -28,6 +28,7 @@ public class ApplicationResource {
     }
 
     /**
+     * TODO: Enhance due to https://github.com/Cantara/Whydah-UserAdminService/issues/20
      * Create a new applcation from json
      * Add default
      *
@@ -63,6 +64,13 @@ public class ApplicationResource {
         }
     }
 
+    /**
+     * TODO enchance due to https://github.com/Cantara/Whydah-UserAdminService/issues/20
+     * @param applicationTokenId
+     * @param userTokenId
+     * @param applicationId
+     * @return
+     */
     @GET
     @Path("/{applicationId}")
     @Produces(MediaType.APPLICATION_XML)
@@ -86,6 +94,7 @@ public class ApplicationResource {
     }
 
     /**
+     * Enhance due to https://github.com/Cantara/Whydah-UserAdminService/issues/20
      * Create a new applcation from json
      * Add default
      *
