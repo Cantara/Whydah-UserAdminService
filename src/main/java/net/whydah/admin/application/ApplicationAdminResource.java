@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
-@Path("/{applicationtokenid}/{userTokenId}/application")
+@Path("/{applicationtokenid}/{userTokenId}/adminapplication")
 @Component
 public class ApplicationAdminResource {
     private static final Logger log = LoggerFactory.getLogger(ApplicationAdminResource.class);
