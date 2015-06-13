@@ -25,4 +25,14 @@ public class StubbedApplicationsRepositoryTest {
         assertEquals(repo.readFile("nonexisting.dll"),"");
 
     }
+
+    @Test
+    public void testFindById() throws Exception {
+        StubbedApplicationsRepository repo = new StubbedApplicationsRepository();
+        String application = repo.findById("11");
+
+        assertNotNull(application);
+        assertTrue(application.contains("SecurityTokenService"));
+
+    }
 }
