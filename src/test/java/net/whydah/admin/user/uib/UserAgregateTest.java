@@ -23,6 +23,8 @@ public class UserAgregateTest {
         UserAggregateRepresentation userAggregate = UserAggregateRepresentation.fromJson(userAgregateTemplate);
         assertNotNull(userAggregate);
         assertEquals("uid", userAggregate.getUid());
+        assertEquals("personRef", userAggregate.getPersonRef());
+        assertEquals("12345678", userAggregate.getCellPhone());
         List<RoleRepresentation> userRoles = userAggregate.getRoles();
         assertNotNull(userRoles);
         //TODO bli: work in progress

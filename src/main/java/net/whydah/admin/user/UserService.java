@@ -30,7 +30,7 @@ public class UserService {
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
         UserIdentity createdUser = null;
         UserAggregate userAggregate = UserAggregate.fromXML(userXml);
-        UserIdentity userIdentity = userAggregate.getIdentity();
+        UserIdentityRepresentation userIdentity = userAggregate.getIdentity();
         if (userIdentity != null) {
             String userJson = userIdentity.toJson();
             createdUser = createUser(applicationTokenId, userTokenId, userJson);

@@ -77,6 +77,7 @@ public class UserAggregate {
             String lastName = (String) xPath.evaluate("//lastname", doc, XPathConstants.STRING);
             String email = (String) xPath.evaluate("//email", doc, XPathConstants.STRING);
             String personRef = (String) xPath.evaluate("//personRef", doc, XPathConstants.STRING);
+            String cellPhone = (String) xPath.evaluate("//cellPhone", doc, XPathConstants.STRING);
 
             UserIdentity identity = new UserIdentity();
             identity.setUid(uid);
@@ -85,6 +86,7 @@ public class UserAggregate {
             identity.setLastName(lastName);
             identity.setEmail(email);
             identity.setPersonRef(personRef);
+            identity.setCellPhone(cellPhone);
 
             /*
             NodeList applicationNodes = (NodeList) xPath.evaluate("//application", doc, XPathConstants.NODESET);

@@ -1,10 +1,7 @@
 package net.whydah.admin.user.uib;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * @author totto
@@ -75,14 +72,9 @@ public class UserIdentityRepresentation {
     }
 
     public String toJson() {
-        String userJson = null;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            userJson =  mapper.writeValueAsString(this);
-            log.debug("toJson: {}", userJson);
-        } catch (IOException e) {
-            log.info("Could not create json from this object {}", toString(), e);
-        }
+
+        String userJson = "{\"username\":\""+ username +"\",\"firstName\":\"" +firstName +"\",\"lastName\":\""+lastName+"\",\"personRef\":\""+personRef+
+                "\",\"email\":\""+email+"\",\"cellPhone\":\""+cellPhone+"\"}";
         return userJson;
     }
 }

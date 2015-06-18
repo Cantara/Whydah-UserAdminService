@@ -108,6 +108,13 @@ public class UserResource {
     }
 
     @POST
+    @Path("/xml")
+    public Response createUserFromXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
+        return  createUser(applicationTokenId,userTokenId,userXml,request);
+    }
+
+
+        @POST
     @Path("/changePassword/{username}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_XML)
