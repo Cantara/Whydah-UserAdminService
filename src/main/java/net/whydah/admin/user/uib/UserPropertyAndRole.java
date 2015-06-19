@@ -180,7 +180,7 @@ public class UserPropertyAndRole {
             XPath xPath = XPathFactory.newInstance().newXPath();
             String id = (String) xPath.evaluate("/application/appId", doc, XPathConstants.STRING);
             String name = (String) xPath.evaluate("/application/applicationName", doc, XPathConstants.STRING);
-            String orgID = (String) xPath.evaluate("/application/orgID", doc, XPathConstants.STRING);
+            String orgName = (String) xPath.evaluate("/application/orgName", doc, XPathConstants.STRING);
             String roleName = (String) xPath.evaluate("/application/roleName", doc, XPathConstants.STRING);
             String roleValue = (String) xPath.evaluate("/application/roleValue", doc, XPathConstants.STRING);
 
@@ -189,6 +189,7 @@ public class UserPropertyAndRole {
             userPropertyAndRole.setApplicationName(name);
             userPropertyAndRole.setApplicationRoleName(roleName);
             userPropertyAndRole.setApplicationRoleValue(roleValue);
+            userPropertyAndRole.setOrganizationName(orgName);
 
         } catch (Exception e) {
             log.warn("Could not create an UserPropertyAndRole from this xml {}", roleXml, e);
