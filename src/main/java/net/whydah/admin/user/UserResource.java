@@ -206,6 +206,21 @@ public class UserResource {
         return Response.ok(roles).build();
     }
 
+    @GET
+    @Path("/{userId}/roles")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response getRolesAsXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("userId") String userId) {
+        log.trace("getRoles, uid={}", userId);
+
+        List<RoleRepresentation> roles = userService.getRoles(applicationTokenId, userTokenId, userId);
+        String rolesXml = "";
+        for (RoleRepresentation role : roles) {
+            rolesXml += role.toXML();
+        }
+
+        return Response.ok(rolesXml).build();
+    }
+
 
     private MediaType findPreferedContentType(Request req) {
         /**

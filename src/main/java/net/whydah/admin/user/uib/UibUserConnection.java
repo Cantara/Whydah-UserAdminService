@@ -260,6 +260,5 @@ public class UibUserConnection {
                 log.error("deleteUser-Response from UIB: {}: {}", statusCode, userId);
                 throw new RuntimeException("DeleteUser failed. Status code " + statusCode);
         }
-
     }
 }

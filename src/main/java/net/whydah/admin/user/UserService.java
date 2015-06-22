@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.NotAuthorizedException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by baardl on 18.04.14.
@@ -133,6 +135,21 @@ public class UserService {
         return roles;
     }
 
+    public List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String userId) {
+        List<RoleRepresentation> roles = new ArrayList<>();
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            String rolesJson = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(), userTokenId, userId);
+            roles = mapRolesFromString(rolesJson);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to getRolesAsString()");
+        }
+        return roles;
+    }
+
+    private List<RoleRepresentation> mapRolesFromString(String rolesJson) {
+        return RoleRepresentationMapper.fromJson(rolesJson);
+    }
+
 
     public void deleteUser(String applicationTokenId, String userTokenId, String userId) {
         if (hasAccess(applicationTokenId, userTokenId)) {
@@ -141,4 +158,6 @@ public class UserService {
             throw new NotAuthorizedException("Not Authorized to deleteUser()");
         }
     }
+
+
 }
