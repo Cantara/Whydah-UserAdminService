@@ -46,13 +46,18 @@ public class UibAuthConnection {
                 userXml = response.readEntity(String.class);
                 break;
             case STATUS_BAD_REQUEST:
-                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                //log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.error("logonUser failed (STATUS_BAD_REQUEST). url={}, body={}, Response from UIB: {}: {}",
+                        logonUserResource.getUri(), userCredentialsXml, response.getStatus(), response.readEntity(String.class));
                 throw new BadRequestException("BadRequest for Json " + response.toString() + ",  Status code " + response.getStatus());
             case FORBIDDEN:
-                log.trace("LogonUser failed, not allowed from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                //log.trace("LogonUser failed, not allowed from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.trace("logonUser failed (FORBIDDEN). url={}, body={}, Response from UIB: {}: {}",
+                        logonUserResource.getUri(), userCredentialsXml, response.getStatus(), response.readEntity(String.class));
                 throw new AuthenticationFailedException("LogonUser request not allowed.");
             default:
-                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                log.error("logonUser failed. url={}, body={}, Response from UIB: {}: {}",
+                        logonUserResource.getUri(), userCredentialsXml, response.getStatus(), response.readEntity(String.class));
                 throw new RuntimeException("LogonUser failed. Status code " + response.getStatus());
         }
         return userXml;
