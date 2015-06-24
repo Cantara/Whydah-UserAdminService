@@ -299,7 +299,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addRoleJson(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                                 @PathParam("userId") String userId, String roleJson) {
-        log.trace("addRoleJson is called with userId={}, roleXml {}", userId, roleJson);
+        log.trace("addRoleJson is called with userId={}, roleJson {}", userId, roleJson);
 
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
@@ -331,13 +331,13 @@ public class UserResource {
             RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
             return Response.ok(roleRepresentation.toXML()).build();
         } catch (IllegalArgumentException iae) {
-            log.error("addRole: Invalid xml={}, userId {}", roleXml,userId, iae);
+            log.error("addRoleXml: Invalid xml={}, userId {}", roleXml,userId, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error("addRole: IllegalStateException xml={}, userId {}", roleXml,userId, ise);
+            log.error("addRoleXml: IllegalStateException xml={}, userId {}", roleXml,userId, ise);
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("addRole: RuntimeException xml={}, userId {}", roleXml,userId, e);
+            log.error("addRoleXml: RuntimeException xml={}, userId {}", roleXml,userId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
