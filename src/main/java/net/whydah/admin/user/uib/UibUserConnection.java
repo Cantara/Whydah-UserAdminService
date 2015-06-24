@@ -51,7 +51,7 @@ public class UibUserConnection {
         int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("Response form Uib {}", response.readEntity(String.class));
+                log.trace("Response from UIB {}", response.readEntity(String.class));
                 userAggregateRepresentation = UserAggregateRepresentation.fromJson(userAggregateJson);
                 break;
             case STATUS_BAD_REQUEST:
@@ -75,7 +75,7 @@ public class UibUserConnection {
         String userJson = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("createUser-Response form Uib {}", userJson);
+                log.trace("createUser-Response from UIB {}", userJson);
                 userIdentity = UserIdentity.fromJson(userJson);
                 break;
             case STATUS_CREATED:
@@ -103,7 +103,7 @@ public class UibUserConnection {
         String passwordJson = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("changePassword-Response form Uib {}", passwordJson);
+                log.trace("changePassword-Response from UIB {}", passwordJson);
                 updatedOk = true;
                 break;
             case STATUS_FORBIDDEN:
@@ -125,7 +125,7 @@ public class UibUserConnection {
 
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("addRole-Response form Uib {}", roleJson);
+                log.trace("addRole-Response from UIB {}", roleJson);
                 role = RoleRepresentation.fromJson(roleJson);
                 break;
             case STATUS_CREATED:
@@ -153,7 +153,7 @@ public class UibUserConnection {
 
         switch (statusCode) {
             case STATUS_NO_CONTENT:
-                log.trace("deleteUserRole-Response form Uib {}", userRoleId);
+                log.trace("deleteUserRole-Response from UIB {}", userRoleId);
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("deleteUserRole-Response from UIB: {}: {}",statusCode, userRoleId);
@@ -175,7 +175,7 @@ public class UibUserConnection {
         int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("addPropertyOrRole-Response form Uib {}", response.readEntity(String.class));
+                log.trace("addPropertyOrRole-Response from UIB {}", response.readEntity(String.class));
                 userAggregateRepresentation = UserAggregateRepresentation.fromJson(response.readEntity(String.class));
                 if (userAggregateRepresentation != null) {
                     updatedUser = userAggregateRepresentation.getUserAggregate();
@@ -229,7 +229,7 @@ public class UibUserConnection {
         responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("{}-Response form Uib {}", methodName,responseBody);
+                log.trace("{}-Response from UIB {}", methodName,responseBody);
                 break;
             case STATUS_FORBIDDEN:
                 log.error("{}-Not allowed from UIB: {}: {} ", methodName,response.getStatus(), responseBody);
@@ -250,7 +250,7 @@ public class UibUserConnection {
 
         switch (statusCode) {
             case STATUS_NO_CONTENT:
-                log.trace("deleteUser-Response form Uib {}", userId);
+                log.trace("deleteUser-Response from UIB {}", userId);
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("deleteUser-Response from UIB: {}: {}",statusCode, userId);

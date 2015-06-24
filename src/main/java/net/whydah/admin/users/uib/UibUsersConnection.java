@@ -49,7 +49,7 @@ public class UibUsersConnection {
         String output = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("Response form Uib {}", output);
+                log.trace("Response from UIB {}", output);
                 resultJson = output;
                 break;
             case STATUS_BAD_REQUEST:

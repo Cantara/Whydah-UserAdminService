@@ -45,7 +45,7 @@ public class UibApplicationConnection {
         int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("Response form Uib {}", response.readEntity(String.class));
+                log.trace("Response from UIB {}", response.readEntity(String.class));
                 application = buildApplication(applicationJson);
                 break;
             case STATUS_BAD_REQUEST:
