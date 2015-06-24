@@ -1,8 +1,9 @@
 UserAdminService
 ====================
 
-The component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
+![Build Status](http://jenkins.capraconsulting.no/buildStatus/icon?job=Whydah-UserAdminService)
 
+The component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
 
 ![Architectural Overview](https://raw2.github.com/altran/Whydah-SSOLoginWebApp/master/Whydah%20infrastructure.png)
 
