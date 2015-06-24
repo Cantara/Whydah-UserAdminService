@@ -2,6 +2,7 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.user.uib.*;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.NotAuthorizedException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,12 +22,15 @@ public class UserService {
 
     private final UibUserConnection uibUserConnection;
     private final CredentialStore credentialStore;
+    private final ObjectMapper mapper;
+
 
     @Autowired
     public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore) {
         this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
         credentialStore.setUserAdminServiceTokenId("2ff16f110b320dcbacf050b3b9062465");
+        this.mapper = new ObjectMapper();
     }
 
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
@@ -123,6 +128,7 @@ public class UserService {
     }
 
 
+    /*
     public String getRolesAsString(String applicationTokenId, String userTokenId, String uid) {
         String roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
@@ -132,8 +138,34 @@ public class UserService {
         }
         return roles;
     }
+    */
 
-    public List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String uid) {
+    public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) {
+        List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
+        String result;
+        try {
+            result = mapper.writeValueAsString(roles);
+        } catch (IOException e) {
+            log.error("Error converting List<RoleRepresentation> to json. ", e);
+            return null;
+        }
+        /*
+        String result = "";
+        for (RoleRepresentation role : roles) {
+            result += role.toJson();
+        }
+        */
+        return result;
+    }
+    public String getRolesAsXml(String applicationTokenId, String userTokenId, String uid) {
+        List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
+        String result = "";
+        for (RoleRepresentation role : roles) {
+            result += role.toXML();
+        }
+        return result;
+    }
+    private List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String uid) {
         List<RoleRepresentation> roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
             String rolesJson = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
@@ -143,6 +175,7 @@ public class UserService {
         }
         return roles;
     }
+
 
     private List<RoleRepresentation> mapRolesFromString(String rolesJson) {
         return RoleRepresentationMapper.fromJson(rolesJson);

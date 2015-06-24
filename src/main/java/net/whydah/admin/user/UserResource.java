@@ -28,7 +28,6 @@ public class UserResource {
     UserService userService;
     ObjectMapper mapper = new ObjectMapper();
 
-
     @Context
     private Request request;
 
@@ -112,7 +111,7 @@ public class UserResource {
     private boolean isXmlContent(String userXml) {
         boolean isXml = false;
         if (userXml != null) {
-          isXml = userXml.trim().startsWith("<");
+            isXml = userXml.trim().startsWith("<");
         }
         return isXml;
     }
@@ -124,7 +123,7 @@ public class UserResource {
     }
 
 
-        @POST
+    @POST
     @Path("/changePassword/{username}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_XML)
@@ -141,14 +140,14 @@ public class UserResource {
         }
 
         String passwdOk = "<passwordUpdated><username>" + userName +"</username><status>" + isPasswordUpdated+"</status></passwordUpdated>";
-            return Response.ok(passwdOk).build();
+        return Response.ok(passwdOk).build();
     }
 
     @GET
     @Path("/{uid}")
-    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                   @PathParam("uid") String uid, @Context Request req) {
+                            @PathParam("uid") String uid, @Context Request req) {
         MediaType responseMediaType = findPreferedResponseType(req);
         log.trace("getUser is called with uid={}. Preferred mediatype from client {}", uid, responseMediaType.toString());
         String userResponse;
@@ -199,6 +198,35 @@ public class UserResource {
     }
 
 
+    @Path("/{uid}/roles")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
+        log.trace("getRoles, uid={}", uid);
+
+        MediaType mediaType = getMediaTypeFromRequest();
+
+        try {
+            String body = null;
+            if (mediaType == MediaType.APPLICATION_XML_TYPE) {
+                body = userService.getRolesAsXml(applicationTokenId, userTokenId, uid);
+            } else if (mediaType == MediaType.APPLICATION_JSON_TYPE) {
+                body = userService.getRolesAsJson(applicationTokenId, userTokenId, uid);
+            }
+            return Response.ok(body).build();
+        } catch (RuntimeException e) {
+            log.error("getRoles failed. uid={}", uid, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private MediaType getMediaTypeFromRequest() {
+        List<Variant> availableVariants = Variant.mediaTypes(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE).add().build();
+        Variant bestMatch = request.selectVariant(availableVariants);
+        return bestMatch.getMediaType();
+    }
+
+
+    /*
     @GET
     @Path("/{uid}/roles")
     @Produces(MediaType.APPLICATION_JSON)
@@ -222,6 +250,7 @@ public class UserResource {
 
         return Response.ok(rolesXml).build();
     }
+    */
 
 
     private MediaType findPreferedContentType(Request req) {
@@ -266,7 +295,7 @@ public class UserResource {
 //                        .encodings("gzip", "identity", "deflate").languages(Locale.ENGLISH,
 //                        Locale.FRENCH,
 //                        Locale.US)
-                            .add().build();
+                        .add().build();
 
           /* Based on the Accept* headers, an acceptable response variant is chosen.  If there is no acceptable variant,
           selectVariant will return a null value. */
@@ -298,9 +327,7 @@ public class UserResource {
                             @PathParam("uid") String uid, String roleXmlOrJson) {
         log.trace("addRole is called with uid={}, roleXmlOrJson={}", uid, roleXmlOrJson);
 
-        List<Variant> availableVariants = Variant.mediaTypes(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE).add().build();
-        Variant bestMatch = request.selectVariant(availableVariants);
-        MediaType mediaType = bestMatch.getMediaType();
+        MediaType mediaType = getMediaTypeFromRequest();
 
         try {
             RoleRepresentationRequest roleRequest;
