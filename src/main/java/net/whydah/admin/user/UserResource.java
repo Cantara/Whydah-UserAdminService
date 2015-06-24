@@ -29,6 +29,10 @@ public class UserResource {
     ObjectMapper mapper = new ObjectMapper();
 
 
+    @Context
+    private Request request;
+
+
     @Autowired
     public UserResource(UserService userService) {
         this.userService = userService;
@@ -276,7 +280,54 @@ public class UserResource {
         return bestResponseVariant.getMediaType();
     }
 
-    /**
+    /*
+     * @param roleXmlOrJson for json
+     * {"uid":"test.me@example.com","
+     *                 applicationId":"12",
+     *                 "applicationRoleName":"developer",
+     *                 "applicationRoleValue":"30",
+     *                 "applicationName":"UserAdminService",
+     *                 "organizationName":"Verification"}
+     */
+    @POST
+    @Path("/{userId}/role")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                            @PathParam("userId") String userId, String roleXmlOrJson) {
+        log.trace("addRole is called with userId={}, roleXmlOrJson={}", userId, roleXmlOrJson);
+
+        List<Variant> availableVariants = Variant.mediaTypes(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE).add().build();
+        Variant bestMatch = request.selectVariant(availableVariants);
+        MediaType mediaType = bestMatch.getMediaType();
+
+        try {
+            RoleRepresentationRequest roleRequest;
+            if (mediaType == MediaType.APPLICATION_XML_TYPE) {
+                roleRequest = RoleRepresentationRequest.fromXml(roleXmlOrJson);
+                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+                return Response.ok(roleRepresentation.toXML()).build();
+            } else if (mediaType == MediaType.APPLICATION_JSON_TYPE) {
+                roleRequest = RoleRepresentationRequest.fromJson(roleXmlOrJson);
+                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+                return Response.ok(roleRepresentation.toJson()).build();
+            }  else {
+                log.error("addRole failed. Invalid roleXmlOrJson={}, userId={}", roleXmlOrJson, userId);
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        } catch (IllegalArgumentException iae) {
+            log.error("addRole: Invalid xml={}, userId={}", roleXmlOrJson,userId, iae);
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (IllegalStateException ise) {
+            log.error("addRole: IllegalStateException roleXmlOrJson={}, userId={}", roleXmlOrJson, userId, ise);
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("addRole: RuntimeException roleXmlOrJson={}, userId={}", roleXmlOrJson, userId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /*
      *
      * @param applicationTokenId
      * @param userTokenId
@@ -290,6 +341,7 @@ public class UserResource {
      *                 "organizationName":"Verification"}
      * @return
      */
+    /*
     @POST
     @Path("/{userId}/role/")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -297,7 +349,6 @@ public class UserResource {
     public Response addRoleJson(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                                 @PathParam("userId") String userId, String roleJson) {
         log.trace("addRoleJson is called with userId={}, roleJson {}", userId, roleJson);
-
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
             RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
@@ -313,8 +364,9 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+    */
 
-
+    /*
     @POST
     @Path("/{userId}/rolexml")
     @Consumes(MediaType.APPLICATION_XML)
@@ -338,6 +390,7 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+    */
 
 
     @DELETE
