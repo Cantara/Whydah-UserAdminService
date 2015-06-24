@@ -115,8 +115,8 @@ public class UibUserConnection {
         return updatedOk;
     }
 
-    public RoleRepresentation addRole(String userAdminServiceTokenId, String adminUserTokenId,String userId, RoleRepresentationRequest roleRequest) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role");
+    public RoleRepresentation addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, RoleRepresentationRequest roleRequest) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         String roleJson = response.readEntity(String.class);
         RoleRepresentation role = null;
@@ -145,8 +145,8 @@ public class UibUserConnection {
 
     }
 
-    public void deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String userId, String userRoleId) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role").path(userRoleId);
+    public void deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role").path(userRoleId);
         Response response = webResource.request(MediaType.APPLICATION_JSON).delete();
         int statusCode = response.getStatus();
 
@@ -166,8 +166,8 @@ public class UibUserConnection {
 
 
 
-    public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String userId, UserPropertyAndRole userPropertyAndRole) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId).path("role");
+    public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserPropertyAndRole userPropertyAndRole) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         UserAggregate updatedUser = null;
         UserAggregateRepresentation userAggregateRepresentation = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userPropertyAndRole.toJson(), MediaType.APPLICATION_JSON));
