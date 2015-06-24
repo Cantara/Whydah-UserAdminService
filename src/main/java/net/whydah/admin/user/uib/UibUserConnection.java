@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response;
  */
 @Component
 public class UibUserConnection {
-
     private static final Logger log = LoggerFactory.getLogger(UibUserConnection.class);
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
@@ -191,8 +190,8 @@ public class UibUserConnection {
         return updatedUser;
     }
 
-    public UserAggregate getUser(String userAdminServiceTokenId, String adminUserTokenId, String userId) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
+    public UserAggregate getUser(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         UserAggregate userAggregate = null;
         UserAggregateRepresentation userAggregateRepresentation;
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
@@ -216,11 +215,10 @@ public class UibUserConnection {
         return userAggregate;
     }
 
-    public String getRolesAsString(String userAdminServiceTokenId, String userTokenId, String userId) {
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(userId).path("roles");
+    public String getRolesAsString(String userAdminServiceTokenId, String userTokenId, String uid) {
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(uid).path("roles");
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
-        String  responseBody = findResponseBody("getRolesAsString",response);
-        return responseBody;
+        return findResponseBody("getRolesAsString", response);
     }
 
     private String findResponseBody(String methodName, Response response) {
@@ -243,20 +241,20 @@ public class UibUserConnection {
     }
 
 
-    public void deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String userId) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
+    public void deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).delete();
         int statusCode = response.getStatus();
 
         switch (statusCode) {
             case STATUS_NO_CONTENT:
-                log.trace("deleteUser-Response from UIB {}", userId);
+                log.trace("deleteUser-Response from UIB uid={}", uid);
                 break;
             case STATUS_BAD_REQUEST:
-                log.error("deleteUser-Response from UIB: {}: {}",statusCode, userId);
-                throw new BadRequestException("deleteUserRole for userRoleId " + userId + ",  Status code " + statusCode);
+                log.error("deleteUser-Response from UIB: {}: uid={}", statusCode, uid);
+                throw new BadRequestException("deleteUserRole for uid=" + uid + ",  Status code " + statusCode);
             default:
-                log.error("deleteUser-Response from UIB: {}: {}", statusCode, userId);
+                log.error("deleteUser-Response from UIB: {}, uid=", statusCode, uid);
                 throw new RuntimeException("DeleteUser failed. Status code " + statusCode);
         }
     }

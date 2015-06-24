@@ -52,11 +52,12 @@ public class UserResource {
     @Path("/")
     @Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-    public Response createUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
+    public Response createUser(@PathParam("applicationtokenid") String applicationTokenId,
+                               @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
         log.trace("createUser is called with userXml={}", userXml);
         MediaType responseMediaType = findPreferedResponseType(request);
-        UserIdentity createdUser = null;
-        String userResponse = null;
+        UserIdentity createdUser;
+        String userResponse;
         UserAggregate userAggregate = null;
         try {
             if (isXmlContent(userXml)) {
@@ -144,17 +145,17 @@ public class UserResource {
     }
 
     @GET
-    @Path("/{userId}")
+    @Path("/{uid}")
     @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
     public Response getUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                   @PathParam("userId") String userId, @Context Request req) {
+                                   @PathParam("uid") String uid, @Context Request req) {
         MediaType responseMediaType = findPreferedResponseType(req);
-        log.trace("getUser is called with userId={}. Preferred mediatype from client {}", userId, responseMediaType.toString());
+        log.trace("getUser is called with uid={}. Preferred mediatype from client {}", uid, responseMediaType.toString());
         String userResponse;
         UserAggregate userAggregate = null;
 
         try {
-            userAggregate = userService.getUser(applicationTokenId, userTokenId, userId);
+            userAggregate = userService.getUser(applicationTokenId, userTokenId, uid);
             if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
                 userResponse = mapper.writeValueAsString(userAggregate);
             } else {
@@ -162,7 +163,7 @@ public class UserResource {
             }
             return Response.ok(userResponse).build();
         } catch (IllegalArgumentException iae) {
-            log.error("getUser: Invalid xml={}", userId, iae);
+            log.error("getUser: Invalid xml={}", uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
@@ -183,37 +184,37 @@ public class UserResource {
     }
 
     @DELETE
-    @Path("/{userId}")
+    @Path("/{uid}")
     public Response deleteUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                               @PathParam("userId") String userId) {
-        log.trace("deleteUser, uid={}, roleid={}", userId);
+                               @PathParam("uid") String uid) {
+        log.trace("deleteUser, uid={}, roleid={}", uid);
 
         try {
-            userService.deleteUser(applicationTokenId, userTokenId,userId);
+            userService.deleteUser(applicationTokenId, userTokenId,uid);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (RuntimeException e) {
-            log.error("deleteUser-RuntimeException. userId {}", userId, e);
+            log.error("deleteUser-RuntimeException. uid {}", uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
 
     @GET
-    @Path("/{userId}/roles")
+    @Path("/{uid}/roles")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("userId") String userId) {
-        log.trace("getRoles, uid={}", userId);
-        String roles = userService.getRolesAsString(applicationTokenId, userTokenId,userId);
+    public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
+        log.trace("getRoles, uid={}", uid);
+        String roles = userService.getRolesAsString(applicationTokenId, userTokenId,uid);
         return Response.ok(roles).build();
     }
 
     @GET
-    @Path("/{userId}/roles")
+    @Path("/{uid}/roles")
     @Produces(MediaType.APPLICATION_XML)
-    public Response getRolesAsXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("userId") String userId) {
-        log.trace("getRoles, uid={}", userId);
+    public Response getRolesAsXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
+        log.trace("getRoles, uid={}", uid);
 
-        List<RoleRepresentation> roles = userService.getRoles(applicationTokenId, userTokenId, userId);
+        List<RoleRepresentation> roles = userService.getRoles(applicationTokenId, userTokenId, uid);
         String rolesXml = "";
         for (RoleRepresentation role : roles) {
             rolesXml += role.toXML();
@@ -290,12 +291,12 @@ public class UserResource {
      *                 "organizationName":"Verification"}
      */
     @POST
-    @Path("/{userId}/role")
+    @Path("/{uid}/role")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("userId") String userId, String roleXmlOrJson) {
-        log.trace("addRole is called with userId={}, roleXmlOrJson={}", userId, roleXmlOrJson);
+                            @PathParam("uid") String uid, String roleXmlOrJson) {
+        log.trace("addRole is called with uid={}, roleXmlOrJson={}", uid, roleXmlOrJson);
 
         List<Variant> availableVariants = Variant.mediaTypes(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE).add().build();
         Variant bestMatch = request.selectVariant(availableVariants);
@@ -305,24 +306,24 @@ public class UserResource {
             RoleRepresentationRequest roleRequest;
             if (mediaType == MediaType.APPLICATION_XML_TYPE) {
                 roleRequest = RoleRepresentationRequest.fromXml(roleXmlOrJson);
-                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
                 return Response.ok(roleRepresentation.toXML()).build();
             } else if (mediaType == MediaType.APPLICATION_JSON_TYPE) {
                 roleRequest = RoleRepresentationRequest.fromJson(roleXmlOrJson);
-                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
                 return Response.ok(roleRepresentation.toJson()).build();
             }  else {
-                log.error("addRole failed. Invalid roleXmlOrJson={}, userId={}", roleXmlOrJson, userId);
+                log.error("addRole failed. Invalid roleXmlOrJson={}, uid={}", roleXmlOrJson, uid);
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } catch (IllegalArgumentException iae) {
-            log.error("addRole: Invalid xml={}, userId={}", roleXmlOrJson,userId, iae);
+            log.error("addRole: Invalid xml={}, uid={}", roleXmlOrJson,uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error("addRole: IllegalStateException roleXmlOrJson={}, userId={}", roleXmlOrJson, userId, ise);
+            log.error("addRole: IllegalStateException roleXmlOrJson={}, uid={}", roleXmlOrJson, uid, ise);
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("addRole: RuntimeException roleXmlOrJson={}, userId={}", roleXmlOrJson, userId, e);
+            log.error("addRole: RuntimeException roleXmlOrJson={}, uid={}", roleXmlOrJson, uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -331,7 +332,7 @@ public class UserResource {
      *
      * @param applicationTokenId
      * @param userTokenId
-     * @param userId
+     * @param uid
      * @param roleJson expect to be on the forme like this
      *                 {"uid":"test.me@example.com","
      *                 applicationId":"12",
@@ -343,24 +344,24 @@ public class UserResource {
      */
     /*
     @POST
-    @Path("/{userId}/role/")
+    @Path("/{uid}/role/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addRoleJson(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                @PathParam("userId") String userId, String roleJson) {
-        log.trace("addRoleJson is called with userId={}, roleJson {}", userId, roleJson);
+                                @PathParam("uid") String uid, String roleJson) {
+        log.trace("addRoleJson is called with uid={}, roleJson {}", uid, roleJson);
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
-            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
             return Response.ok(roleRepresentation.toJson()).build();
         } catch (IllegalArgumentException iae) {
-            log.error("addRoleJson: Invalid json={}, userId {}", roleJson,userId, iae);
+            log.error("addRoleJson: Invalid json={}, uid {}", roleJson,uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error("addRoleJson: IllegalStateException json={}, userId {}", roleJson,userId, ise);
+            log.error("addRoleJson: IllegalStateException json={}, uid {}", roleJson,uid, ise);
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("addRoleJson: RuntimeException json={}, userId {}", roleJson,userId, e);
+            log.error("addRoleJson: RuntimeException json={}, uid {}", roleJson,uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -368,25 +369,25 @@ public class UserResource {
 
     /*
     @POST
-    @Path("/{userId}/rolexml")
+    @Path("/{uid}/rolexml")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response addRoleXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("userId") String userId, String roleXml) {
-        log.trace("addRole is called with userId={}, roleXml {}", userId, roleXml);
+                            @PathParam("uid") String uid, String roleXml) {
+        log.trace("addRole is called with uid={}, roleXml {}", uid, roleXml);
 
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromXml(roleXml);
-            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
             return Response.ok(roleRepresentation.toXML()).build();
         } catch (IllegalArgumentException iae) {
-            log.error("addRoleXml: Invalid xml={}, userId {}", roleXml,userId, iae);
+            log.error("addRoleXml: Invalid xml={}, uid {}", roleXml,uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error("addRoleXml: IllegalStateException xml={}, userId {}", roleXml,userId, ise);
+            log.error("addRoleXml: IllegalStateException xml={}, uid {}", roleXml,uid, ise);
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("addRoleXml: RuntimeException xml={}, userId {}", roleXml,userId, e);
+            log.error("addRoleXml: RuntimeException xml={}, uid {}", roleXml,uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -394,13 +395,13 @@ public class UserResource {
 
 
     @DELETE
-    @Path("/{userId}/role/{roleid}")
+    @Path("/{uid}/role/{roleid}")
     public Response deleteRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                               @PathParam("userId") String userId, @PathParam("roleid") String roleid) {
-        log.trace("deleteRole, uid={}, roleid={}", userId, roleid);
+                               @PathParam("uid") String uid, @PathParam("roleid") String roleid) {
+        log.trace("deleteRole, uid={}, roleid={}", uid, roleid);
 
         try {
-            userService.deleteUserRole(applicationTokenId, userTokenId,userId, roleid);
+            userService.deleteUserRole(applicationTokenId, userTokenId,uid, roleid);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (RuntimeException e) {
             log.error("deleteRole-RuntimeException. roleId {}", roleid, e);
