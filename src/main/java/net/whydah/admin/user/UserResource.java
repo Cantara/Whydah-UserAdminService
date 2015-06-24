@@ -279,30 +279,6 @@ public class UserResource {
         return bestResponseVariant.getMediaType();
     }
 
-    @POST
-    @Path("/{userId}/role")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("userId") String userId, String roleXml) {
-        log.trace("addRole is called with userId={}, roleXml {}", userId, roleXml);
-
-        try {
-            RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromXml(roleXml);
-            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
-            return Response.ok(roleRepresentation.toXML()).build();
-        } catch (IllegalArgumentException iae) {
-            log.error("addRole: Invalid xml={}, userId {}", roleXml,userId, iae);
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (IllegalStateException ise) {
-            log.error("addRole: IllegalStateException xml={}, userId {}", roleXml,userId, ise);
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("addRole: RuntimeException xml={}, userId {}", roleXml,userId, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     /**
      *
      * @param applicationTokenId
@@ -322,7 +298,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addRoleJson(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("userId") String userId, String roleJson) {
+                                @PathParam("userId") String userId, String roleJson) {
         log.trace("addRoleJson is called with userId={}, roleXml {}", userId, roleJson);
 
         try {
@@ -340,6 +316,32 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+    @POST
+    @Path("/{userId}/rolexml")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_XML)
+    public Response addRoleXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                            @PathParam("userId") String userId, String roleXml) {
+        log.trace("addRole is called with userId={}, roleXml {}", userId, roleXml);
+
+        try {
+            RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromXml(roleXml);
+            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, userId, roleRequest);
+            return Response.ok(roleRepresentation.toXML()).build();
+        } catch (IllegalArgumentException iae) {
+            log.error("addRole: Invalid xml={}, userId {}", roleXml,userId, iae);
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (IllegalStateException ise) {
+            log.error("addRole: IllegalStateException xml={}, userId {}", roleXml,userId, ise);
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("addRole: RuntimeException xml={}, userId {}", roleXml,userId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     @DELETE
     @Path("/{userId}/role/{roleid}")
