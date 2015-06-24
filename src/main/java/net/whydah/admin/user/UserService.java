@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.NotAuthorizedException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -98,8 +97,7 @@ public class UserService {
 
 
     public UserAggregate getUser(String applicationTokenId, String userTokenId, String userId) {
-        log.trace("getUser by userId {}", userId);
-        UserAggregate userAggregate = null;
+        UserAggregate userAggregate;
         if (hasAccess(applicationTokenId, userTokenId)) {
             userAggregate = uibUserConnection.getUser(credentialStore.getUserAdminServiceTokenId(),userTokenId, userId);
         } else {
@@ -126,9 +124,9 @@ public class UserService {
 
 
     public String getRolesAsString(String applicationTokenId, String userTokenId, String userId) {
-        String roles = null;
+        String roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            roles = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(),userTokenId, userId);
+            roles = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(), userTokenId, userId);
         } else {
             throw new NotAuthorizedException("Not Authorized to getRolesAsString()");
         }
@@ -136,7 +134,7 @@ public class UserService {
     }
 
     public List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String userId) {
-        List<RoleRepresentation> roles = new ArrayList<>();
+        List<RoleRepresentation> roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
             String rolesJson = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(), userTokenId, userId);
             roles = mapRolesFromString(rolesJson);
@@ -158,6 +156,4 @@ public class UserService {
             throw new NotAuthorizedException("Not Authorized to deleteUser()");
         }
     }
-
-
 }

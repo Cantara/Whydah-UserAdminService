@@ -194,13 +194,13 @@ public class UibUserConnection {
     public UserAggregate getUser(String userAdminServiceTokenId, String adminUserTokenId, String userId) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userId);
         UserAggregate userAggregate = null;
-        UserAggregateRepresentation userAggregateRepresentation = null;
+        UserAggregateRepresentation userAggregateRepresentation;
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
         int statusCode = response.getStatus();
         String responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("getUser-Response form Uib {}", responseBody);
+                log.trace("getUser-Response from Uib {}", responseBody);
                 userAggregateRepresentation = UserAggregateRepresentation.fromJson(responseBody);
                 if (userAggregateRepresentation != null) {
                     userAggregate = userAggregateRepresentation.getUserAggregate();
@@ -218,9 +218,8 @@ public class UibUserConnection {
 
     public String getRolesAsString(String userAdminServiceTokenId, String userTokenId, String userId) {
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(userId).path("roles");
-        String responseBody = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
-        responseBody = findResponseBody("getRolesAsString",response);
+        String  responseBody = findResponseBody("getRolesAsString",response);
         return responseBody;
     }
 

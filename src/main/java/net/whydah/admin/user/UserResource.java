@@ -144,10 +144,9 @@ public class UserResource {
     @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
     public Response getUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                                    @PathParam("userId") String userId, @Context Request req) {
-        log.trace("userId is called with userId={}", userId);
         MediaType responseMediaType = findPreferedResponseType(req);
-        log.trace("Prefered mediatype from client {}", responseMediaType.toString());
-        String userResponse = "";
+        log.trace("getUser is called with userId={}. Preferred mediatype from client {}", userId, responseMediaType.toString());
+        String userResponse;
         UserAggregate userAggregate = null;
 
         try {
@@ -200,9 +199,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("userId") String userId) {
         log.trace("getRoles, uid={}", userId);
-
         String roles = userService.getRolesAsString(applicationTokenId, userTokenId,userId);
-
         return Response.ok(roles).build();
     }
 
@@ -374,6 +371,7 @@ public class UserResource {
         }
         return applicationCreatedJson;
     }
+
     protected String buildUserXml(UserAggregate userAggregate) {
         String userXml = null;
         if (userAggregate != null) {
