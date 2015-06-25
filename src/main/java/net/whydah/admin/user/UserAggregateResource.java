@@ -1,9 +1,9 @@
 package net.whydah.admin.user;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.user.uib.UserAggregate;
 import net.whydah.admin.user.uib.UserAggregateRepresentation;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
