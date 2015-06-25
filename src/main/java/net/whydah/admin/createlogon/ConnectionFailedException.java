@@ -1,4 +1,4 @@
-package net.whydah.admin;
+package net.whydah.admin.createlogon;
 
 /**
  * Thrown when Connection to external service fails.

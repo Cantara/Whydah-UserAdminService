@@ -1,16 +1,18 @@
 package net.whydah.admin.integration;
 
 import net.whydah.admin.auth.WhydahLogonToken;
-import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+//import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
@@ -66,7 +68,7 @@ public class CreateUserIntegrationTest {
         //        @FormParam("usercredential") String userCredentialXml) {
 
         target = stsPath().path("/token/"+appTokenID+"/usertoken");
-        MultivaluedMap<String,String> formData = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formData = new MultivaluedHashMap<>();
         formData.add("apptoken", uasCredentialXml());
         formData.add("usercredential", userAdminCredentialXml());
 

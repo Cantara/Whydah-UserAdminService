@@ -1,4 +1,4 @@
-package net.whydah.admin;
+package net.whydah.admin.user;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>

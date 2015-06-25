@@ -1,12 +1,10 @@
 package net.whydah.admin.user;
 
-import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.application.Application;
 import net.whydah.admin.user.uib.*;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.resteasy.specimpl.ResponseBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +85,14 @@ public class UserResource {
             return Response.status(Response.Status.CONFLICT).build();
         } catch (ConflictExeption ce) {
             log.info(ce.getMessage());
+            /*
             ResponseBuilderImpl builder = new ResponseBuilderImpl();
             builder.status(Response.Status.CONFLICT);
             builder.entity("An existing user record conflicts with your input. Future versions will notify which parameter is in conflict. Unique parmeters are: username and email. ");
             Response response = builder.build();
-            return Response.status(Response.Status.CONFLICT).build();
+            */
+
+            return Response.status(Response.Status.CONFLICT).entity(ce.getMessage()).build();
         }  catch (JsonMappingException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

@@ -1,6 +1,5 @@
 package net.whydah.admin.createlogon;
 
-import net.whydah.admin.ConnectionFailedException;
 import net.whydah.admin.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package net.whydah.admin;
+package net.whydah.admin.config;
 
 import net.whydah.admin.application.ApplicationResource;
 import net.whydah.admin.application.ApplicationService;
@@ -6,7 +6,6 @@ import net.whydah.admin.application.UibApplicationConnection;
 import net.whydah.admin.applications.ApplicationsResource;
 import net.whydah.admin.auth.LogonController;
 import net.whydah.admin.auth.PasswordController;
-import net.whydah.admin.config.AppConfig;
 import net.whydah.admin.createlogon.CreateLogonUserController;
 import net.whydah.admin.user.UserAggregateResource;
 import net.whydah.admin.user.UserResource;

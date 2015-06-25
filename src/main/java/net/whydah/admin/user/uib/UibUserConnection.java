@@ -1,8 +1,8 @@
 package net.whydah.admin.user.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
-import net.whydah.admin.ConflictExeption;
 import net.whydah.admin.config.AppConfig;
+import net.whydah.admin.user.ConflictExeption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
