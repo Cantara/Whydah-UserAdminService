@@ -34,6 +34,18 @@ public class ApplicationService {
         }
         return application;
     }
+
+    // TODO  Implement this
+    public Application updateApplication(String applicationTokenId, String userTokenId,String applicationJson) {
+        Application application = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+         //   application = uibApplicationConnection.addApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationJson);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return application;
+    }
+
     public Application createApplicationFromXml(String applicationTokenId, String userTokenId,String applicationXml) {
         Application createdApplication = null;
         Application application = Application.fromXml(applicationXml);
@@ -48,6 +60,28 @@ public class ApplicationService {
         Application application = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
             application = uibApplicationConnection.getApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationId);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return application;
+    }
+
+    // TODO  Implement this
+    public Application deleteApplication(String applicationTokenId, String userTokenId, String applicationId) {
+        Application application = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+        //    application = uibApplicationConnection.getApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationId);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return application;
+    }
+
+    // TODO  Implement this
+    public Application findApplications(String applicationTokenId, String userTokenId, String query) {
+        Application application = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+//            application = uibApplicationConnection.getApplication(credentialStore.getUserAdminServiceTokenId(), userTokenId, applicationId);
         } else {
             //FIXME handle no access to this method.
         }

@@ -1,5 +1,8 @@
 package net.whydah.admin.applications;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -31,7 +35,9 @@ public class StubbedApplicationsRepository {
 
     protected void readStubbedFiles() {
         applicationJson = readFile("stubbedData/application.json");
-        applicationListJson = readFile("stubbedData/applications.json");
+        String applicationListJsonFromFile = readFile("stubbedData/applications.json");
+        // Quick and dirty escaping of the named element of the applications list
+        applicationListJson = applicationListJsonFromFile.substring(applicationListJsonFromFile.indexOf("["),applicationListJsonFromFile.lastIndexOf("]")+1);
         JSONArray array = new JSONArray(applicationListJson);
         for(int i = 0; i < array.length(); i++){
             JSONObject application = array.getJSONObject(i);
@@ -70,5 +76,16 @@ public class StubbedApplicationsRepository {
         if (id != null) {
             applications.put(id, applicationJson);
         }
+    }
+
+    private static List<String> findJsonPathList(String jsonString,  String expression) throws PathNotFoundException {
+        List<String> result=null;
+        Configuration conf = Configuration.defaultConfiguration();
+        try {
+            result= JsonPath.using(conf).parse(jsonString).read(expression);
+        } catch (Exception e) {
+            log.warn("Failed to parse JSON. Expression {}, JSON {}, ", expression, jsonString, e);
+        }
+        return result;
     }
 }
