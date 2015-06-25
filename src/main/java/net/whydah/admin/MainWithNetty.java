@@ -14,7 +14,7 @@ import java.util.List;
  * Created by baardl on 07.04.14.
  */
 public class MainWithNetty {
-    private final static Logger logger = LoggerFactory.getLogger(MainWithNetty.class);
+    private final static Logger log = LoggerFactory.getLogger(MainWithNetty.class);
 
     static int webappPort;
     static NettyJaxrsServer netty;
