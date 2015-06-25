@@ -205,11 +205,11 @@ public class UserResource {
     }
 
 
+    @GET
     @Path("/{uid}/roles")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
         log.trace("getRoles, uid={}", uid);
-
         MediaType responseMediaType = findPreferredResponseMediaType();
 
         try {
@@ -221,7 +221,7 @@ public class UserResource {
             }
             log.trace("getRoles for uid={}, response: {}", uid, body);
             return Response.ok(body).build();
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             log.error("getRoles failed. uid={}", uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
