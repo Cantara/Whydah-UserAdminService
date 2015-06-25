@@ -25,7 +25,7 @@ public class MainWithJetty {
 
     public static void main(String[] arguments) throws Exception {
         // http://stackoverflow.com/questions/9117030/jul-to-slf4j-bridge
-        // CXF uses java.util.logging - bridge to slf4
+        // Jersey uses java.util.logging - bridge to slf4
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
