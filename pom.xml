@@ -201,8 +201,8 @@
             <version>4.4-beta1</version>
         </dependency>
 
-        <!--Testing-->
 
+        <!--Testing-->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -214,11 +214,6 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.restassured</groupId>
