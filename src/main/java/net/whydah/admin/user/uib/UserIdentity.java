@@ -185,4 +185,15 @@ public class UserIdentity extends UserIdentityRepresentation implements Serializ
     }
 
 
+    public String toJson() {
+        String identity =
+                "\"uid\":\""+ uid +"\"" +
+                ",\"username\":\""+ username +"\"" +
+                ",\"firstName\":\"" +firstName +"\"" +
+                ",\"lastName\":\""+lastName+"\"" +
+                ",\"personRef\":\""+personRef+
+                "\",\"email\":\""+email+"\"" +
+                ",\"cellPhone\":\""+cellPhone+"\"";
+        return "{" + identity + "}";
+    }
 }

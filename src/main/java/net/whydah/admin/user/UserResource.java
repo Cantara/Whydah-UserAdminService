@@ -44,28 +44,27 @@ public class UserResource {
      * Password is left out deliberately. A password belong to user credential as in user login. We will support multiple ways for logging in,
      * where uid/passord is one. Another login is via FB and Windows AD tokens.
      *
-     * @param userXml xml representing a User
+     * @param userXmlOrJson xml representing a User
      * @return Application
      */
     @POST
     @Path("/")
     @Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-    public Response createUser(@PathParam("applicationtokenid") String applicationTokenId,
-                               @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
-        log.trace("createUser is called with userXml={}", userXml);
-        MediaType responseMediaType = findPreferedResponseType(request);
+    public Response createUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                               String userXmlOrJson, @Context Request request) {
+        log.trace("createUser is called with userXmlOrJson={}", userXmlOrJson);
+        MediaType responseMediaType = findPreferredResponseMediaType();
+
         UserIdentity createdUser;
         String userResponse;
         UserAggregate userAggregate = null;
         try {
-            if (isXmlContent(userXml)) {
-                createdUser = userService.createUserFromXml(applicationTokenId, userTokenId, userXml);
+            if (isXmlContent(userXmlOrJson) || responseMediaType == MediaType.APPLICATION_XML_TYPE) {
+                createdUser = userService.createUserFromXml(applicationTokenId, userTokenId, userXmlOrJson);
             } else {
-                createdUser = userService.createUser(applicationTokenId, userTokenId, userXml);
+                createdUser = userService.createUser(applicationTokenId, userTokenId, userXmlOrJson);
             }
-
-
 
 
             if (createdUser != null) {
@@ -81,7 +80,7 @@ public class UserResource {
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
         } catch (IllegalArgumentException iae) {
-            log.error("createUser: Invalid xml={}", userXml, iae);
+            log.error("createUser: Invalid xml={}", userXmlOrJson, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
             log.info(ise.getMessage());
@@ -148,17 +147,20 @@ public class UserResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getUserIdentity(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                                     @PathParam("uid") String uid, @Context Request req) {
-        MediaType responseMediaType = findPreferedResponseType(req);
-        log.trace("getUserIdentity is called with uid={}. Preferred mediatype from client {}", uid, responseMediaType.toString());
+        MediaType mediaType = findPreferredResponseMediaType();
+        //MediaType responseMediaType = findPreferedResponseType(req);
+        log.trace("getUserIdentity is called with uid={}. Preferred mediatype from client {}", uid, mediaType);
         String userResponse;
-        UserAggregate userAggregate = null;
+        UserIdentity userIdentity = null;
 
         try {
-            userAggregate = userService.getUserIdentity(applicationTokenId, userTokenId, uid);
-            if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
-                userResponse = mapper.writeValueAsString(userAggregate);
+            userIdentity = userService.getUserIdentity(applicationTokenId, userTokenId, uid);
+            if (mediaType == MediaType.APPLICATION_XML_TYPE) {
+                //userResponse = buildUserXml(userIdentity);
+                userResponse = userIdentity.toXML();
             } else {
-                userResponse = buildUserXml(userAggregate);
+                //userResponse = mapper.writeValueAsString(userIdentity);
+                userResponse = userIdentity.toJson();
             }
             return Response.ok(userResponse).build();
         } catch (IllegalArgumentException iae) {
@@ -167,16 +169,20 @@ public class UserResource {
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
-        } catch (JsonMappingException e) {
-            log.warn("Could not create json from {}", userAggregate.toString());
+        }
+        /*
+        catch (JsonMappingException e) {
+            log.warn("Could not create json from {}", userIdentity.toString());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (JsonGenerationException e) {
-            log.warn("Could not create json from {}", userAggregate.toString());
+            log.warn("Could not create json from {}", userIdentity.toString());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (IOException e) {
-            log.warn("Could not responseobject from {}", userAggregate.toString());
+            log.warn("Could not responseobject from {}", userIdentity.toString());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch (RuntimeException e) {
+        }
+        */
+        catch (RuntimeException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -203,15 +209,16 @@ public class UserResource {
     public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
         log.trace("getRoles, uid={}", uid);
 
-        MediaType mediaType = getMediaTypeFromRequest();
+        MediaType responseMediaType = findPreferredResponseMediaType();
 
         try {
             String body = null;
-            if (mediaType == MediaType.APPLICATION_XML_TYPE) {
+            if (responseMediaType == MediaType.APPLICATION_XML_TYPE) {
                 body = userService.getRolesAsXml(applicationTokenId, userTokenId, uid);
-            } else if (mediaType == MediaType.APPLICATION_JSON_TYPE) {
+            } else if (responseMediaType == MediaType.APPLICATION_JSON_TYPE) {
                 body = userService.getRolesAsJson(applicationTokenId, userTokenId, uid);
             }
+            log.trace("getRoles for uid={}, response: {}", uid, body);
             return Response.ok(body).build();
         } catch (RuntimeException e) {
             log.error("getRoles failed. uid={}", uid, e);
@@ -219,96 +226,12 @@ public class UserResource {
         }
     }
 
-    private MediaType getMediaTypeFromRequest() {
+    private MediaType findPreferredResponseMediaType() {
         List<Variant> availableVariants = Variant.mediaTypes(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE).add().build();
         Variant bestMatch = request.selectVariant(availableVariants);
         return bestMatch.getMediaType();
     }
 
-
-    /*
-    @GET
-    @Path("/{uid}/roles")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getRoles(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
-        log.trace("getRoles, uid={}", uid);
-        String roles = userService.getRolesAsString(applicationTokenId, userTokenId,uid);
-        return Response.ok(roles).build();
-    }
-
-    @GET
-    @Path("/{uid}/roles")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getRolesAsXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, @PathParam("uid") String uid) {
-        log.trace("getRoles, uid={}", uid);
-
-        List<RoleRepresentation> roles = userService.getRoles(applicationTokenId, userTokenId, uid);
-        String rolesXml = "";
-        for (RoleRepresentation role : roles) {
-            rolesXml += role.toXML();
-        }
-
-        return Response.ok(rolesXml).build();
-    }
-    */
-
-
-    private MediaType findPreferedContentType(Request req) {
-        /**
-         * /* This method builds a list of possible variants. */
-        /* You must call Variant.VariantListBuilder.add() object before calling the Variant.VariantListBuilder.build() object. */
-        List<Variant> contentVariants =
-                Variant
-                        .mediaTypes(
-                                MediaType.valueOf(MediaType.APPLICATION_XML ),
-                                MediaType.valueOf(MediaType.APPLICATION_XML ),
-                                MediaType
-                                        .valueOf(MediaType.APPLICATION_JSON))
-//                        .encodings("gzip", "identity", "deflate").languages(Locale.ENGLISH,
-//                        Locale.FRENCH,
-//                        Locale.US)
-                        .add().build();
-
-          /* Based on the Accept* headers, an acceptable response variant is chosen.  If there is no acceptable variant,
-          selectVariant will return a null value. */
-
-        Variant bestResponseVariant = req.selectVariant(contentVariants);
-//        if(bestResponseVariant == null) {
-//
-//             /* Based on results, the optimal response variant can not be determined from the list given.  */
-//
-//            return Response.notAcceptable().build();
-//        }
-        return bestResponseVariant.getMediaType();
-    }
-    private MediaType findPreferedResponseType(Request req) {
-        /**
-         * /* This method builds a list of possible variants. */
-        /* You must call Variant.VariantListBuilder.add() object before calling the Variant.VariantListBuilder.build() object. */
-        List<Variant> responseVariants =
-                Variant
-                        .mediaTypes(
-                                MediaType.valueOf(MediaType.APPLICATION_XML ),
-                                MediaType.valueOf(MediaType.APPLICATION_XML ),
-                                MediaType
-                                        .valueOf(MediaType.APPLICATION_JSON))
-//                        .encodings("gzip", "identity", "deflate").languages(Locale.ENGLISH,
-//                        Locale.FRENCH,
-//                        Locale.US)
-                        .add().build();
-
-          /* Based on the Accept* headers, an acceptable response variant is chosen.  If there is no acceptable variant,
-          selectVariant will return a null value. */
-
-        Variant bestResponseVariant = req.selectVariant(responseVariants);
-//        if(bestResponseVariant == null) {
-//
-//             /* Based on results, the optimal response variant can not be determined from the list given.  */
-//
-//            return Response.notAcceptable().build();
-//        }
-        return bestResponseVariant.getMediaType();
-    }
 
     /*
      * @param roleXmlOrJson for json
@@ -327,15 +250,15 @@ public class UserResource {
                             @PathParam("uid") String uid, String roleXmlOrJson) {
         log.trace("addRole is called with uid={}, roleXmlOrJson={}", uid, roleXmlOrJson);
 
-        MediaType mediaType = getMediaTypeFromRequest();
+        MediaType responseMediaType = findPreferredResponseMediaType();
 
         try {
             RoleRepresentationRequest roleRequest;
-            if (mediaType == MediaType.APPLICATION_XML_TYPE) {
+            if (responseMediaType == MediaType.APPLICATION_XML_TYPE) {
                 roleRequest = RoleRepresentationRequest.fromXml(roleXmlOrJson);
                 RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
                 return Response.ok(roleRepresentation.toXML()).build();
-            } else if (mediaType == MediaType.APPLICATION_JSON_TYPE) {
+            } else if (responseMediaType == MediaType.APPLICATION_JSON_TYPE) {
                 roleRequest = RoleRepresentationRequest.fromJson(roleXmlOrJson);
                 RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
                 return Response.ok(roleRepresentation.toJson()).build();

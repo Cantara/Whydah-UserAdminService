@@ -8,6 +8,7 @@ import net.whydah.admin.auth.LogonController;
 import net.whydah.admin.auth.PasswordController;
 import net.whydah.admin.config.AppConfig;
 import net.whydah.admin.createlogon.CreateLogonUserController;
+import net.whydah.admin.user.UserAggregateResource;
 import net.whydah.admin.user.UserResource;
 import net.whydah.admin.user.UserService;
 import net.whydah.admin.users.UsersResource;
@@ -36,6 +37,7 @@ public class JerseyApplication extends ResourceConfig {
         register(ApplicationsResource.class);
         register(UserService.class);
         register(UserResource.class);
+        register(UserAggregateResource.class);
         register(UsersResource.class);
         register(LogonController.class);
         register(CreateLogonUserController.class);

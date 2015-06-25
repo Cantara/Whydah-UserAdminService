@@ -190,13 +190,28 @@ public class UibUserConnection {
         return updatedUser;
     }
 
-    public UserAggregate getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+
+    //TODO Clean up exception/failure handling
+    public UserIdentity getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
+        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        String responseBody = response.readEntity(String.class);
+        switch (response.getStatus()) {
+            case STATUS_OK:
+                log.trace("getUserIdentity-Response from Uib {}", responseBody);
+                UserIdentity userIdentity = UserIdentity.fromJson(responseBody);
+                return userIdentity;
+            case STATUS_FORBIDDEN:
+                log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
+                return null;
+            default:
+                log.error("getUserIdentity-Response from UIB: {}: {}", response.getStatus(), responseBody);
+                throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
+        }
+
+        /*
         UserAggregate userAggregate = null;
         UserAggregateRepresentation userAggregateRepresentation;
-        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
-        int statusCode = response.getStatus();
-        String responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("getUserIdentity-Response from Uib {}", responseBody);
@@ -213,12 +228,39 @@ public class UibUserConnection {
                 throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
         }
         return userAggregate;
+        */
     }
 
-    public String getRolesAsString(String userAdminServiceTokenId, String userTokenId, String uid) {
+    public UserAggregate getUserAggregateByUid(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
+        UserAggregate userAggregate = null;
+        UserAggregateRepresentation userAggregateRepresentation;
+        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        String responseBody = response.readEntity(String.class);
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("getUserAggregateByUid-Response from Uib {}", responseBody);
+                userAggregateRepresentation = UserAggregateRepresentation.fromJson(responseBody);
+                if (userAggregateRepresentation != null) {
+                    userAggregate = userAggregateRepresentation.getUserAggregate();
+                }
+                break;
+            case STATUS_FORBIDDEN:
+                log.error("getUserAggregateByUid-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
+                break;
+            default:
+                log.error("getUserAggregateByUid-Response from UIB: {}: {}", response.getStatus(), responseBody);
+                throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
+        }
+        return userAggregate;
+    }
+
+
+    public String getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) {
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(uid).path("roles");
         Response response = webResource.request(MediaType.APPLICATION_JSON).get();
-        return findResponseBody("getRolesAsString", response);
+        return findResponseBody("getRolesAsJson", response);
     }
 
     private String findResponseBody(String methodName, Response response) {

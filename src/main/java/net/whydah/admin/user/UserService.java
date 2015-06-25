@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.NotAuthorizedException;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -101,10 +100,10 @@ public class UserService {
 
 
 
-    public UserAggregate getUserIdentity(String applicationTokenId, String userTokenId, String uid) {
-        UserAggregate userAggregate;
+    public UserIdentity getUserIdentity(String applicationTokenId, String userTokenId, String uid) {
+        UserIdentity userIdentity;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            userAggregate = uibUserConnection.getUserIdentity(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
+            userIdentity = uibUserConnection.getUserIdentity(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
             throw new NotAuthorizedException("Not Authorized to getUserIdentity()");
         }
@@ -114,6 +113,18 @@ public class UserService {
         roles.add(buildStubRole());
         userAggregate = new UserAggregate(userIdentity, roles);
         */
+        log.trace("found {}", userIdentity);
+        return userIdentity;
+    }
+
+
+    public UserAggregate getUserAggregateByUid(String applicationTokenId, String userTokenId, String uid) {
+        UserAggregate userAggregate;
+        if (!hasAccess(applicationTokenId, userTokenId)) {
+            throw new NotAuthorizedException("Not Authorized to getUserAggregateByUid()");
+        }
+
+        userAggregate = uibUserConnection.getUserAggregateByUid(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         log.trace("found UserAggregate {}", userAggregate);
         return userAggregate;
     }
@@ -129,18 +140,25 @@ public class UserService {
 
 
     /*
-    public String getRolesAsString(String applicationTokenId, String userTokenId, String uid) {
+    public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) {
         String roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            roles = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
+            roles = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
-            throw new NotAuthorizedException("Not Authorized to getRolesAsString()");
+            throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
         }
         return roles;
     }
     */
 
     public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) {
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            return uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
+        }
+
+        /*
         List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
         String result;
         try {
@@ -149,13 +167,15 @@ public class UserService {
             log.error("Error converting List<RoleRepresentation> to json. ", e);
             return null;
         }
+        return result;
+        */
         /*
         String result = "";
         for (RoleRepresentation role : roles) {
             result += role.toJson();
         }
         */
-        return result;
+
     }
     public String getRolesAsXml(String applicationTokenId, String userTokenId, String uid) {
         List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
@@ -168,10 +188,10 @@ public class UserService {
     private List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String uid) {
         List<RoleRepresentation> roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            String rolesJson = uibUserConnection.getRolesAsString(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
+            String rolesJson = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
             roles = mapRolesFromString(rolesJson);
         } else {
-            throw new NotAuthorizedException("Not Authorized to getRolesAsString()");
+            throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
         }
         return roles;
     }

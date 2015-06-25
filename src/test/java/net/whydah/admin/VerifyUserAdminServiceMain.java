@@ -183,7 +183,7 @@ public class VerifyUserAdminServiceMain {
         //putUser - ignored now not in use?
         //- String url = getUibUrl(apptokenid, usertokenid, "user/" + uid);
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
-        //getUser
+        //getUserIdentity
         //- String url = getUibUrl(apptokenid, usertokenid, "user/"+uid);
 
     }
@@ -191,11 +191,11 @@ public class VerifyUserAdminServiceMain {
 
     private void getUserAggregate() {
         WebTarget userResource = buildUserPath().path(USER_ID);
-        log.info("getUserAggregate by url {}, ", userResource.getUri().toString());
+        log.info("getUserAggregateByUid by url {}, ", userResource.getUri().toString());
         Response response = userResource.request(MediaType.APPLICATION_JSON).get();
         int statusCode = response.getStatus();
-        log.info("getUserAggregate ,StatusCode {}", statusCode);
-        assertEquals("Could not getUserAggregate via UserAdminService", 200, statusCode);
+        log.info("getUserAggregateByUid ,StatusCode {}", statusCode);
+        assertEquals("Could not getUserAggregateByUid via UserAdminService", 200, statusCode);
         String output = response.readEntity(String.class);
 
         assertNotNull(output);

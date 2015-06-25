@@ -16,8 +16,7 @@
         <developerConnection>scm:git:ssh://git@github.com/altran/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/altran/Whydah-UserAdminService.git</connection>
         <url>https://github.com/altran/Whydah-UserAdminService</url>
-    <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <properties>
         <service.name>Whydah-UserAdminService</service.name>
@@ -123,6 +122,13 @@
             <groupId>net.java.dev.rome</groupId>
             <artifactId>rome</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.0.0</version>
         </dependency>
 
         <dependency>
