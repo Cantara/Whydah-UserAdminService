@@ -146,15 +146,15 @@ public class UserResource {
     @GET
     @Path("/{uid}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("uid") String uid, @Context Request req) {
+    public Response getUserIdentity(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                                    @PathParam("uid") String uid, @Context Request req) {
         MediaType responseMediaType = findPreferedResponseType(req);
-        log.trace("getUser is called with uid={}. Preferred mediatype from client {}", uid, responseMediaType.toString());
+        log.trace("getUserIdentity is called with uid={}. Preferred mediatype from client {}", uid, responseMediaType.toString());
         String userResponse;
         UserAggregate userAggregate = null;
 
         try {
-            userAggregate = userService.getUser(applicationTokenId, userTokenId, uid);
+            userAggregate = userService.getUserIdentity(applicationTokenId, userTokenId, uid);
             if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
                 userResponse = mapper.writeValueAsString(userAggregate);
             } else {
@@ -162,7 +162,7 @@ public class UserResource {
             }
             return Response.ok(userResponse).build();
         } catch (IllegalArgumentException iae) {
-            log.error("getUser: Invalid xml={}", uid, iae);
+            log.error("getUserIdentity: Invalid xml={}", uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());

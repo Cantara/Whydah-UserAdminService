@@ -190,7 +190,7 @@ public class UibUserConnection {
         return updatedUser;
     }
 
-    public UserAggregate getUser(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+    public UserAggregate getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         UserAggregate userAggregate = null;
         UserAggregateRepresentation userAggregateRepresentation;
@@ -199,18 +199,18 @@ public class UibUserConnection {
         String responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("getUser-Response from Uib {}", responseBody);
+                log.trace("getUserIdentity-Response from Uib {}", responseBody);
                 userAggregateRepresentation = UserAggregateRepresentation.fromJson(responseBody);
                 if (userAggregateRepresentation != null) {
                     userAggregate = userAggregateRepresentation.getUserAggregate();
                 }
                 break;
             case STATUS_FORBIDDEN:
-                log.error("getUser-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
+                log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
                 break;
             default:
-                log.error("getUser-Response from UIB: {}: {}", response.getStatus(), responseBody);
-                throw new AuthenticationFailedException("getUser failed. Status code " + response.getStatus());
+                log.error("getUserIdentity-Response from UIB: {}: {}", response.getStatus(), responseBody);
+                throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
         }
         return userAggregate;
     }
@@ -235,7 +235,7 @@ public class UibUserConnection {
                 break;
             default:
                 log.error("{}-Response from UIB: {}: {}", methodName,response.getStatus(), responseBody);
-                throw new AuthenticationFailedException("getUser failed. Status code " + response.getStatus());
+                throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
         }
         return responseBody;
     }

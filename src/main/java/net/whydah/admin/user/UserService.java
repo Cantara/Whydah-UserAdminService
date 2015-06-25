@@ -101,12 +101,12 @@ public class UserService {
 
 
 
-    public UserAggregate getUser(String applicationTokenId, String userTokenId, String uid) {
+    public UserAggregate getUserIdentity(String applicationTokenId, String userTokenId, String uid) {
         UserAggregate userAggregate;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            userAggregate = uibUserConnection.getUser(credentialStore.getUserAdminServiceTokenId(),userTokenId, uid);
+            userAggregate = uibUserConnection.getUserIdentity(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
-            throw new NotAuthorizedException("Not Authorized to getUser()");
+            throw new NotAuthorizedException("Not Authorized to getUserIdentity()");
         }
         /*
         UserIdentity userIdentity = new UserIdentity("uid","username","first", "last", "", "first.last@example.com", "12234", "");
