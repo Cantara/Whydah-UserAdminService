@@ -24,7 +24,6 @@ public class UserAggregateRepresentation {
     private String personRef;
     private String email;
     private String cellPhone;
-    private String password;    //TODO include this in response?
 
     private List<RoleRepresentation> roles;
     private UserAggregate userAggregate;
@@ -43,7 +42,6 @@ public class UserAggregateRepresentation {
         dto.setPersonRef(id.getPersonRef());
         dto.setEmail(id.getEmail());
         dto.setCellPhone(id.getCellPhone());
-        //dto.setPassword(id.getPassword());
 
         List<UserPropertyAndRole> userPropertyAndRoles = userAggregate.getRoles();
         List<RoleRepresentation> roleRepresentations = new ArrayList<>(userPropertyAndRoles.size());
@@ -90,9 +88,6 @@ public class UserAggregateRepresentation {
     public void setCellPhone(String cellPhone) {
         this.cellPhone = cellPhone;
     }
-    public void setPassword(String password) {
-        this.password = password;
-    }
     public void setRoles(List<RoleRepresentation> roles) {
         this.roles = roles;
     }
@@ -126,9 +121,6 @@ public class UserAggregateRepresentation {
     public String getCellPhone() {
         return cellPhone;
     }
-    public String getPassword() {
-        return password;
-    }
     public List<RoleRepresentation> getRoles() {
         if (roles == null) {
             roles = new ArrayList<>();
@@ -137,7 +129,7 @@ public class UserAggregateRepresentation {
     }
 
     public UserAggregate getUserAggregate() {
-        UserIdentity userIdentity = new UserIdentity(getUid(), getUsername(), getFirstName(), getLastName(), getPersonRef(), getEmail(), getCellPhone(),getPassword());
+        UserIdentity userIdentity = new UserIdentity(getUid(), getUsername(), getFirstName(), getLastName(), getPersonRef(), getEmail(), getCellPhone(), null);
         List<UserPropertyAndRole> userPropertiesAndRoles = new ArrayList<>();
         List<RoleRepresentation> roles = getRoles();
         for (RoleRepresentation role : roles) {
