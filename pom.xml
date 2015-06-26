@@ -13,8 +13,8 @@
     </parent>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@github.com/altran/Whydah-UserAdminService.git</developerConnection>
-        <connection>scm:git:https://github.com/altran/Whydah-UserAdminService.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
+        <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
         <url>https://github.com/altran/Whydah-UserAdminService</url>
     </scm>
 
