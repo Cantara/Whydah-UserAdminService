@@ -37,7 +37,7 @@ public class UserService {
         UserAggregate userAggregate = UserAggregate.fromXML(userXml);
         UserIdentityRepresentation userIdentity = userAggregate.getIdentity();
         if (userIdentity != null) {
-            String userJson = userIdentity.toJson();
+            String userJson = userIdentity.toJsonBare();
             createdUser = createUser(applicationTokenId, userTokenId, userJson);
         }
         return createdUser;
@@ -179,10 +179,11 @@ public class UserService {
     }
     public String getRolesAsXml(String applicationTokenId, String userTokenId, String uid) {
         List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
-        String result = "";
+        String result = "<applications>";
         for (RoleRepresentation role : roles) {
             result += role.toXML();
         }
+        result += "</applications>";
         return result;
     }
     private List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String uid) {

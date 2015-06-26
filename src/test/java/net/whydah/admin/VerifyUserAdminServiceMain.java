@@ -205,7 +205,7 @@ public class VerifyUserAdminServiceMain {
     private String addUser() {
 
         WebTarget userResource = buildUserPath();
-        String userJson = buildStubUser().toJson();
+        String userJson = buildStubUser().toJsonBare();
         log.info("AddUser by url {}, ", userResource.getUri().toString());
         Response response = userResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userJson, MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();

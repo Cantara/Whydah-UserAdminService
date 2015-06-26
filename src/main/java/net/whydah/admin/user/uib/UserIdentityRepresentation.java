@@ -71,7 +71,8 @@ public class UserIdentityRepresentation {
         this.cellPhone = cellPhone;
     }
 
-    public String toJson() {
+
+    public String toJsonBare() {
         String userJson = "{\"username\":\""+ username +"\",\"firstName\":\"" +firstName +"\",\"lastName\":\""+lastName+"\",\"personRef\":\""+personRef+
                 "\",\"email\":\""+email+"\",\"cellPhone\":\""+cellPhone+"\"}";
         return userJson;
