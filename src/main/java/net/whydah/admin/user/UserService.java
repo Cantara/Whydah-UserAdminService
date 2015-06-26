@@ -190,6 +190,7 @@ public class UserService {
         List<RoleRepresentation> roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
             String rolesJson = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
+            log.debug("rolesJson {}", rolesJson);
             roles = mapRolesFromString(rolesJson);
         } else {
             throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
