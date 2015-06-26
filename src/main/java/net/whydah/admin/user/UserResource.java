@@ -116,32 +116,13 @@ public class UserResource {
         return isXml;
     }
 
+    @Deprecated //TODO merge with normal endpoint
     @POST
     @Path("/xml")
     public Response createUserFromXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
         return  createUser(applicationTokenId,userTokenId,userXml,request);
     }
 
-
-    @POST
-    @Path("/changePassword/{username}")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response changePassword(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                   @PathParam("username") String userName, String password) {
-        log.trace("changePassword is called with username={}", userName);
-        boolean isPasswordUpdated = false;
-        try {
-            isPasswordUpdated = userService.changePassword(applicationTokenId, userTokenId, userName, password);
-
-        } catch (RuntimeException e) {
-            log.error("", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-
-        String passwdOk = "<passwordUpdated><username>" + userName +"</username><status>" + isPasswordUpdated+"</status></passwordUpdated>";
-        return Response.ok(passwdOk).build();
-    }
 
     @GET
     @Path("/{uid}")
@@ -189,6 +170,21 @@ public class UserResource {
         }
     }
 
+    //TODO https://github.com/Cantara/Whydah-UserAdminService/issues/25
+    /*
+    @PUT
+    @Path("/{uid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUserIdentity(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+            @PathParam("uid") String uid, String userXmlOrJson) {
+        log.trace("updateUserIdentity: uid={}, userXmlOrJson={}", uid, userXmlOrJson);
+
+       userService.updateUserIdentity(applicationTokenId, userTokenId, userXmlOrJson);
+    }
+    */
+
+
     @DELETE
     @Path("/{uid}")
     public Response deleteUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
@@ -202,6 +198,26 @@ public class UserResource {
             log.error("deleteUser-RuntimeException. uid {}", uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @POST
+    @Path("/changePassword/{username}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_XML)
+    public Response changePassword(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                                   @PathParam("username") String userName, String password) {
+        log.trace("changePassword is called with username={}", userName);
+        boolean isPasswordUpdated = false;
+        try {
+            isPasswordUpdated = userService.changePassword(applicationTokenId, userTokenId, userName, password);
+
+        } catch (RuntimeException e) {
+            log.error("", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        String passwdOk = "<passwordUpdated><username>" + userName +"</username><status>" + isPasswordUpdated+"</status></passwordUpdated>";
+        return Response.ok(passwdOk).build();
     }
 
 
