@@ -25,7 +25,7 @@ public class CreateUserIntegrationTest {
     private WebTarget target;
 
    // private final String SECURITY_TOKEN_SERVICE_URL= "http://ec2-54-77-145-230.eu-west-1.compute.amazonaws.com:9998/tokenservice";
-    private final String SECURITY_TOKEN_SERVICE_URL= "http://eunoask-dsk1061:9998/tokenservice";
+    private final String SECURITY_TOKEN_SERVICE_URL= "http://localhost::9998/tokenservice";
     private final String MEDIA_TYPE = "application/x-www-form-urlencoded";
 
     public CreateUserIntegrationTest() {
