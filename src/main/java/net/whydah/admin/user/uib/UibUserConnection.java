@@ -42,36 +42,15 @@ public class UibUserConnection {
         uib = client.target(uibUrl);
     }
 
-    public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
-        UserAggregate userAggregate = null;
-        UserAggregateRepresentation userAggregateRepresentation = null;
-        Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userAggregateJson, MediaType.APPLICATION_JSON));
-        int statusCode = response.getStatus();
-        switch (statusCode) {
-            case STATUS_OK:
-                log.trace("Response from UIB {}", response.readEntity(String.class));
-                userAggregateRepresentation = UserAggregateRepresentation.fromJson(userAggregateJson);
-                break;
-            case STATUS_BAD_REQUEST:
-                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
-                throw new BadRequestException("BadRequest for Json " + userAggregateJson + ",  Status code " + response.getStatus());
-            default:
-                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
-                throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
-        }
-        userAggregate = userAggregateRepresentation.getUserAggregate();
-        return userAggregate;
-    }
-
     public UserIdentity createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
-        UserIdentity userIdentity = null;
-        UserAggregateRepresentation userAggregateRepresentation = null;
-       // userIdentityJson = "{\"username\":\"per\",\"firstName\":\"per\",\"lastName\":\"per\",\"email\":\"per.per@example.com\",\"cellPhone\":\"123456789\",\"personRef\":\"ref\"}";
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user");
         Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
-        int statusCode = response.getStatus();
+
+        UserIdentity userIdentity;
+        //UserAggregateRepresentation userAggregateRepresentation = null;
+        // userIdentityJson = "{\"username\":\"per\",\"firstName\":\"per\",\"lastName\":\"per\",\"email\":\"per.per@example.com\",\"cellPhone\":\"123456789\",\"personRef\":\"ref\"}";
         String userJson = response.readEntity(String.class);
+        int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("createUser-Response from UIB {}", userJson);
@@ -93,6 +72,53 @@ public class UibUserConnection {
         }
         return userIdentity;
     }
+
+    public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
+        Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userAggregateJson, MediaType.APPLICATION_JSON));
+
+        UserAggregate userAggregate;
+        UserAggregateRepresentation userAggregateRepresentation;
+        int statusCode = response.getStatus();
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("Response from UIB {}", response.readEntity(String.class));
+                userAggregateRepresentation = UserAggregateRepresentation.fromJson(userAggregateJson);
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                throw new BadRequestException("BadRequest for Json " + userAggregateJson + ",  Status code " + response.getStatus());
+            default:
+                log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
+                throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
+        }
+        userAggregate = userAggregateRepresentation.getUserAggregate();
+        return userAggregate;
+    }
+
+
+    public Response updateUserIdentity(String userAdminServiceTokenId, String userTokenId, String uid, String userIdentityJson) {
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user").path(uid);
+        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).put(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
+
+        Response.ResponseBuilder responseBuilder = Response.status(responseFromUib.getStatusInfo());
+        int statusCode = responseFromUib.getStatusInfo().getStatusCode();
+        String reasonPhrase = responseFromUib.getStatusInfo().getReasonPhrase();
+        String responseBody = null;
+        if (responseFromUib.hasEntity()) {
+            responseBody = responseFromUib.readEntity(String.class);
+            responseBuilder = responseBuilder.entity(responseBody);
+        }
+        switch (responseFromUib.getStatusInfo().getFamily()) {
+            case SUCCESSFUL:
+                log.trace("updateUserIdentity was successful. Response from UIB: {} {}, body={}", statusCode, reasonPhrase, responseBody);
+                break;
+            default:
+                log.warn("updateUserIdentity was unsuccessful. Response from UIB: {} {}, body={}", statusCode, reasonPhrase, responseBody);
+        }
+        return responseBuilder.build();
+    }
+
 
     public boolean changePassword(String userAdminServiceTokenId, String adminUserTokenId, String userName, String password) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userName).path("changepassword");
@@ -142,7 +168,6 @@ public class UibUserConnection {
                 throw new AuthenticationFailedException("Authentication failed. Status code " + statusCode);
         }
         return role;
-
     }
 
     public void deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) {
@@ -264,7 +289,7 @@ public class UibUserConnection {
     }
 
     private String findResponseBody(String methodName, Response response) {
-        String responseBody = null;
+        String responseBody;
         int statusCode = response.getStatus();
         responseBody = response.readEntity(String.class);
         switch (statusCode) {

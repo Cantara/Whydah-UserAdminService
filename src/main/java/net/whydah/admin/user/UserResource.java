@@ -170,19 +170,15 @@ public class UserResource {
         }
     }
 
-    //TODO https://github.com/Cantara/Whydah-UserAdminService/issues/25
-    /*
     @PUT
     @Path("/{uid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUserIdentity(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-            @PathParam("uid") String uid, String userXmlOrJson) {
-        log.trace("updateUserIdentity: uid={}, userXmlOrJson={}", uid, userXmlOrJson);
-
-       userService.updateUserIdentity(applicationTokenId, userTokenId, userXmlOrJson);
+                                       @PathParam("uid") String uid, String userIdentityJson) {
+        log.trace("updateUserIdentity: uid={}, userIdentityJson={}", uid, userIdentityJson);
+        return userService.updateUserIdentity(applicationTokenId, userTokenId, uid, userIdentityJson);
     }
-    */
 
 
     @DELETE

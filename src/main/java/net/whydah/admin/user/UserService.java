@@ -32,6 +32,17 @@ public class UserService {
         this.mapper = new ObjectMapper();
     }
 
+
+    public UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) {
+        UserIdentity userIdentity;
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userJson);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to create user");
+        }
+        return userIdentity;
+    }
+
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
         UserIdentity createdUser = null;
         UserAggregate userAggregate = UserAggregate.fromXML(userXml);
@@ -43,15 +54,27 @@ public class UserService {
         return createdUser;
     }
 
-    public UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) {
-        UserIdentity userIdentity = null;
-        if (hasAccess(applicationTokenId, adminUserTokenId)) {
-            userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userJson);
+    public UserIdentity getUserIdentity(String applicationTokenId, String userTokenId, String uid) {
+        UserIdentity userIdentity;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            userIdentity = uibUserConnection.getUserIdentity(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
-            throw new NotAuthorizedException("Not Authorized to create user");
+            throw new NotAuthorizedException("Not Authorized to getUserIdentity()");
         }
+        /*
+        UserIdentity userIdentity = new UserIdentity("uid","username","first", "last", "", "first.last@example.com", "12234", "");
+        List<UserPropertyAndRole> roles = new ArrayList<>();
+        roles.add(buildStubRole());
+        userAggregate = new UserAggregate(userIdentity, roles);
+        */
+        log.trace("found {}", userIdentity);
         return userIdentity;
     }
+
+    public javax.ws.rs.core.Response updateUserIdentity(String applicationTokenId, String userTokenId, String uid, String userIdentityJson) {
+        return uibUserConnection.updateUserIdentity(applicationTokenId, userTokenId, uid, userIdentityJson);
+    }
+
 
     public boolean changePassword(String applicationTokenId, String adminUserTokenId, String userName, String password) {
         boolean isUpdated;
@@ -64,7 +87,6 @@ public class UserService {
     }
 
     public UserAggregate addUserRoleFromXml(String applicationTokenId, String adminUserTokenId, String uid, String propertyOrRoleXml) {
-
         UserAggregate updatedUser = null;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             UserPropertyAndRole userPropertyAndRole = UserPropertyAndRole.fromXml(propertyOrRoleXml);
@@ -74,7 +96,6 @@ public class UserService {
         }
         return updatedUser;
     }
-
 
     public RoleRepresentation addUserRole(String applicationTokenId, String adminUserTokenId, String uid, RoleRepresentationRequest roleRequest) {
         RoleRepresentation role;
@@ -98,24 +119,6 @@ public class UserService {
         throw new NotImplementedException();
     }
 
-
-
-    public UserIdentity getUserIdentity(String applicationTokenId, String userTokenId, String uid) {
-        UserIdentity userIdentity;
-        if (hasAccess(applicationTokenId, userTokenId)) {
-            userIdentity = uibUserConnection.getUserIdentity(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
-        } else {
-            throw new NotAuthorizedException("Not Authorized to getUserIdentity()");
-        }
-        /*
-        UserIdentity userIdentity = new UserIdentity("uid","username","first", "last", "", "first.last@example.com", "12234", "");
-        List<UserPropertyAndRole> roles = new ArrayList<>();
-        roles.add(buildStubRole());
-        userAggregate = new UserAggregate(userIdentity, roles);
-        */
-        log.trace("found {}", userIdentity);
-        return userIdentity;
-    }
 
 
     public UserAggregate getUserAggregateByUid(String applicationTokenId, String userTokenId, String uid) {
