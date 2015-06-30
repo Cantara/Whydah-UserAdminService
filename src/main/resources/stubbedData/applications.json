@@ -25,6 +25,10 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
         "crypto": [
           {
             "cryptoId": "asdfaddsgasd1234",
@@ -61,6 +65,10 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
         "crypto": [
           {
             "cryptoId": "321asdfaddsgasd",
@@ -97,6 +105,10 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
         "crypto": [
           {
             "cryptoId": "321asdfaddsgasd",
@@ -133,6 +145,11 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
+
         "crypto": [
           {
             "cryptoId": "321asdfaddsgasd",
@@ -169,6 +186,11 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
+
         "crypto": [
           {
             "cryptoId": "321asdfaddsgasd",
@@ -205,6 +227,11 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
+
         "crypto": [
           {
             "cryptoId": "321asdfaddsgasd",
@@ -241,6 +268,11 @@
         "minimumSecurityLevel": 0,
         "minimumDEFCON": 3,
         "minimumUpdateFrequency": "60d",
+        "serviceipaddresses": [
+          "217.17.33.67/24",
+          "189.123.123.32/32"
+        ],
+
         "crypto": [
           {
             "cryptoId": "321asdfaddsgasd",
