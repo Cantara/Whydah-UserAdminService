@@ -1,7 +1,5 @@
 package net.whydah.admin.applications;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.whydah.admin.application.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 /**
  * Accessable in DEV mode:
@@ -25,9 +22,7 @@ import java.io.IOException;
 @Component
 public class ApplicationsResource {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsResource.class);
-    ApplicationsService applicationsService;
-    ObjectMapper mapper = new ObjectMapper();
-
+    private final ApplicationsService applicationsService;
 
     @Autowired
     public ApplicationsResource(ApplicationsService applicationsService) {
@@ -75,22 +70,5 @@ public class ApplicationsResource {
     @Produces(MediaType.TEXT_HTML)
     public Response ping() {
         return Response.ok("pong").build();
-    }
-
-    protected String buildApplicationJson(Application application) {
-        String applicationCreatedJson = null;
-        try {
-            applicationCreatedJson = mapper.writeValueAsString(application);
-        } catch (IOException e) {
-            log.warn("Could not convert application to Json {}", application.toString());
-        }
-        return applicationCreatedJson;
-    }
-    protected String buildApplicationXml(Application application) {
-        String applicationCreatedXml = null;
-        if (application != null) {
-            applicationCreatedXml = application.toXML();
-        }
-        return applicationCreatedXml;
     }
 }

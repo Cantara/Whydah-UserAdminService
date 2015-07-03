@@ -1,8 +1,6 @@
 package net.whydah.admin.config;
 
 import net.whydah.admin.application.ApplicationResource;
-import net.whydah.admin.application.ApplicationService;
-import net.whydah.admin.application.UibApplicationConnection;
 import net.whydah.admin.applications.ApplicationsResource;
 import net.whydah.admin.auth.LogonController;
 import net.whydah.admin.auth.PasswordController;
@@ -29,9 +27,7 @@ public class JerseyApplication extends ResourceConfig {
 
         register(RequestContextFilter.class);
         register(AppConfig.class);
-        register(UibApplicationConnection.class);
 
-        register(ApplicationService.class);
         register(ApplicationResource.class);
         register(ApplicationsResource.class);
         register(UserService.class);
