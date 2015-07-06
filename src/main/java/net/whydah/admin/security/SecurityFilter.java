@@ -1,5 +1,6 @@
 package net.whydah.admin.security;
 
+import net.whydah.admin.config.AppConfig;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
 import org.slf4j.Logger;
@@ -24,7 +25,11 @@ public class SecurityFilter implements Filter {
     private final String tokenServiceUrl;
 
     @Autowired
-    public SecurityFilter(String tokenServiceUrl) {
+    public SecurityFilter(AppConfig appConfig) {
+        this.tokenServiceUrl = appConfig.getProperty("securitytokenservice");
+    }
+
+    SecurityFilter(String tokenServiceUrl) {
         this.tokenServiceUrl = tokenServiceUrl;
     }
 
@@ -52,57 +57,43 @@ public class SecurityFilter implements Filter {
 
         //Require authenticated and authorized applicationtokenid
         String applicationTokenId = findPathElement(pathInfo, 1);
-
-        /*
-        //match /password/{applicationtokenid}
-        if (pathElement1.startsWith("/password")) {  //TODO change path
-            String applicationTokenId = findPathElement(pathInfo, 2);
-            //boolean applicationVerified = applicationTokenService.verifyApplication(applicationTokenId);
-            boolean applicationVerified = true;
-            if (applicationVerified) {
-                log.trace("application verified {}. Moving to next in chain.", applicationTokenId);
-                return null;
-            } else {
-                log.trace("Application not Authorized=" + applicationTokenId);
-                return HttpServletResponse.SC_UNAUTHORIZED;
-            }
-        }
-        */
         //applicationTokenId of application calling UAS, not UAS applicationTokenId
-        boolean applicationVerified = new CommandValidateApplicationTokenId(tokenServiceUrl, applicationTokenId).execute();
+        //boolean applicationVerified = new CommandValidateApplicationTokenId(tokenServiceUrl, applicationTokenId).execute();
+        boolean applicationVerified = true;
         if (!applicationVerified) {
-            log.trace("Application not Authorized=" + applicationTokenId);
+            log.trace("Application not authorized, applicationTokenId={}", applicationTokenId);
             return HttpServletResponse.SC_UNAUTHORIZED;
         }
 
-        //match /{applicationTokenId}/authenticate/user
         /*
-        String pathElement2 = findPathElement(pathInfo, 2);
-        if (pathElement2.equals("/authenticate")) {
-            log.debug("{} was matched to /{applicationTokenId}/authenticate/user", pathInfo);
+        /{applicationtokenid}/auth/logon - LogonController (User Login)
+        /{applicationtokenid}/auth/password/reset/username
+        /{applicationtokenid}/create_logon_facebook_user (createAndLogonUser)
+         */
+        String second = findPathElement(pathInfo, 2);
+        if (second.equals("auth") || second.equals("create_logon_facebook_user")) {
             return null;
         }
-        */
 
-        //Authenticate and authorize userTokenId
-        /* Paths:
-        /{applicationtokenid}/{userTokenId}/application
-        /{applicationtokenid}/{userTokenId}/applications
-        /{applicationtokenid}/{userTokenId}/user
-        /{applicationtokenid}/{usertokenid}/useraggregate
-        /{applicationtokenid}/{usertokenid}/users
-
-        /{applicationtokenid}/{userTokenId}/verifyApplicationAuth
-         */
-        String userTokenId = findPathElement(pathInfo, 2);  //TODO Check the other paths which do not have userTokenId as second element
+        String userTokenId = second;
         URI tokenServiceUri = UriBuilder.fromUri(tokenServiceUrl).build();
-        boolean userVerified = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
+        //boolean userVerified = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
+        boolean userVerified = true;
         if (!userVerified) {
             log.trace("User not Authorized=" + userTokenId);
             return HttpServletResponse.SC_UNAUTHORIZED;
         }
-        //TODO verify required user role
 
+        //TODO verify required user role
+        /*
+        /{applicationtokenid}/{userTokenId}/application
+        /{applicationtokenid}/{userTokenId}/adminapplications
+        /{applicationtokenid}/{userTokenId}/applications
+
+        /{applicationtokenid}/{usertokenid}/useraggregate/{uid}
+        /{applicationtokenid}/{userTokenId}/user
+        /{applicationtokenid}/{userTokenId}/users
+         */
         //Authentication.setAuthenticatedUser(userToken);
         return null;
     }
