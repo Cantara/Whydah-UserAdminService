@@ -101,6 +101,7 @@ public class ApplicationResource {
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)
+    @Deprecated //Not used by ansible scrips anymore as of 2015-07-06
     public Response ping() {
         return Response.ok("pong").build();
     }

@@ -5,6 +5,7 @@ import net.whydah.admin.applications.ApplicationsResource;
 import net.whydah.admin.auth.LogonController;
 import net.whydah.admin.auth.PasswordController;
 import net.whydah.admin.createlogon.CreateLogonUserController;
+import net.whydah.admin.health.HealthResource;
 import net.whydah.admin.user.UserAggregateResource;
 import net.whydah.admin.user.UserResource;
 import net.whydah.admin.user.UserService;
@@ -24,19 +25,20 @@ public class JerseyApplication extends ResourceConfig {
     private static final Logger log = LoggerFactory.getLogger(JerseyApplication.class);
 
     public JerseyApplication() {
-
-        register(RequestContextFilter.class);
-        register(AppConfig.class);
+        register(RequestContextFilter.class);   //Should this be here?
+        register(AppConfig.class);              //Should this be here?
 
         register(ApplicationResource.class);
         register(ApplicationsResource.class);
-        register(UserService.class);
+        register(UserService.class);        //Should this be here?
         register(UserResource.class);
         register(UserAggregateResource.class);
         register(UsersResource.class);
         register(LogonController.class);
         register(CreateLogonUserController.class);
         register(PasswordController.class);
+        register(HealthResource.class);
+
         //register(SpringRequestResource.class);
         //register(CustomExceptionMapper.class);
         //https://java.net/jira/browse/JERSEY-2175
