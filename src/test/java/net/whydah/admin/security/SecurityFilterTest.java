@@ -20,14 +20,12 @@ public class SecurityFilterTest {
         securityFilter = new SecurityFilter("stsUrlNotWorking");
     }
 
-    /*
     @Test
     public void testHealthEndpoint() {
         assertNull(securityFilter.authenticateAndAuthorizeRequest("/health"));
     }
-    */
 
-    @Test
+    @Test(enabled = false)  //disable integration with STS is not enable yet in SecurityFilter.
     public void testAuthenticateApplication() {
         Integer errorCodeOrNull = securityFilter.authenticateAndAuthorizeRequest("/applicationTokenId/userTokenId/somePath");
         assertEquals(errorCodeOrNull, new Integer(HttpServletResponse.SC_UNAUTHORIZED));
