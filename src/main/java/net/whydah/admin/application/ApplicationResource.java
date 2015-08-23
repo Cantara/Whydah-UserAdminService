@@ -1,6 +1,7 @@
 package net.whydah.admin.application;
 
-import net.whydah.admin.config.AppConfig;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,9 @@ public class ApplicationResource {
 
 
     @Autowired
-    public ApplicationResource(AppConfig appConfig) {
+    @Configure
+    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl) {
         Client client = ClientBuilder.newClient();
-        String uibUrl = appConfig.getProperty("useridentitybackend");
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
     }

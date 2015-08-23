@@ -1,7 +1,8 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.AuthenticationFailedException;
-import net.whydah.admin.config.AppConfig;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,9 @@ public class UibApplicationsConnection {
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
 
     @Autowired
-    public UibApplicationsConnection(AppConfig appConfig) {
+    @Configure
+    public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl) {
         Client client = ClientBuilder.newClient();
-        String uibUrl = appConfig.getProperty("useridentitybackend");
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
     }

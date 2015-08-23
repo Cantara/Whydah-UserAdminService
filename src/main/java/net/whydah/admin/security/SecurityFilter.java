@@ -1,8 +1,7 @@
 package net.whydah.admin.security;
 
-import net.whydah.admin.config.AppConfig;
-import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
-import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,8 @@ public class SecurityFilter implements Filter {
     private final String tokenServiceUrl;
 
     @Autowired
-    public SecurityFilter(AppConfig appConfig) {
-        this.tokenServiceUrl = appConfig.getProperty("securitytokenservice");
-    }
-
-    SecurityFilter(String tokenServiceUrl) {
+    @Configure
+    public SecurityFilter(@Configuration("securitytokenservice") String tokenServiceUrl) {
         this.tokenServiceUrl = tokenServiceUrl;
     }
 
@@ -71,6 +67,9 @@ public class SecurityFilter implements Filter {
         /{applicationtokenid}/create_logon_facebook_user (createAndLogonUser)
          */
         String second = findPathElement(pathInfo, 2);
+        if (second == null) {
+            return HttpServletResponse.SC_NOT_FOUND;
+        }
         if (second.equals("auth") || second.equals("create_logon_facebook_user")) {
             return null;
         }

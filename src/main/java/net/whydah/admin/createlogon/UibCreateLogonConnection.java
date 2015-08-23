@@ -1,6 +1,7 @@
 package net.whydah.admin.createlogon;
 
-import net.whydah.admin.config.AppConfig;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class UibCreateLogonConnection {
     private final WebTarget uibService;
 
     @Autowired
-    public UibCreateLogonConnection(AppConfig appConfig) {
+    @Configure
+    public UibCreateLogonConnection(@Configuration("useridentitybackend") String uibUrl) {
         Client client = ClientBuilder.newClient();
-        String uibUrl = appConfig.getProperty("useridentitybackend");
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uibService = client.target(uibUrl);
     }

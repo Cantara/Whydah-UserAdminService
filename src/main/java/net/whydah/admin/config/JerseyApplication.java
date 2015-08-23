@@ -26,7 +26,6 @@ public class JerseyApplication extends ResourceConfig {
 
     public JerseyApplication() {
         register(RequestContextFilter.class);   //Should this be here?
-        register(AppConfig.class);              //Should this be here?
 
         register(ApplicationResource.class);
         register(ApplicationsResource.class);
