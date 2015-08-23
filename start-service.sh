@@ -1,10 +1,5 @@
 #!/bin/bash
-
-#  If IAM_MODE not set, use PROD
-if [ -z "$IAM_MODE" ]; then 
-  IAM_MODE=PROD
-fi
-
+# Used by https://github.com/Cantara/Whydah/tree/master/dev-quickstart
 
 # If Version is from source, find the artifact
 if [ "$Version" = "FROM_SOURCE" ]; then 
@@ -15,9 +10,4 @@ else
 fi
 
 
-# If IAM_CONFIG not set, use embedded
-if [ -z "$IAM_CONFIG" ]; then
-  nohup /usr/bin/java -DIAM_MODE=$IAM_MODE -jar  $Version &
-else  
-  nohup /usr/bin/java -DIAM_MODE=$IAM_MODE-DIAM_CONFIG=$IAM_CONFIG -jar  $Version &
-fi
+nohup /usr/bin/java $env_vars -jar  $Version &
