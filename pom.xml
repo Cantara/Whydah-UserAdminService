@@ -16,8 +16,7 @@
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
         <url>https://github.com/altran/Whydah-UserAdminService</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <properties>
         <service.name>Whydah-UserAdminService</service.name>
@@ -33,6 +32,11 @@
             <id>cantara-releases</id>
             <name>Cantara Release Repository</name>
             <url>http://mvnrepo.cantara.no/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>cantara-snapshots</id>
+            <name>Cantara Snapshot Repository</name>
+            <url>http://mvnrepo.cantara.no/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -67,9 +71,22 @@
             <organization>Altran Norge AS</organization>
             <organizationUrl>http://www.altran.no/</organizationUrl>
         </developer>
+        <developer>
+            <name>Erik Drolshammer</name>
+            <email>erik-dev@fjas.no</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <dependencies>
+        <dependency>
+            <groupId>net.whydah.sso</groupId>
+            <artifactId>Whydah-Java-SDK</artifactId>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.servlet</artifactId>
@@ -128,6 +145,17 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.constretto</groupId>
+            <artifactId>constretto-core</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.constretto</groupId>
+            <artifactId>constretto-spring</artifactId>
+            <version>2.2.2</version>
         </dependency>
 
 
@@ -397,8 +425,6 @@
                                 <extraArguments>
                                     <extraArgument>-XX:PermSize=32m</extraArgument>
                                     <extraArgument>-XX:MaxPermSize=32m</extraArgument>
-                                    <extraArgument>-DIAM_MODE=PROD</extraArgument>
-                                    <extraArgument>-DIAM_CONFIG=config_override/useradminservice.PROD.properties</extraArgument>
                                     <!--<extraArgument>-Dlogback.configurationFile=file:config_override/logback.xml</extraArgument>-->
                                 </extraArguments>
                             </jvmSettings>

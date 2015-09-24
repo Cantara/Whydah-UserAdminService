@@ -1,5 +1,9 @@
 package net.whydah.admin;
 
+import net.whydah.admin.config.SSLTool;
+import org.constretto.ConstrettoBuilder;
+import org.constretto.ConstrettoConfiguration;
+import org.constretto.model.Resource;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -15,7 +19,6 @@ import java.util.logging.LogManager;
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 public class MainWithJetty {
-    public static final int DEFAULT_PORT_NO = 9992;
     public static final String CONTEXT_PATH = "/useradminservice";
     private static final Logger log = LoggerFactory.getLogger(MainWithJetty.class);
 
@@ -31,7 +34,21 @@ public class MainWithJetty {
         SLF4JBridgeHandler.install();
         LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
 
-        MainWithJetty main = new MainWithJetty(DEFAULT_PORT_NO);
+        final ConstrettoConfiguration configuration = new ConstrettoBuilder()
+                .createPropertiesStore()
+                .addResource(Resource.create("classpath:useradminservice.properties"))
+                .addResource(Resource.create("file:./useradminservice_override.properties"))
+                .done()
+                .getConfiguration();
+
+        // Property-overwrite of SSL verification to support weak ssl certificates
+        String sslVerification = configuration.evaluateToString("sslverification");
+        if ("disabled".equalsIgnoreCase(sslVerification)) {
+            SSLTool.disableCertificateValidation();
+        }
+
+        Integer webappPort = configuration.evaluateToInt("service.port");
+        MainWithJetty main = new MainWithJetty(webappPort);
         main.start();
         main.join();
     }
@@ -70,15 +87,18 @@ public class MainWithJetty {
         server.join();
     }
 
+    /*
     //TODO
     public String getBasePath() {
         String path = "http://localhost:" + jettyPort + CONTEXT_PATH;
         return path;
     }
+    */
     public int getPortNumber() {
         return ((ServerConnector) server.getConnectors()[0]).getLocalPort();
     }
 
+    /*
     public void setResourceBase(String resourceBase) {
         this.resourceBase = resourceBase;
     }
@@ -86,4 +106,5 @@ public class MainWithJetty {
     public String getResourceBase() {
         return resourceBase;
     }
+    */
 }

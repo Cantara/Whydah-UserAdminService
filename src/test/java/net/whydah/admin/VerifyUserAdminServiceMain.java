@@ -1,6 +1,5 @@
 package net.whydah.admin;
 
-import net.whydah.admin.config.AppConfig;
 import net.whydah.admin.user.uib.RoleRepresentation;
 import net.whydah.admin.user.uib.RoleRepresentationRequest;
 import net.whydah.admin.user.uib.UserIdentity;
@@ -38,8 +37,8 @@ public class VerifyUserAdminServiceMain {
 
     public VerifyUserAdminServiceMain() {
         Client client = ClientBuilder.newClient();
-        AppConfig appConfig = new AppConfig();
-        uasUrl = appConfig.getProperty("myuri");
+        //uasUrl = appConfig.getProperty("myuri");
+        uasUrl = "http://localhost:9992/useradminservice";
         log.info("Connection to UserAdministrationService on {}", uasUrl);
         userAdminService = client.target(uasUrl);
     }

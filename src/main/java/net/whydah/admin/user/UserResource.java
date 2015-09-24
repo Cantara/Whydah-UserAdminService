@@ -3,7 +3,6 @@ package net.whydah.admin.user;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.whydah.admin.application.Application;
 import net.whydah.admin.user.uib.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -375,6 +374,7 @@ public class UserResource {
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)
+    @Deprecated //Not used by ansible scrips anymore as of 2015-07-06
     public Response ping() {
         return Response.ok("pong").build();
     }

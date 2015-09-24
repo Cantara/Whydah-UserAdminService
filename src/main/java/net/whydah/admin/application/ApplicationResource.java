@@ -1,6 +1,7 @@
 package net.whydah.admin.application;
 
-import net.whydah.admin.config.AppConfig;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import javax.ws.rs.core.Response;
  *
  * Proxy in front of UIB application CRUD endpoint.
  *
- * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a>
  */
 @Path("/{applicationtokenid}/{userTokenId}/application")
@@ -31,9 +31,9 @@ public class ApplicationResource {
 
 
     @Autowired
-    public ApplicationResource(AppConfig appConfig) {
+    @Configure
+    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl) {
         Client client = ClientBuilder.newClient();
-        String uibUrl = appConfig.getProperty("useridentitybackend");
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
     }
@@ -99,102 +99,10 @@ public class ApplicationResource {
     }
 
 
-
-    /*
-    //TODO: Enhance due to https://github.com/Cantara/Whydah-UserAdminService/issues/20
-    @POST
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response createApplication(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String applicationXml) {
-        log.trace("createApplication is called with applicationXml={}", applicationXml);
-        Application application;
-        try {
-            application = applicationService.createApplicationFromXml(applicationTokenId, userTokenId, applicationXml);
-
-        } catch (IllegalArgumentException iae) {
-            log.error("createApplication: Invalid xml={}", applicationXml, iae);
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-
-        if (application != null) {
-            String applicationCreatedXml = application.toXML();
-            return Response.ok(applicationCreatedXml).build();
-        } else {
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }
-    }
-
-   //TODO enchance due to https://github.com/Cantara/Whydah-UserAdminService/issues/20
-    @GET
-    @Path("/{applicationId}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getApplication(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                   @PathParam("applicationId") String applicationId) {
-        log.trace("getApplication is called with applicationId={}", applicationId);
-        try {
-            Application application = applicationService.getApplication(applicationTokenId, userTokenId,applicationId);
-            String applicationCreatedXml = buildApplicationXml(application);
-            return Response.ok(applicationCreatedXml).build();
-        } catch (IllegalArgumentException iae) {
-            log.error("createApplication: Invalid xml={}", applicationId, iae);
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    protected String buildApplicationXml(Application application) {
-        String applicationCreatedXml = null;
-        if (application != null) {
-            applicationCreatedXml = application.toXML();
-        }
-        return applicationCreatedXml;
-    }
-    */
-
-    /**
-     * Enhance due to https://github.com/Cantara/Whydah-UserAdminService/issues/20
-     * Create a new applcation from json
-     * Add default
-     *
-     * @param applicationXml json representing an Application
-     * @return Application
-     */
-    @POST
-    @Path("/auth")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response authenticateApplication(@PathParam("applicationtokenid") String applicationTokenId,  String applicationXml) {
-        log.trace("authenticateApplication is called with applicationXml={} from applicationtokenid={}", applicationXml,applicationTokenId);
-
-        // FIXME verify that the request come from STS, which is the only application who has access to auth
-        // FIXME ask UIB for to verify applicationSecret
-        // FIXME Build and return application.toXML()
-
-        boolean authOK=true;
-        if (authOK) {
-            String applicationCreatedXml ="";// application.toXML();
-            return Response.ok(applicationCreatedXml).build();
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-    }
-
-
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)
+    @Deprecated //Not used by ansible scrips anymore as of 2015-07-06
     public Response ping() {
         return Response.ok("pong").build();
     }
