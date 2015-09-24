@@ -28,7 +28,7 @@ public class PasswordController {
     @Path("/reset/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) {
-        log.trace("username is called username={}", username);
+        log.trace("reset username={}", username);
         String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
         return Response.ok(username).build();
     }
@@ -39,7 +39,7 @@ public class PasswordController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username,@PathParam("passwordChangeToken") String passwordChangeToken,@FormParam("password") String password) {
 
-        log.trace("username is called username={}", username);
+        log.trace("resetNewPW - username={}", username);
         String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken,password);
         return Response.ok(username).build();
     }
