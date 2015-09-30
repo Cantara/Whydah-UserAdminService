@@ -1,5 +1,7 @@
 package net.whydah.admin.createlogon;
 
+import net.whydah.admin.user.uib.UserIdentity;
+import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -48,5 +50,24 @@ public class UibCreateLogonConnection {
         }
         return response.getEntity().toString();
 
+    }
+
+    public UserIdentity createUser(String applicationTokenId, UserIdentityRepresentation minimalUser) {
+
+        UserIdentity userIdentity = null;
+//        if ( minimalUser != null) {
+//
+//            WebTarget webResource = uibService.path("/" + applicationTokenId).path(USER_AUTHENTICATION_PATH).path(CREATE_AND_LOGON_OPERATION);
+//            log.debug("URI to use {}", webResource.getUri());
+//            Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
+//            int statusCode = response.getStatus();
+//            if (statusCode != 200) {
+//                log.info("Request to UIB failed status {}, response {}", statusCode, response.getEntity());
+//                throw new ConnectionFailedException("Error creating user based on facebookUserXml {" + fbUserXml + "}, Response: {" + response.getEntity() + "}, Status {" + statusCode + "}");
+//            }
+//            //TODO build response response.getEntity().toString();
+
+//        }
+        return userIdentity;
     }
 }

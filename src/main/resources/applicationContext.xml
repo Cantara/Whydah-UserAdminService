@@ -18,4 +18,5 @@
     </constretto:configuration>
 
     <context:component-scan base-package="net.whydah.admin"/>
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 </beans>

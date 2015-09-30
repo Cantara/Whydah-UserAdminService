@@ -1,5 +1,7 @@
 package net.whydah.admin.createlogon;
 
+import net.whydah.admin.user.uib.UserIdentity;
+import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,4 +21,13 @@ public class SignupService {
         this.uibConnection = uibConnection;
     }
 
+    public UserIdentity signupUser(String applicationtokenid, UserIdentityRepresentation signupUser, UserAction userAction) {
+        //1.Create User (UIB)
+       UserIdentity userIdentity =  uibConnection.createUser(applicationtokenid, signupUser);
+        //2.Send email or sms pin (STS)
+        //3.Receive UserToken (STS)
+        //4.Return UserToken.
+
+        return userIdentity;
+    }
 }

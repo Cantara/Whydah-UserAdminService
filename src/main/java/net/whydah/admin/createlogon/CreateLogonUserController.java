@@ -1,7 +1,10 @@
 package net.whydah.admin.createlogon;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.user.uib.UserAggregate;
+import net.whydah.admin.user.uib.UserIdentity;
+import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,9 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+
+import static javax.ws.rs.core.Response.Status;
 
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
@@ -21,11 +27,13 @@ public class CreateLogonUserController {
 
     private final UibCreateLogonConnection uibConnection;
     private final SignupService signupService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public CreateLogonUserController(UibCreateLogonConnection uibConnection, SignupService signupService) {
+    public CreateLogonUserController(UibCreateLogonConnection uibConnection, SignupService signupService, ObjectMapper objectMapper) {
         this.uibConnection = uibConnection;
         this.signupService = signupService;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -77,10 +85,40 @@ public class CreateLogonUserController {
     }
 
     @POST
+    @Path("/signup")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response signup(@PathParam("applicationtokenid") String applicationtokenid, String userJson) {
+        log.trace("Try to create user from json {}", userJson);
+        UserAction userAction = UserAction.EMAIL;
+
+
+        Response response = null;
+        String userCreatedJson = null;
+        try {
+            UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
+            UserIdentity userIdentity = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            if (userIdentity != null) {
+                response = Response.ok(userIdentity.toJson()).build();
+            } else {
+                log.debug("UserIdentity was not created. Input Json {}", userJson);
+                response = Response.status(Status.PRECONDITION_FAILED).build();
+            }
+        } catch (IOException ioe){
+            response = Response.status(Status.BAD_REQUEST).build();
+        } catch (AuthenticationFailedException e) {
+            log.trace("Failed to create user with applicationtokenid {}, userJson: {}", applicationtokenid, userJson);
+            response = Response.serverError().build();
+        }
+        return response;
+
+    }
+
+    @POST
     @Path("/signup/{userAction}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response signupWithPin(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("userAction") String userActionInput,String userJson ) {
+    public Response signupUserAction(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("userAction") String userActionInput,String userJson) {
         log.trace("Try to create user from json {}", userJson);
         UserAction userAction = UserAction.EMAIL;
         if (userActionInput != null && userActionInput.trim().toUpperCase().equals(UserAction.PIN.name())){
@@ -90,12 +128,16 @@ public class CreateLogonUserController {
         Response response = null;
         String userCreatedXml = null;
         try {
-            //1.Create User (UIB)
-            //2.Send email or sms pin (STS)
-            //3.Receive UserToken (STS)
-            //4.Return UserToken.
-//            userCreatedXml = uibConnection.createUser(applicationtokenid, fbUserXml);
-            response = Response.ok(userCreatedXml).build();
+            UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
+            UserIdentity userIdentity = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            if (userIdentity != null) {
+                response = Response.ok(userIdentity.toJson()).build();
+            } else {
+                log.debug("UserIdentity was not created. Input Json {}, userAction {}", userJson, userAction);
+                response = Response.status(Status.PRECONDITION_FAILED).build();
+            }
+        } catch (IOException ioe){
+            response = Response.status(Response.Status.BAD_REQUEST).build();
         } catch (AuthenticationFailedException e) {
             log.trace("Failed to create user with applicationtokenid {}, userJson: {}", applicationtokenid, userJson);
             response = Response.serverError().build();
