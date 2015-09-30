@@ -55,6 +55,8 @@ public class UibCreateLogonConnection {
     public UserIdentity createUser(String applicationTokenId, UserIdentityRepresentation minimalUser) {
 
         UserIdentity userIdentity = null;
+        userIdentity = new UserIdentity("temp-uid", minimalUser.getUsername(),minimalUser.getFirstName(),minimalUser.getLastName(),minimalUser.getPersonRef(),
+                minimalUser.getEmail(),minimalUser.getCellPhone(),null);
 //        if ( minimalUser != null) {
 //
 //            WebTarget webResource = uibService.path("/" + applicationTokenId).path(USER_AUTHENTICATION_PATH).path(CREATE_AND_LOGON_OPERATION);
