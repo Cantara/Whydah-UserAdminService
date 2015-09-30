@@ -70,7 +70,7 @@ public class SecurityFilter implements Filter {
         if (second == null) {
             return HttpServletResponse.SC_NOT_FOUND;
         }
-        if (second.equals("auth") || second.equals("create_logon_facebook_user")) {
+        if (second.equals("auth") || second.equals("create_logon_facebook_user") || second.equals("signup")) {
             return null;
         }
 

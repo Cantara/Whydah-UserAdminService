@@ -20,10 +20,12 @@ public class CreateLogonUserController {
     private static final Logger log = LoggerFactory.getLogger(CreateLogonUserController.class);
 
     private final UibCreateLogonConnection uibConnection;
+    private final SignupService signupService;
 
     @Autowired
-    public CreateLogonUserController(UibCreateLogonConnection uibConnection) {
+    public CreateLogonUserController(UibCreateLogonConnection uibConnection, SignupService signupService) {
         this.uibConnection = uibConnection;
+        this.signupService = signupService;
     }
 
 
@@ -74,6 +76,34 @@ public class CreateLogonUserController {
 
     }
 
+    @POST
+    @Path("/signup/{userAction}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response signupWithPin(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("userAction") String userActionInput,String userJson ) {
+        log.trace("Try to create user from json {}", userJson);
+        UserAction userAction = UserAction.EMAIL;
+        if (userActionInput != null && userActionInput.trim().toUpperCase().equals(UserAction.PIN.name())){
+            userAction = UserAction.PIN;
+        }
+
+        Response response = null;
+        String userCreatedXml = null;
+        try {
+            //1.Create User (UIB)
+            //2.Send email or sms pin (STS)
+            //3.Receive UserToken (STS)
+            //4.Return UserToken.
+//            userCreatedXml = uibConnection.createUser(applicationtokenid, fbUserXml);
+            response = Response.ok(userCreatedXml).build();
+        } catch (AuthenticationFailedException e) {
+            log.trace("Failed to create user with applicationtokenid {}, userJson: {}", applicationtokenid, userJson);
+            response = Response.serverError().build();
+        }
+        return response;
+
+    }
+
     protected String buildUserXml(UserAggregate userAggregate) {
         String userXml = null;
         if (userAggregate != null) {
@@ -81,4 +111,6 @@ public class CreateLogonUserController {
         }
         return userXml;
     }
+
+
 }

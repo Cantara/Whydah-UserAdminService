@@ -68,8 +68,6 @@
             <roles>
                 <role>Developer</role>
             </roles>
-            <organization>Altran Norge AS</organization>
-            <organizationUrl>http://www.altran.no/</organizationUrl>
         </developer>
         <developer>
             <name>Erik Drolshammer</name>
@@ -84,9 +82,13 @@
         <dependency>
             <groupId>net.whydah.sso</groupId>
             <artifactId>Whydah-Java-SDK</artifactId>
-            <version>2.1-SNAPSHOT</version>
+            <version>2.1.SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
+            <version>1.4.11</version>
+        </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.servlet</artifactId>
@@ -157,7 +159,6 @@
             <artifactId>constretto-spring</artifactId>
             <version>2.2.2</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

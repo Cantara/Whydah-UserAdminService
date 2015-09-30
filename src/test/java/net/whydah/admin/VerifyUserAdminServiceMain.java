@@ -34,6 +34,12 @@ public class VerifyUserAdminServiceMain {
     public static final String USER_ADMIN_SERVICE_TOKEN_ID = "1";
     public static final String USER_TOKEN_ID = "1";
     public static final String USER_ID = "test.me@example.com";
+    private static final String UIB_USERNAME = "useradmin";
+    private static final String UIB_PASSWORD = "admin";
+    private static final String UAS_APPLICATION_ID = "12";
+    private static final String UAS_APPLICATION_SECRET = "9ju592A4t8dzz8mz7a5QQJ7Px";
+    private final String userAdminServiceUri = "http://localhost:9992/useradminservice";
+    private final String userTokenServiceUri = "http://localhost:9998/tokenservice";
 
     public VerifyUserAdminServiceMain() {
         Client client = ClientBuilder.newClient();
@@ -46,15 +52,18 @@ public class VerifyUserAdminServiceMain {
     public static void main(String[] args) {
         System.setProperty("IAM_MODE", "DEV");
         VerifyUserAdminServiceMain verificator = new VerifyUserAdminServiceMain();
-        //verificator.logonUser();
+        verificator.logonUser();
         //verificator.stsUserInterface();
-        //verificator.userAdminWebUserInterface();
+        verificator.userAdminWebUserInterface();
         verificator.userAdminWebApplicationInterface();
     }
 
 
     public void logonUser() {
-        String userAdminServiceTokenId = "1";
+//        String uasAppToken = WhydahUtil.logOnApplication(userTokenServiceUri, UAS_APPLICATION_ID, UAS_APPLICATION_SECRET);
+//        log.debug("usaAppToken {}", uasAppToken);
+//        String adminUserToken = WhydahUtil.logOnApplicationAndUser(userTokenServiceUri,UAS_APPLICATION_ID,UAS_APPLICATION_SECRET,UIB_USERNAME,UIB_PASSWORD);
+        String userAdminServiceTokenId = "c20ad4d76fe97759aa27a0c99bff6710";
         WebTarget userLogonResource = userAdminService.path("/" + userAdminServiceTokenId).path(USER_AUTHENTICATION_PATH);
 
         String credentials = userCredentialXml();
@@ -109,8 +118,8 @@ public class VerifyUserAdminServiceMain {
     private String userCredentialXml() {
         return "<usercredential>\n" +
                 "   <params>\n" +
-                "      <username>testMe</username>\n" +
-                "      <password>testMe1234</password>\n" +
+                "      <username>"+UIB_PASSWORD+"</username>\n" +
+                "      <password>"+UIB_PASSWORD +"</password>\n" +
                 "   </params>\n" +
                 "</usercredential>";
     }
@@ -207,6 +216,8 @@ public class VerifyUserAdminServiceMain {
         String userJson = buildStubUser().toJsonBare();
         log.info("AddUser by url {}, ", userResource.getUri().toString());
         Response response = userResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userJson, MediaType.APPLICATION_JSON));
+        String responseText = response.readEntity(String.class);
+        log.debug("Response: {}", responseText);
         int statusCode = response.getStatus();
         log.info("addUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
