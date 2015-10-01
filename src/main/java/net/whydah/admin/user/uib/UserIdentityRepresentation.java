@@ -72,9 +72,22 @@ public class UserIdentityRepresentation {
     }
 
 
-    public String toJsonBare() {
+    public String toJson() {
         String userJson = "{\"username\":\""+ username +"\",\"firstName\":\"" +firstName +"\",\"lastName\":\""+lastName+"\",\"personRef\":\""+personRef+
                 "\",\"email\":\""+email+"\",\"cellPhone\":\""+cellPhone+"\"}";
         return userJson;
+    }
+
+    @Override
+    public String toString() {
+        return "UserIdentityRepresentation{" +
+                "username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", personRef='" + personRef + '\'' +
+                ", email='" + email + '\'' +
+                ", cellPhone='" + cellPhone + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

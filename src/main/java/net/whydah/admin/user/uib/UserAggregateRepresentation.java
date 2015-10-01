@@ -30,6 +30,21 @@ public class UserAggregateRepresentation {
     private UserAggregateRepresentation() {
     }
 
+    public static UserAggregateRepresentation fromUserIdentityRepresentation(UserIdentityRepresentation userIdentity) {
+        UserAggregateRepresentation dto = null;
+        if (userIdentity != null) {
+            dto = new UserAggregateRepresentation();
+
+            dto.setUsername(userIdentity.getUsername());
+            dto.setFirstName(userIdentity.getFirstName());
+            dto.setLastName(userIdentity.getLastName());
+            dto.setPersonRef(userIdentity.getPersonRef());
+            dto.setEmail(userIdentity.getEmail());
+            dto.setCellPhone(userIdentity.getCellPhone());
+        }
+        return dto;
+    }
+
     public static UserAggregateRepresentation fromUserAggregate(UserAggregate userAggregate) {
         UserAggregateRepresentation dto = new UserAggregateRepresentation();
 
@@ -183,6 +198,14 @@ public class UserAggregateRepresentation {
     }
     public void setRoles(List<RoleRepresentation> roles) {
         this.roles = roles;
+    }
+    public void addRole(RoleRepresentation role) {
+        if (roles == null) {
+            roles = new ArrayList<>();
+        }
+        if (role != null) {
+            roles.add(role);
+        }
     }
 
     public String getPersonName() {

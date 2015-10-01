@@ -3,7 +3,6 @@ package net.whydah.admin.createlogon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.user.uib.UserAggregate;
-import net.whydah.admin.user.uib.UserIdentity;
 import net.whydah.admin.user.uib.UserIdentityRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,9 +96,9 @@ public class CreateLogonUserController {
         String userCreatedJson = null;
         try {
             UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
-            UserIdentity userIdentity = signupService.signupUser(applicationtokenid, signupUser, userAction);
-            if (userIdentity != null) {
-                response = Response.ok(userIdentity.toJson()).build();
+            String userToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            if (userToken != null) {
+                response = Response.ok(userToken).build();
             } else {
                 log.debug("UserIdentity was not created. Input Json {}", userJson);
                 response = Response.status(Status.PRECONDITION_FAILED).build();
@@ -129,9 +128,9 @@ public class CreateLogonUserController {
         String userCreatedXml = null;
         try {
             UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
-            UserIdentity userIdentity = signupService.signupUser(applicationtokenid, signupUser, userAction);
-            if (userIdentity != null) {
-                response = Response.ok(userIdentity.toJson()).build();
+            String userToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            if (userToken != null) {
+                response = Response.ok(userToken).build();
             } else {
                 log.debug("UserIdentity was not created. Input Json {}, userAction {}", userJson, userAction);
                 response = Response.status(Status.PRECONDITION_FAILED).build();

@@ -48,7 +48,7 @@ public class UserService {
         UserAggregate userAggregate = UserAggregate.fromXML(userXml);
         UserIdentityRepresentation userIdentity = userAggregate.getIdentity();
         if (userIdentity != null) {
-            String userJson = userIdentity.toJsonBare();
+            String userJson = userIdentity.toJson();
             createdUser = createUser(applicationTokenId, userTokenId, userJson);
         }
         return createdUser;
