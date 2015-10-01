@@ -67,7 +67,7 @@ public class SignupService {
     }
 
     public String signupUser(String applicationtokenId, UserIdentityRepresentation signupUser, UserAction userAction) {
-        String userTokenXml = null;
+        String passwordResetToken = null;
         //Add default roles
         UserAggregateRepresentation createUserRepresentation = buildUserWithDefaultRoles(signupUser);
         //1.Create User (UIB)
@@ -79,11 +79,11 @@ public class SignupService {
             //3.Send email or sms pin (STS)
             boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
             if (notificationSent) {
-                userTokenXml = resetPasswordToken;
+                passwordResetToken = resetPasswordToken;
             }
         }
 
-        return userTokenXml;
+        return passwordResetToken;
     }
 
     protected boolean sendNotification(UserAggregateRepresentation createdUser, UserAction userAction, String passwordResetToken) {
@@ -96,7 +96,7 @@ public class SignupService {
                 String username = createdUser.getUsername();
                 String userEmail = createdUser.getEmail();
                 if (userEmail != null && !userEmail.isEmpty()) {
-                    passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail);
+                    notificationIsSent = passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail);
                 }
             }
         }

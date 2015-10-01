@@ -93,12 +93,11 @@ public class CreateLogonUserController {
 
 
         Response response = null;
-        String userCreatedJson = null;
         try {
             UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
-            String userToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
-            if (userToken != null) {
-                response = Response.ok(userToken).build();
+            String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            if (passwordResetToken != null) {
+                response = Response.ok(passwordResetToken).build();
             } else {
                 log.debug("UserIdentity was not created. Input Json {}", userJson);
                 response = Response.status(Status.PRECONDITION_FAILED).build();
@@ -125,12 +124,11 @@ public class CreateLogonUserController {
         }
 
         Response response = null;
-        String userCreatedXml = null;
         try {
             UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
-            String userToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
-            if (userToken != null) {
-                response = Response.ok(userToken).build();
+            String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            if (passwordResetToken != null) {
+                response = Response.ok(passwordResetToken).build();
             } else {
                 log.debug("UserIdentity was not created. Input Json {}, userAction {}", userJson, userAction);
                 response = Response.status(Status.PRECONDITION_FAILED).build();

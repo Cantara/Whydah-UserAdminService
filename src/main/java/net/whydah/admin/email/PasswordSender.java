@@ -30,10 +30,17 @@ public class PasswordSender {
         this.ssoLoginServiceUrl = ssoLoginServiceUrl;
     }
 
-    public void sendResetPasswordEmail(String username, String token, String userEmail) {
+    public boolean sendResetPasswordEmail(String username, String token, String userEmail) {
+        boolean messageSent = false;
         String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
         log.info("Sending resetPassword email for user {} to {}, token={}", username, userEmail, token);
         String body = bodyGenerator.resetPassword(resetUrl, username);
-        mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+        try {
+            mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+            messageSent = true;
+        } catch (Exception e) {
+            log.info("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
+        }
+        return messageSent;
     }
 }

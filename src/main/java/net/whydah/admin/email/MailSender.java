@@ -83,6 +83,9 @@ public class MailSender {
             log.info("Sent email to " + recipients);
         } catch (MessagingException e) {
             String smtpInfo = "Error sending email. SMTP_HOST=" + SMTP_HOST + ", SMTP_PORT=" + SMTP_PORT + ", smtpUsername=" + smtpUsername + ", subject=" + subject;
+            if (e.getCause() instanceof AuthenticationFailedException) {
+                log.warn("Failed to send mail due to missconfiguration? Reason {}", e.getCause().getMessage());
+            }
             throw new RuntimeException(smtpInfo, e);
         }
     }
