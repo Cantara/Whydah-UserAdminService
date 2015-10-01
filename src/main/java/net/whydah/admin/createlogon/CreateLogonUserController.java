@@ -96,8 +96,9 @@ public class CreateLogonUserController {
         try {
             UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
             String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
+            String responseJson = "{\"resetPasswordToken\": \"" + passwordResetToken+"\"}";
             if (passwordResetToken != null) {
-                response = Response.ok(passwordResetToken).build();
+                response = Response.ok(responseJson).build();
             } else {
                 log.debug("UserIdentity was not created. Input Json {}", userJson);
                 response = Response.status(Status.PRECONDITION_FAILED).build();
