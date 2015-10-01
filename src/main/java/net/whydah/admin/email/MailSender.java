@@ -86,7 +86,7 @@ public class MailSender {
             if (e.getCause() instanceof AuthenticationFailedException) {
                 log.warn("Failed to send mail due to missconfiguration? Reason {}", e.getCause().getMessage());
             }
-          //FIXME bli  throw new RuntimeException(smtpInfo, e);
+          throw new RuntimeException(smtpInfo, e);
         }
     }
 }

@@ -1,5 +1,6 @@
 package net.whydah.admin.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.createlogon.UserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
@@ -20,11 +23,13 @@ public class PasswordController {
 
     private final UibAuthConnection uibAuthConnection;
     private final AuthenticationService authenticationService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public PasswordController(UibAuthConnection uibAuthConnection, AuthenticationService authenticationService) {
+    public PasswordController(UibAuthConnection uibAuthConnection, AuthenticationService authenticationService, ObjectMapper objectMapper) {
         this.uibAuthConnection = uibAuthConnection;
         this.authenticationService = authenticationService;
+        this.objectMapper = objectMapper;
     }
 
     @POST
@@ -55,12 +60,22 @@ public class PasswordController {
 
     @POST
     @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username,@PathParam("passwordChangeToken") String passwordChangeToken,@FormParam("password") String password) {
+    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username,@PathParam("passwordChangeToken") String passwordChangeToken,String newPasswordJson) {
 
         log.trace("resetNewPW - username={}", username);
-        String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken,password);
-        return Response.ok(username).build();
+        String password = null;
+        try {
+            Map<String,String> newPasswordMap = objectMapper.readValue(newPasswordJson, Map.class);
+            password = newPasswordMap.get("newpassword");
+            String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken,password);
+            return Response.ok(username).build();
+        } catch (IOException e) {
+            log.trace("Failed to parse inncomming newPasswordJson {}", newPasswordJson);
+        }
+        return Response.accepted(newPasswordJson).build();
+
     }
 
 

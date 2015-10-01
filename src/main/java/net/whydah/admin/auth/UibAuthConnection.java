@@ -88,7 +88,7 @@ public class UibAuthConnection {
     public String setPasswordByToken(String userAdminServiceTokenId, String username,String passwordToken,String password) {
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username).path("newpassword").path(passwordToken);
 
-        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.MULTIPART_FORM_DATA));
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         switch (statusCode) {
