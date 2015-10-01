@@ -90,7 +90,7 @@ public class SignupService {
         boolean notificationIsSent = false;
         if (createdUser != null) {
             if (userAction != null && userAction.equals(UserAction.PIN)) {
-                //TODO send PIN notification
+                //TODO send PIN notification see https://github.com/Cantara/Whydah-UserAdminService/issues/31
                 throw new NotImplementedException();
             } else {
                 String username = createdUser.getUsername();
