@@ -1,5 +1,7 @@
 package net.whydah.admin.createlogon;
 
+import net.whydah.admin.auth.UibAuthConnection;
+import net.whydah.admin.email.PasswordSender;
 import net.whydah.admin.user.uib.RoleRepresentation;
 import net.whydah.admin.user.uib.UserAggregateRepresentation;
 import net.whydah.admin.user.uib.UserIdentityRepresentation;
@@ -8,6 +10,7 @@ import org.constretto.ConstrettoConfiguration;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -19,6 +22,8 @@ public class SignupService {
     private static final Logger log = getLogger(SignupService.class);
     private final UibCreateLogonConnection uibConnection;
     private final ConstrettoConfiguration configuration;
+    private final UibAuthConnection uibAuthConnection;
+    private final PasswordSender passwordSender;
 
     private String defaultApplicationId;
     private String defaultApplicationName;
@@ -35,9 +40,12 @@ public class SignupService {
     private String fbRoleName;
 
     @Autowired
-    public SignupService(UibCreateLogonConnection uibConnection, ConstrettoConfiguration configuration) {
+    public SignupService(UibCreateLogonConnection uibConnection, ConstrettoConfiguration configuration,
+                         UibAuthConnection uibAuthConnection, PasswordSender passwordSender) {
         this.uibConnection = uibConnection;
         this.configuration = configuration;
+        this.uibAuthConnection = uibAuthConnection;
+        this.passwordSender = passwordSender;
         initAddUserDefaults(this.configuration);
     }
     private void initAddUserDefaults(ConstrettoConfiguration configuration) {
@@ -58,19 +66,44 @@ public class SignupService {
         this.fbRoleName = configuration.evaluateToString("adduser.facebook.defaultrole.name");
     }
 
-    public String signupUser(String applicationtokenid, UserIdentityRepresentation signupUser, UserAction userAction) {
+    public String signupUser(String applicationtokenId, UserIdentityRepresentation signupUser, UserAction userAction) {
+        String userTokenXml = null;
         //Add default roles
         UserAggregateRepresentation createUserRepresentation = buildUserWithDefaultRoles(signupUser);
         //1.Create User (UIB)
-        UserAggregateRepresentation  createdUser =  uibConnection.createAggregateUser(applicationtokenid, createUserRepresentation);
-        //2.Send email or sms pin (STS)
-        //3.Receive UserToken (STS)
-        //4.Return UserToken.
-        String userTokenXml = null;
+        UserAggregateRepresentation  createdUser =  uibConnection.createAggregateUser(applicationtokenId, createUserRepresentation);
+        //2.CreateResetPasswordToken
+        if (createdUser != null) {
+            String username = createdUser.getUsername();
+            String resetPasswordToken = uibAuthConnection.resetPassword(applicationtokenId, username);
+            //3.Send email or sms pin (STS)
+            boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
+            if (notificationSent) {
+                userTokenXml = resetPasswordToken;
+            }
+        }
+
         return userTokenXml;
     }
 
-    private UserAggregateRepresentation buildUserWithDefaultRoles(UserIdentityRepresentation signupUser) {
+    protected boolean sendNotification(UserAggregateRepresentation createdUser, UserAction userAction, String passwordResetToken) {
+        boolean notificationIsSent = false;
+        if (createdUser != null) {
+            if (userAction != null && userAction.equals(UserAction.PIN)) {
+                //TODO send PIN notification
+                throw new NotImplementedException();
+            } else {
+                String username = createdUser.getUsername();
+                String userEmail = createdUser.getEmail();
+                if (userEmail != null && !userEmail.isEmpty()) {
+                    passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail);
+                }
+            }
+        }
+        return notificationIsSent;
+    }
+
+    protected UserAggregateRepresentation buildUserWithDefaultRoles(UserIdentityRepresentation signupUser) {
         UserAggregateRepresentation userAggregate = null;
         if (signupUser != null) {
             userAggregate = UserAggregateRepresentation.fromUserIdentityRepresentation(signupUser);
@@ -80,7 +113,7 @@ public class SignupService {
         return userAggregate;
     }
 
-    private RoleRepresentation buildDefaultRole() {
+    protected RoleRepresentation buildDefaultRole() {
         UserPropertyAndRole userRole = new UserPropertyAndRole(null, null, defaultApplicationId,defaultApplicationName,defaultOrganizationName,defaultRoleName,defaultRoleValue);
         return RoleRepresentation.fromUserPropertyAndRole(userRole);
     }

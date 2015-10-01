@@ -165,14 +165,13 @@
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-        <!-- not used by UIB -->
-        <!--
+
+        <!--Support for mail sending-->
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-spring</artifactId>
-            <version>${jetty.version}</version>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.22</version>
         </dependency>
-        -->
 
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
