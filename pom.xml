@@ -19,6 +19,7 @@
     </scm>
 
     <properties>
+        <whydah-sdk-version>2.1.1-ALPHA-8</whydah-sdk-version>
         <service.name>Whydah-UserAdminService</service.name>
         <jersey.version>2.18</jersey.version>
         <jetty.version>9.3.0.v20150612</jetty.version>
@@ -82,7 +83,7 @@
         <dependency>
             <groupId>net.whydah.sso</groupId>
             <artifactId>Whydah-Java-SDK</artifactId>
-            <version>2.1.1-ALPHA-8</version>
+            <version>${whydah-sdk-version}</version>
         </dependency>
         <dependency>
             <groupId>com.netflix.hystrix</groupId>
