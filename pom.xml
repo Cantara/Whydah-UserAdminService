@@ -19,8 +19,8 @@
     </scm>
 
     <properties>
-        <whydah-sdk-version>2.1.1-ALPHA-8</whydah-sdk-version>
         <service.name>Whydah-UserAdminService</service.name>
+        <whydah-sdk-version>2.1.5-SNAPSHOT</whydah-sdk-version>
         <jersey.version>2.18</jersey.version>
         <jetty.version>9.3.0.v20150612</jetty.version>
         <spring.version>4.1.6.RELEASE</spring.version>
