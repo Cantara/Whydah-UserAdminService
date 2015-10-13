@@ -132,6 +132,16 @@ public class UserService {
         return userAggregate;
     }
 
+    public String getUserAggregateByUidAsJson(String applicationTokenId, String userTokenId, String uid) {
+        if (!hasAccess(applicationTokenId, userTokenId)) {
+            throw new NotAuthorizedException("Not Authorized to getUserAggregateByUid()");
+        }
+
+        String userAggregate = uibUserConnection.getUserAggregateByUidAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
+        log.trace("found UserAggregate {}", userAggregate);
+        return userAggregate;
+    }
+
     private UserPropertyAndRole buildStubRole() {
         return new UserPropertyAndRole("id", "uid", "1", "appname", "orgName", "user", "true");
     }

@@ -282,6 +282,25 @@ public class UibUserConnection {
         return userAggregate;
     }
 
+    public String getUserAggregateByUidAsJson(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
+        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        String responseBody = response.readEntity(String.class);
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("getUserAggregateByUid-Response from Uib {}", responseBody);
+                return responseBody;
+            case STATUS_FORBIDDEN:
+                log.error("getUserAggregateByUid-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
+                break;
+            default:
+                log.error("getUserAggregateByUid-Response from UIB: {}: {}", response.getStatus(), responseBody);
+                throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
+        }
+        return null;
+    }
+
 
     public String getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) {
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(uid).path("roles");

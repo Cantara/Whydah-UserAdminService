@@ -45,30 +45,17 @@ public class UserAggregateResource {
     public Response getUserAggregateByUid(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("usertokenid") String userTokenId,
                                           @PathParam("uid") String uid) {
         log.trace("getUserAggregateByUid with uid={}", uid);
-
-        UserAggregate userAggregate;
         try {
-            userAggregate = userAggregateService.getUserAggregateByUid(applicationTokenId, userTokenId, uid);
-            if (userAggregate == null) {
+            String userAggregateJson = userAggregateService.getUserAggregateByUidAsJson(applicationTokenId, userTokenId, uid);
+            if (userAggregateJson == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity("no user with uid" + uid).build();
             }
+            return Response.ok(userAggregateJson).build();
+
         } catch (RuntimeException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        //TODO rewrite urls to point to UAS instead of UIB
-
-        String json = UserAggregateRepresentation.fromUserAggregate(userAggregate).toJson();
-        return Response.ok(json).build();
-        /*
-        try {
-            String userResponse = mapper.writeValueAsString(userAggregate);
-            return Response.ok(userResponse).build();
-        } catch (IOException e) {
-            log.error("", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-        */
     }
 }
