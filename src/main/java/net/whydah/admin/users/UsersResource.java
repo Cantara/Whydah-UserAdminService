@@ -1,5 +1,6 @@
 package net.whydah.admin.users;
 
+import net.whydah.admin.AuthenticationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ public class UsersResource {
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
 
+        } catch (AuthenticationFailedException afe) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         } catch (RuntimeException e) {
             log.error("Unkonwn error.", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
