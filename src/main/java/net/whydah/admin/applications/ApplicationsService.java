@@ -45,6 +45,16 @@ public class ApplicationsService {
         return applications;
     }
 
+    public String findApplications(String applicationTokenId, String userTokenId, String query) {
+        String applications = null;
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            applications = uibApplicationsConnection.findApplications(credentialStore.getUserAdminServiceTokenId(), userTokenId, query);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        return applications;
+    }
+
     boolean hasAccess(String applicationTokenId, String userTokenId) {
         //FIXME validate user and applciation trying to create a new application.
         return true;

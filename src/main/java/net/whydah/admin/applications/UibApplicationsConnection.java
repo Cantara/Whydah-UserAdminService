@@ -1,6 +1,7 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.AuthenticationFailedException;
+import org.apache.commons.lang.NotImplementedException;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -58,6 +59,30 @@ public class UibApplicationsConnection {
                 throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
         }
         return output;
+    }
+
+    public String findApplications(String userAdminServiceTokenId, String userTokenId, String query) {
+        throw new NotImplementedException("https://github.com/Cantara/Whydah-UserAdminWebApp/issues/1");
+        /*
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
+        String resultJson = null;
+        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        int statusCode = response.getStatus();
+        String output = response.readEntity(String.class);
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("Response from UIB {}", output);
+                resultJson = output;
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                throw new BadRequestException("BadRequest for query " + query + ",  Status code " + response.getStatus());
+            default:
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                throw new AuthenticationFailedException("Request failed. Status code " + response.getStatus());
+        }
+        return resultJson;
+        */
     }
 
 
