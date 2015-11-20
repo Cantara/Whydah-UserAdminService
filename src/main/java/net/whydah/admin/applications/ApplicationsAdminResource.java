@@ -38,6 +38,7 @@ public class ApplicationsAdminResource {
         log.trace("listAll is called ");
         try {
             String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            log.trace("Returning applicationlist as json \n",applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
