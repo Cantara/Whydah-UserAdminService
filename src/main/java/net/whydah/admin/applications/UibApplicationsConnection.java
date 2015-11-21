@@ -45,6 +45,7 @@ public class UibApplicationsConnection {
        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
+        log.trace("listAll {}", output);
         switch (statusCode) {
             case STATUS_OK:
                 break;

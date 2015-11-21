@@ -48,7 +48,8 @@ public class ApplicationResource {
 
         WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH);
         Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-        return copyResponse(responseFromUib);
+        Response response = copyResponse(responseFromUib);
+        return response;
     }
 
     private Response copyResponse(Response responseFromUib) {
@@ -68,7 +69,11 @@ public class ApplicationResource {
         log.trace("getApplication is called with applicationId={}", applicationId);
         WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
         Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).get();
-        return copyResponse(responseFromUib);
+        String jsonResult = responseFromUib.readEntity(String.class);
+        log.trace("Received jsonResult {}", jsonResult);
+//        Response response = copyResponse(responseFromUib);
+//        return response;
+        return Response.ok(jsonResult).build();
     }
 
     @PUT

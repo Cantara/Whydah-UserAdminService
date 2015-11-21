@@ -32,11 +32,12 @@ public class ApplicationsResource {
 
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
     public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
         log.trace("listAll is called ");
         try {
             String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            log.trace("listAll {}", applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
