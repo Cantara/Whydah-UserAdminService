@@ -1,6 +1,6 @@
 package net.whydah.admin.application;
 
-import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplication;
+import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUIB;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -42,8 +42,8 @@ public class ApplicationAuthenticationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String stsApplicationtokenId,
-                                            @FormParam(CommandAuthenticateApplication.UAS_APP_CREDENTIAL_XML) String uasAppCredentialXml,
-                                            @FormParam(CommandAuthenticateApplication.APP_CREDENTIAL_XML) String appCredentialXml) {
+                                            @FormParam(CommandAuthenticateApplicationUIB.UAS_APP_CREDENTIAL_XML) String uasAppCredentialXml,
+                                            @FormParam(CommandAuthenticateApplicationUIB.APP_CREDENTIAL_XML) String appCredentialXml) {
 
         // verify stsApplicationtokenId
         Boolean stsAuthenticationOK = new CommandValidateApplicationTokenId(stsUri, stsApplicationtokenId).execute();
@@ -52,9 +52,8 @@ public class ApplicationAuthenticationEndpoint {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-
         Response responseFromUib =
-                new CommandAuthenticateApplication(uibUri, stsApplicationtokenId, uasAppCredentialXml, appCredentialXml).execute();
+                new CommandAuthenticateApplicationUIB(uibUri, stsApplicationtokenId, uasAppCredentialXml, appCredentialXml).execute();
         return copyResponse(responseFromUib);
     }
 
