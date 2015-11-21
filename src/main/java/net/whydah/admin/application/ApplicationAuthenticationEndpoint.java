@@ -1,5 +1,6 @@
 package net.whydah.admin.application;
 
+import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplication;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -13,13 +14,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 /**
@@ -28,20 +23,15 @@ import javax.ws.rs.core.Response;
 @Component
 @Path("/{stsApplicationtokenId}/application/auth")
 public class ApplicationAuthenticationEndpoint {
-    private static final String UAS_APP_CREDENTIAL_XML = "uasAppCredentialXml";
-    private static final String APP_CREDENTIAL_XML = "appCredentialXml";
-    private static final String APPLICATION_AUTH_PATH = "application/auth";
     private static final Logger log = LoggerFactory.getLogger(ApplicationAuthenticationEndpoint.class);
-    private final WebTarget uib;
+    private final String uibUri;
     private final String stsUri;
 
 
     @Autowired
     @Configure
-    public ApplicationAuthenticationEndpoint(@Configuration("useridentitybackend") String uibUrl, @Configuration("securitytokenservice") String stsUri) {
-        log.debug("Connection to UserIdentityBackend on {}", uibUrl);
-        Client client = ClientBuilder.newClient();
-        this.uib = client.target(uibUrl);
+    public ApplicationAuthenticationEndpoint(@Configuration("useridentitybackend") String uibUri, @Configuration("securitytokenservice") String stsUri) {
+        this.uibUri = uibUri;
         this.stsUri = stsUri;
     }
 
@@ -52,8 +42,8 @@ public class ApplicationAuthenticationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String stsApplicationtokenId,
-                                            @FormParam(UAS_APP_CREDENTIAL_XML) String uasAppCredentialXml,
-                                            @FormParam(APP_CREDENTIAL_XML) String appCredentialXml) {
+                                            @FormParam(CommandAuthenticateApplication.UAS_APP_CREDENTIAL_XML) String uasAppCredentialXml,
+                                            @FormParam(CommandAuthenticateApplication.APP_CREDENTIAL_XML) String appCredentialXml) {
 
         // verify stsApplicationtokenId
         Boolean stsAuthenticationOK = new CommandValidateApplicationTokenId(stsUri, stsApplicationtokenId).execute();
@@ -63,13 +53,8 @@ public class ApplicationAuthenticationEndpoint {
         }
 
 
-        //call UIB
-        WebTarget webResource = uib.path(stsApplicationtokenId).path(APPLICATION_AUTH_PATH);
-        MultivaluedMap<String,String> formData = new MultivaluedHashMap<>(2);
-        formData.add(UAS_APP_CREDENTIAL_XML, uasAppCredentialXml);
-        formData.add(APP_CREDENTIAL_XML, appCredentialXml);
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_FORM_URLENCODED)
-                                              .post(Entity.entity(formData, MediaType.APPLICATION_FORM_URLENCODED));
+        Response responseFromUib =
+                new CommandAuthenticateApplication(uibUri, stsApplicationtokenId, uasAppCredentialXml, appCredentialXml).execute();
         return copyResponse(responseFromUib);
     }
 
