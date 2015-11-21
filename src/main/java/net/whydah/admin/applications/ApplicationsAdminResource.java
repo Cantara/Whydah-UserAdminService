@@ -35,9 +35,10 @@ public class ApplicationsAdminResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
-        log.trace("listAll is called ");
+        log.trace("listAll(Admin) is called ");
         try {
             String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            log.trace("Returning applicationlist as json \n",applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
@@ -53,7 +54,7 @@ public class ApplicationsAdminResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("applicationName") String applicationName) {
-        log.trace("findByName is called ");
+        log.trace("findByName(Admin) is called ");
         try {
             String application = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
             return Response.ok(application).build();
