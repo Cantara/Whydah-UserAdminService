@@ -1,8 +1,10 @@
 package net.whydah.admin.user;
 
+import net.whydah.admin.users.UsersService;
 import net.whydah.sso.commands.userauth.CommandChangeUserPasswordUsingToken;
 import net.whydah.sso.commands.userauth.CommandResetUserPassword;
 import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,15 @@ import javax.ws.rs.core.Response;
 public class PasswordResource2 {
     private static final Logger log = LoggerFactory.getLogger(PasswordResource2.class);
     private final String uibUri;
+    private final UsersService usersService;
 
 
     @Autowired
-    public PasswordResource2(@Configuration("useridentitybackend") String uibUri) {
+    @Configure
+    public PasswordResource2(@Configuration("useridentitybackend") String uibUri, UsersService usersService) {
         this.uibUri = uibUri;
+        this.usersService = usersService;
     }
-
 
     /**
      * Proxy for resetPassword
