@@ -52,6 +52,8 @@ public class ApplicationAuthenticationEndpoint {
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String stsApplicationtokenId,
                                             @FormParam(CommandAuthenticateApplicationUIB.APP_CREDENTIAL_XML) String appCredentialXml) {
 
+        log.info("authenticateApplication - trying to authenticate applicationcredential: {}",appCredentialXml);
+
         // verify stsApplicationtokenId
         Boolean stsAuthenticationOK = new CommandValidateApplicationTokenId(stsUri, stsApplicationtokenId).execute();
         if (!stsAuthenticationOK) {
