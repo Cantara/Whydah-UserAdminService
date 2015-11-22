@@ -1,6 +1,7 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.security.UASCredentials;
 import org.apache.commons.lang.NotImplementedException;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -29,10 +30,12 @@ public class UibApplicationsConnection {
 
     private final WebTarget uib;
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
+    private final UASCredentials UASCredentials;
 
     @Autowired
     @Configure
-    public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl) {
+    public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials UASCredentials) {
+        this.UASCredentials = UASCredentials;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
@@ -41,7 +44,7 @@ public class UibApplicationsConnection {
 
     public String listAll(String userAdminServiceTokenId, String userTokenId) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications");
-        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, UASCredentials.getApplicationCredentialsXmlEncoded()).get();
        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
