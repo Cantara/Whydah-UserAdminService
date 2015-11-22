@@ -36,10 +36,11 @@ public class ApplicationAuthenticationEndpoint {
     public ApplicationAuthenticationEndpoint(@Configuration("useridentitybackend") String uibUri,
                                              @Configuration("securitytokenservice") String stsUri,
                                              @Configuration("applicationid") String applicationid,
+                                             @Configuration("applicationname") String applicationname,
                                              @Configuration("applicationsecret") String applicationsecret) {
         this.uibUri = uibUri;
         this.stsUri = stsUri;
-        this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationsecret);
+        this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationname, applicationsecret);
     }
 
 
