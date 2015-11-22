@@ -9,7 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -34,6 +39,19 @@ public class SecurityFilter implements Filter {
     public SecurityFilter(@Configuration("securitytokenservice") String stsUri) {
         this.stsUri = stsUri;
     }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+
+        Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
+        if (statusCode == null) {
+            chain.doFilter(request, response);
+        } else {
+            ((HttpServletResponse) response).setStatus(statusCode);
+        }
+    }
+
 
     /**
      *
@@ -66,10 +84,12 @@ public class SecurityFilter implements Filter {
         /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
         /{applicationTokenId}/signup/user                   //UserSignupEndpoint
         */
+        String applicationAuthPattern = "/application/auth";
+        String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
+        String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
         String pwPattern = "/user/.+/(reset|change)_password";
-        String userAuthPattern = "/authenticate/user(|/.*)";
         String userSignupPattern = "/signup/user";
-        String [] patternsWithoutUserTokenId = {pwPattern, userAuthPattern, userSignupPattern};
+        String [] patternsWithoutUserTokenId = {applicationAuthPattern,userLogonPattern, pwPattern, userAuthPattern, userSignupPattern};
         for (String pattern : patternsWithoutUserTokenId) {
             if (Pattern.compile(pattern).matcher(path).matches()) {
                 log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
@@ -111,20 +131,6 @@ public class SecurityFilter implements Filter {
             }
         }
         return pathElement;
-    }
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest servletRequest = (HttpServletRequest) request;
-
-        //TODO BLI
-         Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
-//        Integer statusCode = null;
-        if (statusCode == null) {
-            chain.doFilter(request, response);
-        } else {
-            ((HttpServletResponse) response).setStatus(statusCode);
-        }
     }
 
     @Override
