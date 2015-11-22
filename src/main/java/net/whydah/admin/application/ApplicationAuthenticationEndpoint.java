@@ -2,7 +2,7 @@ package net.whydah.admin.application;
 
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.types.ApplicationCredential;
-import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUIB;
+import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUAS;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -50,7 +50,7 @@ public class ApplicationAuthenticationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String stsApplicationtokenId,
-                                            @FormParam(CommandAuthenticateApplicationUIB.APP_CREDENTIAL_XML) String appCredentialXml) {
+                                            @FormParam(CommandAuthenticateApplicationUAS.APP_CREDENTIAL_XML) String appCredentialXml) {
 
         log.info("authenticateApplication - trying to authenticate applicationcredential: {}",appCredentialXml);
 
