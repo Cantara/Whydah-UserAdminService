@@ -40,6 +40,19 @@ public class SecurityFilter implements Filter {
         this.stsUri = stsUri;
     }
 
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+
+        Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
+        if (statusCode == null) {
+            chain.doFilter(request, response);
+        } else {
+            ((HttpServletResponse) response).setStatus(statusCode);
+        }
+    }
+
+
     /**
      *
      * @param pathInfo  the path to apply the filter to
@@ -72,9 +85,9 @@ public class SecurityFilter implements Filter {
         /{applicationTokenId}/signup/user                   //UserSignupEndpoint
         */
         String applicationAuthPattern = "/application/auth";
-        String userLogonPattern = "/auth/logon/user";
+        String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
+        String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
         String pwPattern = "/user/.+/(reset|change)_password";
-        String userAuthPattern = "/authenticate/user(|/.*)";
         String userSignupPattern = "/signup/user";
         String [] patternsWithoutUserTokenId = {applicationAuthPattern,userLogonPattern, pwPattern, userAuthPattern, userSignupPattern};
         for (String pattern : patternsWithoutUserTokenId) {
@@ -118,18 +131,6 @@ public class SecurityFilter implements Filter {
             }
         }
         return pathElement;
-    }
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest servletRequest = (HttpServletRequest) request;
-
-        Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
-        if (statusCode == null) {
-            chain.doFilter(request, response);
-        } else {
-            ((HttpServletResponse) response).setStatus(statusCode);
-        }
     }
 
     @Override
