@@ -1,5 +1,7 @@
 package net.whydah.admin.application;
 
+import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
+import net.whydah.sso.application.types.ApplicationCredential;
 import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUIB;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import org.constretto.annotation.Configuration;
@@ -26,13 +28,18 @@ public class ApplicationAuthenticationEndpoint {
     private static final Logger log = LoggerFactory.getLogger(ApplicationAuthenticationEndpoint.class);
     private final String uibUri;
     private final String stsUri;
+    private final ApplicationCredential uasApplicationCredential;
 
 
     @Autowired
     @Configure
-    public ApplicationAuthenticationEndpoint(@Configuration("useridentitybackend") String uibUri, @Configuration("securitytokenservice") String stsUri) {
+    public ApplicationAuthenticationEndpoint(@Configuration("useridentitybackend") String uibUri,
+                                             @Configuration("securitytokenservice") String stsUri,
+                                             @Configuration("applicationid") String applicationid,
+                                             @Configuration("applicationsecret") String applicationsecret) {
         this.uibUri = uibUri;
         this.stsUri = stsUri;
+        this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationsecret);
     }
 
 
@@ -42,7 +49,6 @@ public class ApplicationAuthenticationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String stsApplicationtokenId,
-                                            @FormParam(CommandAuthenticateApplicationUIB.UAS_APP_CREDENTIAL_XML) String uasAppCredentialXml,
                                             @FormParam(CommandAuthenticateApplicationUIB.APP_CREDENTIAL_XML) String appCredentialXml) {
 
         // verify stsApplicationtokenId
@@ -52,6 +58,7 @@ public class ApplicationAuthenticationEndpoint {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
+        String uasAppCredentialXml = ApplicationCredentialMapper.toXML(uasApplicationCredential);
         Response responseFromUib =
                 new CommandAuthenticateApplicationUIB(uibUri, stsApplicationtokenId, uasAppCredentialXml, appCredentialXml).execute();
         return copyResponse(responseFromUib);
