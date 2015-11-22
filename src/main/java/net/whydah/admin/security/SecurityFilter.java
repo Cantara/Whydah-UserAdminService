@@ -1,5 +1,7 @@
 package net.whydah.admin.security;
 
+import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
+import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -7,105 +9,113 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 /**
- * NOT ENABLED YET!
- * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 2015-07-06
+ * SecurityFilter is reponsible for verifying applicationTokenId and userTokenId against STS.
+ * Verifying application and user roles is the responsibility of UIB.
+ *
+ * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 2015-11-22
  */
 @Component
 public class SecurityFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
-    private final String tokenServiceUrl;
+
+    private final String stsUri;
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String tokenServiceUrl) {
-        this.tokenServiceUrl = tokenServiceUrl;
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri) {
+        this.stsUri = stsUri;
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-
-
+    /**
+     *
+     * @param pathInfo  the path to apply the filter to
+     * @return HttpServletResponse.SC_UNAUTHORIZED if authentication fails, otherwise null
+     */
     Integer authenticateAndAuthorizeRequest(String pathInfo) {
-        log.trace("filter path {}", pathInfo);
+        log.debug("filter path {}", pathInfo);
 
-        //Open paths without authentication
-        if (pathInfo.startsWith("/health")) {
-            return null;
-        }
-
-        /*
-        if (ApplicationMode.skipSecurityFilter()) {
-            log.warn("Running in noSecurityFilter mode, security is omitted for users.");
-            Authentication.setAuthenticatedUser(buildMockedUserToken());
-            return null;
-        }
-        */
-
-
-        //Require authenticated and authorized applicationtokenid
-        String applicationTokenId = findPathElement(pathInfo, 1);
-        //applicationTokenId of application calling UAS, not UAS applicationTokenId
-        //boolean applicationVerified = new CommandValidateApplicationTokenId(tokenServiceUrl, applicationTokenId).execute();
-        boolean applicationVerified = true;
-        if (!applicationVerified) {
-            log.trace("Application not authorized, applicationTokenId={}", applicationTokenId);
-            return HttpServletResponse.SC_UNAUTHORIZED;
-        }
-
-        /*
-        /{applicationtokenid}/auth/logon - LogonController (User Login)
-        /{applicationtokenid}/auth/password/reset/username
-        /{applicationtokenid}/create_logon_facebook_user (createAndLogonUser)
-         */
-        String second = findPathElement(pathInfo, 2);
-        if (second == null) {
+        //match /
+        if (pathInfo == null || pathInfo.equals("/")) {
             return HttpServletResponse.SC_NOT_FOUND;
         }
-        if (second.equals("auth") || second.equals("create_logon_facebook_user") || second.equals("signup")) {
-            return null;
-        }
 
-        String userTokenId = second;
-        URI tokenServiceUri = UriBuilder.fromUri(tokenServiceUrl).build();
-        //boolean userVerified = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
-        boolean userVerified = true;
-        if (!userVerified) {
-            log.trace("User not Authorized=" + userTokenId);
+
+        String applicationTokenId = findPathElement(pathInfo, 1).substring(1);
+        Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
+        if (!applicationTokenIsValid) {
             return HttpServletResponse.SC_UNAUTHORIZED;
         }
 
-        //TODO verify required user role
-        /*
-        /{applicationtokenid}/{userTokenId}/application
-        /{applicationtokenid}/{userTokenId}/adminapplications
-        /{applicationtokenid}/{userTokenId}/applications
 
-        /{applicationtokenid}/{usertokenid}/useraggregate/{uid}
-        /{applicationtokenid}/{userTokenId}/user
-        /{applicationtokenid}/{userTokenId}/users
+        //paths without userTokenId
+        String path = pathInfo.substring(1); //strip leading /
+        //strip applicationTokenId from pathInfo
+        path = path.substring(path.indexOf("/"));
+        /*
+        /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource2
+        /{applicationTokenId}/user/{uid}/change_password    //PasswordResource2
+        /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
+        /{applicationTokenId}/signup/user                   //UserSignupEndpoint
+        */
+        String pwPattern = "/user/.+/(reset|change)_password";
+        String userAuthPattern = "/authenticate/user(|/.*)";
+        String userSignupPattern = "/signup/user";
+        String [] patternsWithoutUserTokenId = {pwPattern, userAuthPattern, userSignupPattern};
+        for (String pattern : patternsWithoutUserTokenId) {
+            if (Pattern.compile(pattern).matcher(path).matches()) {
+                log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
+                return null;
+            }
+        }
+
+
+        //paths WITH userTokenId verification
+        /*
+        /{applicationtokenid}/{userTokenId}/application     //ApplicationResource
+        /{applicationtokenid}/{userTokenId}/applications    //ApplicationsResource
+        /{applicationtokenid}/{userTokenId}/user            //UserResource
+        /{applicationtokenid}/{usertokenid}/useraggregate   //UserAggregateResource
+        /{applicationtokenid}/{usertokenid}/users           //UsersResource
          */
-        //Authentication.setAuthenticatedUser(userToken);
+        String usertokenId = findPathElement(pathInfo, 2).substring(1);
+
+        URI tokenServiceUri;
+        try {
+            tokenServiceUri = new URI(stsUri);
+        } catch (URISyntaxException e) {
+            log.error("{} is not a valid URI.", stsUri, e);
+            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        }
+        Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
+        if (!userTokenIsValid) {
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
         return null;
     }
 
     private String findPathElement(String pathInfo, int elementNumber) {
-        if (pathInfo == null) {
-            return null;
+        String pathElement = null;
+        if (pathInfo != null) {
+            String[] pathElements = pathInfo.split("/");
+            if (pathElements.length > elementNumber) {
+                pathElement = "/" + pathElements[elementNumber];
+            }
         }
-        String[] pathElements = pathInfo.split("/");
-        if (pathElements.length <= elementNumber) {
-            return null;
-        }
-        return pathElements[elementNumber];
+        return pathElement;
     }
 
     @Override
@@ -120,7 +130,9 @@ public class SecurityFilter implements Filter {
         }
     }
 
-
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
     @Override
     public void destroy() {
     }
