@@ -37,7 +37,7 @@ public class UsersService {
     public String findUsers(String applicationTokenId, String userTokenId, String query) {
         String usersJson = null;
         if (hasAccess("findUsers",applicationTokenId, userTokenId)) {
-           usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), userTokenId, query);
+           usersJson = uibUsersConnection.findUsers(applicationTokenId, userTokenId, query);
         } else {
             throw new NotAuthorizedException("Not Authorized to findUsers");
         }
@@ -55,7 +55,7 @@ public class UsersService {
     public String searchUsers(String applicationTokenId, String userTokenId, String query) {
         String usersJson = null;
         if (hasAccess("searchUsers",applicationTokenId, userTokenId)) {
-            usersJson = uibUsersConnection.findUsers(credentialStore.getUserAdminServiceTokenId(), userTokenId, query);
+            usersJson = uibUsersConnection.findUsers(applicationTokenId, userTokenId, query);
             // TODO map to useridentity or implement new function in UIB for this (last is better)
         } else {
             throw new NotAuthorizedException("Not Authorized to searchUsers");
