@@ -28,7 +28,7 @@ public class ApplicationsService {
     public String listAll(String applicationTokenId, String userTokenId) {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
+            applications = uibApplicationsConnection.listAll(applicationTokenId, userTokenId);
         } else {
             //FIXME handle no access to this method.
         }
@@ -38,7 +38,7 @@ public class ApplicationsService {
     public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
+            applications = uibApplicationsConnection.listAll(applicationTokenId, userTokenId);
         } else {
             //FIXME handle no access to this method.
         }
@@ -48,7 +48,7 @@ public class ApplicationsService {
     public String findApplications(String applicationTokenId, String userTokenId, String query) {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.findApplications(credentialStore.getUserAdminServiceTokenId(), userTokenId, query);
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, query);
         } else {
             //FIXME handle no access to this method.
         }
