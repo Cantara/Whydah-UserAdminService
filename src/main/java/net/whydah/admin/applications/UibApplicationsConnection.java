@@ -25,6 +25,7 @@ public class UibApplicationsConnection {
     private static final Logger log = LoggerFactory.getLogger(UibApplicationsConnection.class);
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
+    private static final int NO_CONTENT = 204; //Response.Status.OK.getStatusCode();
     private static final int NOT_AUTHERIZED = 403;
 
 
@@ -51,6 +52,8 @@ public class UibApplicationsConnection {
         log.trace("listAll {}", output);
         switch (statusCode) {
             case STATUS_OK:
+                break;
+            case NO_CONTENT:
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
