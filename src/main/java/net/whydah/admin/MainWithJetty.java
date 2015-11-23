@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
@@ -40,6 +41,8 @@ public class MainWithJetty {
                 .addResource(Resource.create("file:./useradminservice_override.properties"))
                 .done()
                 .getConfiguration();
+
+        printConfiguration(configuration);
 
         // Property-overwrite of SSL verification to support weak ssl certificates
         String sslVerification = configuration.evaluateToString("sslverification");
@@ -107,4 +110,11 @@ public class MainWithJetty {
         return resourceBase;
     }
     */
+
+    private static void printConfiguration(ConstrettoConfiguration configuration) {
+        Map<String, String> properties = configuration.asMap();
+        for (String key : properties.keySet()) {
+            log.info("Using Property: {}, value: {}", key, properties.get(key));
+        }
+    }
 }
