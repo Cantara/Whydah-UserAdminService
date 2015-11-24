@@ -2,6 +2,7 @@ package net.whydah.admin.application;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUAS;
 import org.slf4j.Logger;
 
@@ -30,7 +31,6 @@ public class CommandAuthenticateApplicationUIB extends HystrixCommand<Response> 
     private String uasAppCredentialXml;
     private String appCredentialXml;
 
-
     public CommandAuthenticateApplicationUIB(String uibUri, String stsApplicationtokenId, String uasAppCredentialXml,
                                              String appCredentialXml) {
         super(HystrixCommandGroupKey.Factory.asKey("UIBApplicationAdminGroup"));
@@ -53,6 +53,7 @@ public class CommandAuthenticateApplicationUIB extends HystrixCommand<Response> 
         formData.add(UAS_APP_CREDENTIAL_XML, uasAppCredentialXml);
         formData.add(CommandAuthenticateApplicationUAS.APP_CREDENTIAL_XML, appCredentialXml);
         return webResource.request(MediaType.APPLICATION_FORM_URLENCODED)
+                .header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML,UASCredentials.encode(uasAppCredentialXml))
                           .post(Entity.entity(formData, MediaType.APPLICATION_FORM_URLENCODED));
     }
 

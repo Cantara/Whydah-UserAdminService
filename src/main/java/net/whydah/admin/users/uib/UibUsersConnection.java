@@ -1,6 +1,7 @@
 package net.whydah.admin.users.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.security.UASCredentials;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -31,10 +32,12 @@ public class UibUsersConnection {
 
 
     private final WebTarget uib;
+    private final UASCredentials uasCredentials;
 
     @Autowired
     @Configure
-    public UibUsersConnection(@Configuration("useridentitybackend") String uibUrl) {
+    public UibUsersConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+        this.uasCredentials = uasCredentials;
         Client client = ClientBuilder.newClient();
 //        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
         // uib = client.target(userIdentityBackendUri);
@@ -45,7 +48,7 @@ public class UibUsersConnection {
     public String findUsers(String userAdminServiceTokenId, String userTokenId, String query) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
         String resultJson = null;
-        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         switch (statusCode) {

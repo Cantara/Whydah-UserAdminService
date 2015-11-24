@@ -71,4 +71,16 @@ public class UASCredentials {
         }
         return encoded;
     }
+
+    public static String encode(String uasAppCredentialXml) {
+        String encoded = "";
+        if (uasAppCredentialXml != null) {
+            try {
+                encoded = URLEncoder.encode(uasAppCredentialXml,"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                log.warn("Failed to encode {}. reason {}. This will prevent UAS talking to UIB!");
+            }
+        }
+        return encoded;
+    }
 }

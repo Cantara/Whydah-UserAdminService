@@ -1,5 +1,6 @@
 package net.whydah.admin.createlogon;
 
+import net.whydah.admin.security.UASCredentials;
 import net.whydah.admin.user.uib.UserAggregateRepresentation;
 import net.whydah.admin.user.uib.UserIdentity;
 import net.whydah.admin.user.uib.UserIdentityRepresentation;
@@ -30,10 +31,12 @@ public class UibCreateLogonConnection {
 
 
     private final WebTarget uibService;
+    private final UASCredentials uasCredentials;
 
     @Autowired
     @Configure
-    public UibCreateLogonConnection(@Configuration("useridentitybackend") String uibUrl) {
+    public UibCreateLogonConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+        this.uasCredentials = uasCredentials;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uibService = client.target(uibUrl);
@@ -43,7 +46,7 @@ public class UibCreateLogonConnection {
 
         WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH).path(CREATE_AND_LOGON_OPERATION);
         log.debug("URI to use {}",webResource.getUri());
-        Response response = webResource.request(MediaType.APPLICATION_XML).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
+        Response response = webResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
         int statusCode = response.getStatus();
         if (statusCode != 200) {
             log.info("Request to UIB failed status {}, response {}", statusCode, response.getEntity());
@@ -62,7 +65,7 @@ public class UibCreateLogonConnection {
 
             WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
-            Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(minimalUser.toJson(), MediaType.APPLICATION_JSON));
+            Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(minimalUser.toJson(), MediaType.APPLICATION_JSON));
             int statusCode = response.getStatus();
             if (statusCode != 200) {
                 log.info("Request to UIB failed status {}, response {}", statusCode, response.getEntity());
@@ -79,7 +82,7 @@ public class UibCreateLogonConnection {
         if (userAggregate != null) {
             WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
-            Response response = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(userAggregate.toJson(), MediaType.APPLICATION_JSON));
+            Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userAggregate.toJson(), MediaType.APPLICATION_JSON));
             int statusCode = response.getStatus();
             String responseJson = null;
             switch (statusCode) {

@@ -31,12 +31,12 @@ public class UibApplicationsConnection {
 
     private final WebTarget uib;
     private final String userIdentityBackendUri = "http://localhost:9995/uib";
-    private final UASCredentials UASCredentials;
+    private final UASCredentials uasCredentials;
 
     @Autowired
     @Configure
-    public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials UASCredentials) {
-        this.UASCredentials = UASCredentials;
+    public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+        this.uasCredentials = uasCredentials;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
@@ -45,7 +45,7 @@ public class UibApplicationsConnection {
 
     public String listAll(String userAdminServiceTokenId, String userTokenId) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications");
-        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, UASCredentials.getApplicationCredentialsXmlEncoded()).get();
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);

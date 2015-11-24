@@ -1,6 +1,7 @@
 package net.whydah.admin.auth;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.security.UASCredentials;
 import net.whydah.admin.user.uib.UserIdentity;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -27,12 +28,14 @@ public class UibAuthConnection {
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     public static final int FORBIDDEN = 403;
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
+    private final UASCredentials uasCredentials;
 
     private final WebTarget uib;
 
     @Autowired
     @Configure
-    public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl) {
+    public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+        this.uasCredentials = uasCredentials;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
@@ -40,7 +43,7 @@ public class UibAuthConnection {
 
     public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
         WebTarget logonUserResource = uib.path("/" + userAdminServiceTokenId).path("authenticate/user");
-        Response response = logonUserResource.request(MediaType.APPLICATION_XML).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
+        Response response = logonUserResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
         String userXml = null;
         switch (statusCode) {
@@ -67,7 +70,7 @@ public class UibAuthConnection {
 
     public String resetPassword(String userAdminServiceTokenId, String username) {
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username);
-        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).post(Entity.entity("",MediaType.APPLICATION_XML_TYPE));
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("",MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         switch (statusCode) {
@@ -88,7 +91,7 @@ public class UibAuthConnection {
     public String setPasswordByToken(String userAdminServiceTokenId, String username,String passwordToken,String password) {
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username).path("newpassword").path(passwordToken);
 
-        Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.APPLICATION_JSON));
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         switch (statusCode) {
