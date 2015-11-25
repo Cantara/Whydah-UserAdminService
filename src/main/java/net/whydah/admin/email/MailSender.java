@@ -24,7 +24,8 @@ public class MailSender {
     private static final boolean SMTP_AUTH = true;
     private static final boolean SMTP_STARTTTLS_ENABLE = true;
     private static final String SMTP_HOST = "smtp.gmail.com";
-    private static final String SMTP_PORT = "587";
+    private static final String SMTP_PORT = "465";
+//    private static final String SMTP_PORT = "587";
 
 
     private final String smtpUsername;
@@ -55,7 +56,7 @@ public class MailSender {
         //smtpProperties.put("mail.smtp.port", SMTP_PORT);
 
         smtpProperties.put("mail.smtp.host", SMTP_HOST);
-        smtpProperties.put("mail.smtp.socketFactory.port", "465");
+        smtpProperties.put("mail.smtp.socketFactory.port", SMTP_PORT);
         smtpProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         smtpProperties.put("mail.smtp.auth", "true");
         smtpProperties.put("mail.smtp.port", "465");
