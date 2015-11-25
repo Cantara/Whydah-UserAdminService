@@ -1,5 +1,6 @@
 package net.whydah.admin.application;
 
+import net.whydah.admin.security.UASCredentials;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -28,11 +29,13 @@ public class ApplicationResource {
 
     private static final String APPLICATION_PATH = "application";
     private final WebTarget uib;
+    private final UASCredentials uasCredentials;
 
 
     @Autowired
     @Configure
-    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl) {
+    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+        this.uasCredentials = uasCredentials;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
@@ -47,7 +50,7 @@ public class ApplicationResource {
         log.trace("create is called with applicationJson={}", applicationJson);
 
         WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH);
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).post(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
+        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
         Response response = copyResponse(responseFromUib);
         return response;
     }
@@ -68,7 +71,7 @@ public class ApplicationResource {
                                    @PathParam("applicationId") String applicationId){
         log.trace("getApplication is called with applicationId={}", applicationId);
         WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).get();
+        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         String jsonResult = responseFromUib.readEntity(String.class);
         log.trace("Received jsonResult {}", jsonResult);
 //        Response response = copyResponse(responseFromUib);
@@ -86,7 +89,7 @@ public class ApplicationResource {
                                       String applicationJson)  {
         log.trace("updateApplication applicationId={}, applicationJson={}", applicationId, applicationJson);
         WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).put(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
+        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
         return copyResponse(responseFromUib);
     }
 
@@ -99,7 +102,7 @@ public class ApplicationResource {
         log.trace("deleteApplication is called with applicationId={}", applicationId);
 
         WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).delete();
+        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
         return copyResponse(responseFromUib);
     }
 

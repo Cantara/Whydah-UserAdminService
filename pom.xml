@@ -85,6 +85,11 @@
             <version>2.1.19-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>net.whydah.sso</groupId>
+            <artifactId>Whydah-TypeLib</artifactId>
+            <version>1.0.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.servlet</artifactId>
             <version>3.0</version>
