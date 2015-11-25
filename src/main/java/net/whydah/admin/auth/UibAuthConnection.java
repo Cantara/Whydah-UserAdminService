@@ -87,6 +87,25 @@ public class UibAuthConnection {
         return output;
     }
 
+    public String resetPassword_new(String userAdminServiceTokenId, String uid) {
+        // /user/{uid}/reset_password
+        WebTarget resetPasswordResource = uib.path(userAdminServiceTokenId).path("user").path(uid).path("reset_password");
+        Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("",MediaType.APPLICATION_XML_TYPE));
+        int statusCode = response.getStatus();
+        String output = response.readEntity(String.class);
+        switch (statusCode) {
+            case STATUS_OK:
+                log.info("Reset password request ok for uid {}", uid);
+                break;
+            case STATUS_BAD_REQUEST:
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                throw new BadRequestException("BadRequest for resetPassword " + response.toString() + ",  Status code " + response.getStatus());
+            default:
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                throw new AuthenticationFailedException("ResetPassword failed. Status code " + response.getStatus());
+        }
+        return output;
+    }
 
     public String setPasswordByToken(String userAdminServiceTokenId, String username,String passwordToken,String password) {
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username).path("newpassword").path(passwordToken);

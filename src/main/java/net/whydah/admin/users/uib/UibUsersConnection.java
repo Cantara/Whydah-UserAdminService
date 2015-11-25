@@ -46,8 +46,8 @@ public class UibUsersConnection {
     }
 
     public String findUsers(String userAdminServiceTokenId, String userTokenId, String query) {
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
         String resultJson = null;
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);

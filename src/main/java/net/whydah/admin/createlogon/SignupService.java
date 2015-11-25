@@ -75,7 +75,8 @@ public class SignupService {
         //2.CreateResetPasswordToken
         if (createdUser != null) {
             String username = createdUser.getUsername();
-            String resetPasswordToken = uibAuthConnection.resetPassword(applicationtokenId, username);
+            String uid = createdUser.getUid();
+            String resetPasswordToken = uibAuthConnection.resetPassword_new(applicationtokenId, username);
             //3.Send email or sms pin (STS)
             boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
             if (notificationSent) {
