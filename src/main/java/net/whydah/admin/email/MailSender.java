@@ -18,7 +18,7 @@ import java.util.Properties;
 @Component
 public class MailSender {
     private static final Logger log = LoggerFactory.getLogger(MailSender.class);
-    public static final String FROM_ADDRESS = "notworking@whydah.net";
+    public static  String FROM_ADDRESS = "notworking@whydah.net";
 
 
     private static final boolean SMTP_AUTH = true;
@@ -47,6 +47,7 @@ public class MailSender {
 
     public void send(String recipients, String subject, String body) {
         log.debug("Sending email to recipients={}, subject={}, body={}", recipients, subject, body);
+        FROM_ADDRESS=smtpUsername;
 
         //Gmail props
         Properties smtpProperties = new Properties();
