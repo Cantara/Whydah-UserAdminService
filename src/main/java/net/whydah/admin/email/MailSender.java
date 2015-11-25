@@ -13,7 +13,6 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
- * @Deprecated Functionallity is moved to UserAdminService
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a>
  */
 @Component
@@ -50,10 +49,17 @@ public class MailSender {
 
         //Gmail props
         Properties smtpProperties = new Properties();
-        smtpProperties.put("mail.smtp.auth", SMTP_AUTH);
-        smtpProperties.put("mail.smtp.starttls.enable", SMTP_STARTTTLS_ENABLE);
+        //smtpProperties.put("mail.smtp.auth", SMTP_AUTH);
+        //smtpProperties.put("mail.smtp.starttls.enable", SMTP_STARTTTLS_ENABLE);
+        //smtpProperties.put("mail.smtp.host", SMTP_HOST);
+        //smtpProperties.put("mail.smtp.port", SMTP_PORT);
+
         smtpProperties.put("mail.smtp.host", SMTP_HOST);
-        smtpProperties.put("mail.smtp.port", SMTP_PORT);
+        smtpProperties.put("mail.smtp.socketFactory.port", "465");
+        smtpProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        smtpProperties.put("mail.smtp.auth", "true");
+        smtpProperties.put("mail.smtp.port", "465");
+
 
         //Cantara smtp, will only work with @cantara-adresses
         /*
