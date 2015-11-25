@@ -172,23 +172,9 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.5.0-b01</version>
+            <version>1.5.2</version>
         </dependency>
 
-        <!--    not used
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        -->
-        <!-- not used
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.4-beta1</version>
-        </dependency>
-        -->
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
