@@ -53,7 +53,7 @@ public class PasswordController {
             return Response.ok(username).build();
         } else {
             log.trace("Password reset failed. Username {}", username);
-            return Response.accepted().build();
+            return Response.accepted("Unable to send reset password notification to user").build();
         }
     }
 
