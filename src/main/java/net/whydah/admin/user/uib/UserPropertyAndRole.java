@@ -34,9 +34,9 @@ import java.io.StringReader;
  * has the "writer" role in
  * application CompanyCMS.
  *
- * @author totto
  * @since 1/11/11
  */
+@Deprecated
 public class UserPropertyAndRole {
 
     private static final Logger log = LoggerFactory.getLogger(UserPropertyAndRole.class);

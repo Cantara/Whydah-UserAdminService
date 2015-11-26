@@ -15,8 +15,8 @@ import java.io.Serializable;
  * A class representing the identity of a User - backed by LDAP scheme.
  * See getLdapAttributes in LDAPHelper for mapping to LDAP attributes.
  *
- * @author totto
  */
+@Deprecated
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class UserIdentity extends UserIdentityRepresentation implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(UserIdentity.class);

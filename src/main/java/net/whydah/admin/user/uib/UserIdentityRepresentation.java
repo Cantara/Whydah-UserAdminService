@@ -3,9 +3,7 @@ package net.whydah.admin.user.uib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author totto
- */
+@Deprecated
 public class UserIdentityRepresentation {
     private static final Logger log = LoggerFactory.getLogger(UserIdentityRepresentation.class);
     protected String username;
