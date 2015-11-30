@@ -49,7 +49,7 @@ public class ApplicationsResource {
     }
 
     @GET
-    @Path("/{applicationName}")
+    @Path("/find/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("applicationName") String applicationName) {
