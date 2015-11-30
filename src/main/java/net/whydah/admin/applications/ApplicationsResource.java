@@ -55,8 +55,8 @@ public class ApplicationsResource {
                             @PathParam("applicationName") String applicationName) {
         log.trace("findByName - listAll is called, query {}",applicationName);
         try {
-//            String applications = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
-            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            String applications = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
+//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
