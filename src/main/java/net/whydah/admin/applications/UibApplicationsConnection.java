@@ -69,27 +69,28 @@ public class UibApplicationsConnection {
     }
 
     public String findApplications(String userAdminServiceTokenId, String userTokenId, String query) {
-        throw new NotImplementedException("https://github.com/Cantara/Whydah-UserAdminWebApp/issues/1");
-        /*
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
-        String resultJson = null;
-        Response response = webResource.request(MediaType.APPLICATION_JSON).get();
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications/find/"+query);
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
+        log.trace("findApplications {}", output);
         switch (statusCode) {
             case STATUS_OK:
-                log.trace("Response from UIB {}", output);
-                resultJson = output;
+                break;
+            case NO_CONTENT:
                 break;
             case STATUS_BAD_REQUEST:
-                log.error("Response from UIB: {}: {}", response.getStatus(), output);
-                throw new BadRequestException("BadRequest for query " + query + ",  Status code " + response.getStatus());
+                log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
+                throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+            case NOT_AUTHERIZED:
+                log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
+                throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
             default:
-                log.error("Response from UIB: {}: {}", response.getStatus(), output);
-                throw new AuthenticationFailedException("Request failed. Status code " + response.getStatus());
+                log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
+                throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
         }
-        return resultJson;
-        */
+        return output;
     }
 
 

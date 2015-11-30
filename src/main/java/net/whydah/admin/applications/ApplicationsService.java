@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 @Service
 public class ApplicationsService {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd hh:mm");
     private final UibApplicationsConnection uibApplicationsConnection;
     private final CredentialStore credentialStore;
 
@@ -38,7 +37,7 @@ public class ApplicationsService {
     public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.listAll(applicationTokenId, userTokenId);
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId,applicationName);
         } else {
             //FIXME handle no access to this method.
         }
