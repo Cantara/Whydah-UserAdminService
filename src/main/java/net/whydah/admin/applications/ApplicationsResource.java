@@ -53,7 +53,7 @@ public class ApplicationsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("applicationName") String applicationName) {
-        log.trace("findByName is called ");
+        log.trace("findByName is called, query {}",applicationName);
         try {
             String application = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
             return Response.ok(application).build();
