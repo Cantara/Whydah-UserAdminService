@@ -81,8 +81,8 @@ public class ApplicationsService {
 
     boolean isUAWA(String applicationTokenId, String userTokenId){
         log.trace("Checking isUAWA. applicationTokenId:{} userTokenId:{} ",applicationTokenId, userTokenId);
-        //String applicationID = new CommandGetApplicationIdFromApplicationTokenId(tokenServiceUri, applicationTokenId).execute();
-        // Check UAWA appid on applicationTokenId from STS - @Path("{applicationtokenid}/get_application_id")
+        // String applicationID = new CommandGetApplicationIdFromApplicationTokenId(tokenServiceUri, applicationTokenId).execute();
+        // return ("2219".equals(applicationID));
         return true;
     }
 }
