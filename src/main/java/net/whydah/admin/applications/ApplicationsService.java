@@ -34,10 +34,9 @@ public class ApplicationsService {
             //FIXME handle no access to this method.
         }
         if (isUAWA(applicationTokenId, userTokenId)){
-            applications= ApplicationMapper.toJson(ApplicationMapper.fromJson(applications));
+            applications= ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
         } else {
-            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJson(applications));
-
+            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
         return applications;
     }
@@ -50,10 +49,9 @@ public class ApplicationsService {
             //FIXME handle no access to this method.
         }
         if (isUAWA(applicationTokenId, userTokenId)){
-            applications= ApplicationMapper.toJson(ApplicationMapper.fromJson(applications));
+            applications= ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
         } else {
-            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJson(applications));
-
+            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
         return applications;
     }
@@ -66,10 +64,9 @@ public class ApplicationsService {
             //FIXME handle no access to this method.
         }
         if (isUAWA(applicationTokenId, userTokenId)){
-            applications= ApplicationMapper.toJson(ApplicationMapper.fromJson(applications));
+            applications= ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
         } else {
-            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJson(applications));
-
+            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
         return applications;
     }
