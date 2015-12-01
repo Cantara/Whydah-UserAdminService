@@ -2,6 +2,7 @@ package net.whydah.admin.applications;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.sso.application.mappers.ApplicationMapper;
+import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ public class ApplicationsService {
 
     boolean isUAWA(String applicationTokenId, String userTokenId){
         log.trace("Checking isUAWA. applicationTokenId:{} userTokenId:{} ",applicationTokenId, userTokenId);
+        //String applicationID = new CommandGetApplicationIdFromApplicationTokenId(tokenServiceUri, applicationTokenId).execute();
         // Check UAWA appid on applicationTokenId from STS - @Path("{applicationtokenid}/get_application_id")
         return true;
     }
