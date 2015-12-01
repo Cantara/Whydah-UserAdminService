@@ -33,7 +33,7 @@ public class AuthenticationService {
 
     public boolean resetPassword(String applicationtokenId,String username, UserAction userAction){
         boolean passwordResetOk = false;
-        String passwordResetJson = uibAuthConnection.resetPassword(applicationtokenId, username);
+        String passwordResetJson = uibAuthConnection.resetPassword_new(applicationtokenId, username);
         try {
             Map<String,String> passwordResetMap = objectMapper.readValue(passwordResetJson,Map.class);
             String email = passwordResetMap.get("email");
