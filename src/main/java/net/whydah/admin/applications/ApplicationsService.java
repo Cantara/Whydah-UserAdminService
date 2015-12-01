@@ -1,6 +1,7 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.CredentialStore;
+import net.whydah.sso.application.mappers.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class ApplicationsService {
         } else {
             //FIXME handle no access to this method.
         }
+        if (isUAWA(applicationTokenId, userTokenId)){
+            applications= ApplicationMapper.toJson(ApplicationMapper.fromJson(applications));
+        } else {
+            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJson(applications));
+
+        }
         return applications;
     }
 
@@ -40,6 +47,12 @@ public class ApplicationsService {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId,applicationName);
         } else {
             //FIXME handle no access to this method.
+        }
+        if (isUAWA(applicationTokenId, userTokenId)){
+            applications= ApplicationMapper.toJson(ApplicationMapper.fromJson(applications));
+        } else {
+            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJson(applications));
+
         }
         return applications;
     }
@@ -51,11 +64,23 @@ public class ApplicationsService {
         } else {
             //FIXME handle no access to this method.
         }
+        if (isUAWA(applicationTokenId, userTokenId)){
+            applications= ApplicationMapper.toJson(ApplicationMapper.fromJson(applications));
+        } else {
+            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJson(applications));
+
+        }
         return applications;
     }
 
     boolean hasAccess(String applicationTokenId, String userTokenId) {
         //FIXME validate user and applciation trying to create a new application.
+        return true;
+    }
+
+    boolean isUAWA(String applicationTokenId, String userTokenId){
+        log.trace("Checking isUAWA. applicationTokenId:{} userTokenId:{} ",applicationTokenId, userTokenId);
+        // Check UAWA appid on applicationTokenId from STS - @Path("{applicationtokenid}/get_application_id")
         return true;
     }
 }
