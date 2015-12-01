@@ -40,7 +40,7 @@ public class AuthenticationService {
             String cellPhone = passwordResetMap.get("cellPhone");
             String resetPasswordToken = passwordResetMap.get("resetPasswordToken");
             passwordResetOk = sendNotification (email, cellPhone, username,userAction, resetPasswordToken);
-            passwordResetOk = false;
+            passwordResetOk = true;
 
         } catch (IOException e) {
             log.warn("Failed to parse response from uibAuthConnection.resetPassword. username {}, responseJson {}", username, passwordResetJson);
