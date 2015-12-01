@@ -20,6 +20,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class AuthenticationService {
     private static final Logger log = getLogger(AuthenticationService.class);
 
+    static final String CHANGE_PASSWORD_TOKEN = "changePasswordToken";
+
     private final UibAuthConnection uibAuthConnection;
     private final PasswordSender passwordSender;
     private final ObjectMapper objectMapper;
@@ -38,10 +40,13 @@ public class AuthenticationService {
             Map<String,String> passwordResetMap = objectMapper.readValue(passwordResetJson,Map.class);
             String email = passwordResetMap.get("email");
             String cellPhone = passwordResetMap.get("cellPhone");
-            String resetPasswordToken = passwordResetMap.get("resetPasswordToken");
-            passwordResetOk = sendNotification (email, cellPhone, username,userAction, resetPasswordToken);
-            passwordResetOk = true;
-
+            String resetPasswordToken = passwordResetMap.get(CHANGE_PASSWORD_TOKEN);
+            if (resetPasswordToken==null || resetPasswordToken.length()<7){
+                log.warn("UIB returned empty reset_password_token");
+            } else {
+                passwordResetOk = sendNotification (email, cellPhone, username,userAction, resetPasswordToken);
+                passwordResetOk = true;
+            }
         } catch (IOException e) {
             log.warn("Failed to parse response from uibAuthConnection.resetPassword. username {}, responseJson {}", username, passwordResetJson);
         }
