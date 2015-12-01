@@ -3,6 +3,8 @@ package net.whydah.admin.applications;
 import net.whydah.admin.CredentialStore;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +21,16 @@ public class ApplicationsService {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
     private final UibApplicationsConnection uibApplicationsConnection;
     private final CredentialStore credentialStore;
+    private final String stsUrl;
     private static final String UAWA_ID="2219";
-
-    public static String stsUrl;
 
 
     @Autowired
-    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore) {
+    @Configure
+    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore,@Configuration("securitytokenservice") String stsUri) {
         this.uibApplicationsConnection = uibApplicationsConnection;
         this.credentialStore = credentialStore;
+        this.stsUrl=stsUri;
     }
 
     public String listAll(String applicationTokenId, String userTokenId) {
