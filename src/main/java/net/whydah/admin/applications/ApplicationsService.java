@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.core.UriBuilder;
 import java.text.SimpleDateFormat;
 
 /**
@@ -78,7 +79,8 @@ public class ApplicationsService {
 
     boolean isUAWA(String applicationTokenId, String userTokenId){
         log.trace("Checking isUAWA. applicationTokenId:{} userTokenId:{} ",applicationTokenId, userTokenId);
-        // String applicationID = new CommandGetApplicationIdFromApplicationTokenId(tokenServiceUri, applicationTokenId).execute();
+        String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri("https://whydahdev.cantara.no/tokenservice/").build(), applicationTokenId).execute();
+        log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ",applicationID);
         // return ("2219".equals(applicationID));
         return true;
     }
