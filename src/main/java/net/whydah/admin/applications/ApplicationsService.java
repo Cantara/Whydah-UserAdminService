@@ -19,6 +19,9 @@ public class ApplicationsService {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
     private final UibApplicationsConnection uibApplicationsConnection;
     private final CredentialStore credentialStore;
+    private static final String UAWA_ID="2219";
+
+    public static String stsUrl;
 
 
     @Autowired
@@ -78,10 +81,10 @@ public class ApplicationsService {
     }
 
     boolean isUAWA(String applicationTokenId, String userTokenId){
-        log.trace("Checking isUAWA. applicationTokenId:{} userTokenId:{} ",applicationTokenId, userTokenId);
-        String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri("https://whydahdev.cantara.no/tokenservice/").build(), applicationTokenId).execute();
+        log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ",UAWA_ID,applicationTokenId, userTokenId);
+        String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
         log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ",applicationID);
-        return ("2219".equals(applicationID));
+        return (UAWA_ID.equals(applicationID));
         //return true;
     }
 }

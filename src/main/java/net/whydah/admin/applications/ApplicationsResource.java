@@ -1,5 +1,6 @@
 package net.whydah.admin.applications;
 
+import org.constretto.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,9 @@ public class ApplicationsResource {
     private final ApplicationsService applicationsService;
 
     @Autowired
-    public ApplicationsResource(ApplicationsService applicationsService) {
+    public ApplicationsResource(@Configuration("securitytokenservice") String stsUri,ApplicationsService applicationsService) {
         this.applicationsService = applicationsService;
+        ApplicationsService.stsUrl=stsUri;
     }
 
 
