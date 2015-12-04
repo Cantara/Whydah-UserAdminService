@@ -4,7 +4,7 @@
 # If Version is from source, find the artifact
 if [ "$Version" = "FROM_SOURCE" ]; then 
     # Find the bult artifact
-    Version=$(find target/* -name '*.jar' | grep SNAPSHOT | grep -v original | grep -v lib)
+    Version=$(find target/* -name '*.jar' | grep SNAPSHOT | grep -v javadoc |  grep -v original | grep -v lib)
 else
     Version=UserAdminService.jar
 fi
