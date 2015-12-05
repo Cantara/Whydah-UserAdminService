@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Used by https://github.com/Cantara/Whydah/tree/master/dev-quickstart
 
 # If Version is from source, find the artifact
