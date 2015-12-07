@@ -21,8 +21,6 @@ public class UserAggregateResource {
     UserService userService;
 
 
-    @Context
-    private Request request;
 
 
     @Autowired
