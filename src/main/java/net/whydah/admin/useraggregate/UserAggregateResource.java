@@ -2,7 +2,7 @@ package net.whydah.admin.useraggregate;
 
 import net.whydah.admin.user.UserService;
 import net.whydah.admin.user.uib.*;
-import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.mappers.UserAggregateMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +47,15 @@ public class UserAggregateResource {
                                String userAggregateJson, @Context Request request) {
         log.trace("createUser is called with userAggregateJson={}", userAggregateJson);
 
-        UserAggregate userAggregate = UserIdentityMapper.fromJson(userAggregateJson);
+        UserAggregate userAggregate = UserAggregateMapper.fromJson(userAggregateJson);
         UserIdentity createdUser = userService.createUser(applicationTokenId, userTokenId, userAggregateJson);
-
+        //
+        // TODO - add roles to user here
+        //
         if (createdUser != null) {
-            userAggregate = UserIdentityMapper.fromJson(createdUser.toJson());
+            UserAggregate createdUserAggregate = UserAggregateMapper.fromJson(createdUser.toJson());
 
-            return Response.ok().build();
+            return Response.ok(UserAggregateMapper.toJson(createdUserAggregate)).build();
         } else {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
@@ -79,8 +81,11 @@ public class UserAggregateResource {
 
         try {
             userIdentity = userService.getUserIdentity(applicationTokenId, userTokenId, uid);
-                userResponse = userIdentity.toJson();
-            return Response.ok(userResponse).build();
+            UserAggregate userAggregate = UserAggregateMapper.fromJson(userIdentity.toJson());
+            //
+            // TODO - fetch and add roles here
+            //
+            return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
         } catch (IllegalArgumentException iae) {
             log.error("getUserIdentity: Invalid xml={}", uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
