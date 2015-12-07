@@ -3,6 +3,7 @@ package net.whydah.admin.useraggregate;
 import net.whydah.admin.user.UserService;
 import net.whydah.admin.user.uib.*;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +12,14 @@ import net.whydah.sso.user.types.UserAggregate;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 @Path("/{applicationtokenid}/{userTokenId}/useraggregate")
 @Controller
 public class UserAggregateResource {
     private static final Logger log = LoggerFactory.getLogger(UserAggregateResource.class);
     UserService userService;
+
 
     @Context
     private Request request;
@@ -44,16 +45,18 @@ public class UserAggregateResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response createUserAggregate(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                               String userAggregateJson, @Context Request request) {
+                                        String userAggregateJson, @Context Request request) {
         log.trace("createUser is called with userAggregateJson={}", userAggregateJson);
 
         UserAggregate userAggregate = UserAggregateMapper.fromJson(userAggregateJson);
         UserIdentity createdUser = userService.createUser(applicationTokenId, userTokenId, userAggregateJson);
-        //
-        // TODO - add roles to user here
-        //
         if (createdUser != null) {
             UserAggregate createdUserAggregate = UserAggregateMapper.fromJson(createdUser.toJson());
+            List<UserApplicationRoleEntry> roleList = userAggregate.getRoleList();
+            for (UserApplicationRoleEntry role : roleList) {
+                userService.addUserRole(applicationTokenId, userTokenId, createdUser.getUid(), RoleRepresentationRequest.fromJson(role.toJson()));
+            }
+            createdUserAggregate.setRoleList(roleList);
 
             return Response.ok(UserAggregateMapper.toJson(createdUserAggregate)).build();
         } else {
@@ -74,17 +77,12 @@ public class UserAggregateResource {
     @Path("/{uid}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getUserAggregate(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                    @PathParam("uid") String uid, @Context Request req) {
+                                     @PathParam("uid") String uid, @Context Request req) {
         log.trace("getUserAggregate is called with uid={}. ", uid);
-        String userResponse;
-        UserIdentity userIdentity = null;
+        UserAggregate userAggregate = null;
 
         try {
-            userIdentity = userService.getUserIdentity(applicationTokenId, userTokenId, uid);
-            UserAggregate userAggregate = UserAggregateMapper.fromJson(userIdentity.toJson());
-            //
-            // TODO - fetch and add roles here
-            //
+            userAggregate = UserAggregateMapper.fromJson(userService.getUserAggregateByUid(applicationTokenId, userTokenId, uid).toJson());
             return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
         } catch (IllegalArgumentException iae) {
             log.error("getUserIdentity: Invalid xml={}", uid, iae);
