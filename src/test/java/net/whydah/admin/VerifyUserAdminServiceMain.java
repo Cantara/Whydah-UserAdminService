@@ -1,9 +1,9 @@
 package net.whydah.admin;
 
-import net.whydah.admin.user.uib.RoleRepresentation;
-import net.whydah.admin.user.uib.RoleRepresentationRequest;
-import net.whydah.admin.user.uib.UserIdentity;
-import net.whydah.admin.user.uib.UserIdentityRepresentation;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.mappers.UserRoleMapper;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -222,7 +222,7 @@ public class VerifyUserAdminServiceMain {
         log.info("addUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
         String output = response.readEntity(String.class);
-        UserIdentity createdUserIdentity = UserIdentity.fromJson(output);
+        UserIdentity createdUserIdentity = UserIdentityMapper.fromUserIdentityJson(output);
         String userId = createdUserIdentity.getUid();
         assertNotNull(userId);
         return userId;
@@ -265,7 +265,7 @@ public class VerifyUserAdminServiceMain {
 
     public String addUserRole() {
 
-        RoleRepresentationRequest role = buildStubUserRole();
+        UserApplicationRoleEntry role = buildStubUserRole();
         WebTarget userRolesResource = buildBasePath().path("role/");
 
         log.info("AddUserRole by url {}, ", userRolesResource.getUri().toString());
@@ -274,28 +274,28 @@ public class VerifyUserAdminServiceMain {
         log.info("addUserRole ,StatusCode {}", statusCode);
         assertEquals("Could not add user-role via UserAdminService", 200, statusCode);
         String output = response.readEntity(String.class);
-        RoleRepresentation createdRole = RoleRepresentation.fromJson(output);
+        UserApplicationRoleEntry createdRole = UserRoleMapper.fromJson(output);
         String roleId = createdRole.getId();
         assertNotNull(roleId);
         return roleId;
 
     }
 
-    private UserIdentityRepresentation buildStubUser() {
+    private UserIdentity buildStubUser() {
         String firstName = "firstName-" + System.currentTimeMillis();
         String email = firstName + "@example.com";
-        UserIdentityRepresentation userIdentity = new UserIdentityRepresentation(email, firstName, "testlastName", "test-personRef", email,"+4793333697");
+        UserIdentity userIdentity = new UserIdentity(email, firstName, "testlastName", "test-personRef", email,"+4793333697");
         return userIdentity;
     }
 
-    private RoleRepresentationRequest buildStubUserRole() {
+    private UserApplicationRoleEntry buildStubUserRole() {
         String roleName = "testRole-" + System.currentTimeMillis();
-        RoleRepresentationRequest role = new RoleRepresentationRequest();
+        UserApplicationRoleEntry role = new UserApplicationRoleEntry();
         role.setApplicationId("12");
         role.setApplicationName("UserAdminService");
-        role.setOrganizationName("Verification");
-        role.setApplicationRoleName(roleName);
-        role.setApplicationRoleValue("30");
+        role.setOrgName("Verification");
+        role.setRoleName(roleName);
+        role.setRoleValue("30");
         return role;
     }
 

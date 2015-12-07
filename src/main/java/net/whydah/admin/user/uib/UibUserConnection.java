@@ -3,6 +3,12 @@ package net.whydah.admin.user.uib;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.admin.user.ConflictExeption;
+import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.mappers.UserRoleMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -58,11 +64,11 @@ public class UibUserConnection {
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("createUser-Response from UIB {}", userJson);
-                userIdentity = UserIdentity.fromJson(userJson);
+                userIdentity = UserIdentityMapper.fromUserIdentityJson(userJson);
                 break;
             case STATUS_CREATED:
                 log.trace("createUser-userCreated {}", userJson);
-                userIdentity = UserIdentity.fromJson(userJson);
+                userIdentity = UserIdentityMapper.fromUserIdentityJson(userJson);
                 break;
             case STATUS_CONFLICT:
                 log.info("Duplicate creation of user attempted on {}", userIdentityJson);
@@ -82,12 +88,11 @@ public class UibUserConnection {
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userAggregateJson, MediaType.APPLICATION_JSON));
 
         UserAggregate userAggregate;
-        UserAggregateRepresentation userAggregateRepresentation;
         int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("Response from UIB {}", response.readEntity(String.class));
-                userAggregateRepresentation = UserAggregateRepresentation.fromJson(userAggregateJson);
+                userAggregate = UserAggregateMapper.fromJson(userAggregateJson);
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
@@ -96,7 +101,6 @@ public class UibUserConnection {
                 log.error("Response from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
                 throw new AuthenticationFailedException("Authentication failed. Status code " + response.getStatus());
         }
-        userAggregate = userAggregateRepresentation.getUserAggregate();
         return userAggregate;
     }
 
@@ -145,21 +149,21 @@ public class UibUserConnection {
         return updatedOk;
     }
 
-    public RoleRepresentation addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, RoleRepresentationRequest roleRequest) {
+    public UserApplicationRoleEntry addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         String roleJson = response.readEntity(String.class);
-        RoleRepresentation role = null;
+        UserApplicationRoleEntry role = null;
         int statusCode = response.getStatus();
 
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("addRole-Response from UIB {}", roleJson);
-                role = RoleRepresentation.fromJson(roleJson);
+                role = UserRoleMapper.fromJson(roleJson);
                 break;
             case STATUS_CREATED:
                 log.trace("addRole-roleCreated {}", roleJson);
-                role = RoleRepresentation.fromJson(roleJson);
+                role = UserRoleMapper.fromJson(roleJson);
                 break;
             case STATUS_CONFLICT:
                 log.info("Duplicate creation of role attempted on {}", roleJson);
@@ -195,19 +199,15 @@ public class UibUserConnection {
 
 
 
-    public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserPropertyAndRole userPropertyAndRole) {
+    public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry userPropertyAndRole) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         UserAggregate updatedUser = null;
-        UserAggregateRepresentation userAggregateRepresentation = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userPropertyAndRole.toJson(), MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("addPropertyOrRole-Response from UIB {}", response.readEntity(String.class));
-                userAggregateRepresentation = UserAggregateRepresentation.fromJson(response.readEntity(String.class));
-                if (userAggregateRepresentation != null) {
-                    updatedUser = userAggregateRepresentation.getUserAggregate();
-                }
+                updatedUser = UserAggregateMapper.fromJson(response.readEntity(String.class));
                 break;
             case STATUS_FORBIDDEN:
                 log.error("addPropertyOrRole-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), response.readEntity(String.class));
@@ -228,7 +228,7 @@ public class UibUserConnection {
         switch (response.getStatus()) {
             case STATUS_OK:
                 log.trace("getUserIdentity-Response from Uib {}", responseBody);
-                UserIdentity userIdentity = UserIdentity.fromJson(responseBody);
+                UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(responseBody);
                 return userIdentity;
             case STATUS_FORBIDDEN:
                 log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
@@ -237,43 +237,20 @@ public class UibUserConnection {
                 log.error("getUserIdentity-Response from UIB: {}: {}", response.getStatus(), responseBody);
                 throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
         }
-
-        /*
-        UserAggregate userAggregate = null;
-        UserAggregateRepresentation userAggregateRepresentation;
-        switch (statusCode) {
-            case STATUS_OK:
-                log.trace("getUserIdentity-Response from Uib {}", responseBody);
-                userAggregateRepresentation = UserAggregateRepresentation.fromJson(responseBody);
-                if (userAggregateRepresentation != null) {
-                    userAggregate = userAggregateRepresentation.getUserAggregate();
-                }
-                break;
-            case STATUS_FORBIDDEN:
-                log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
-                break;
-            default:
-                log.error("getUserIdentity-Response from UIB: {}: {}", response.getStatus(), responseBody);
-                throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
-        }
-        return userAggregate;
-        */
     }
+
 
     public UserAggregate getUserAggregateByUid(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         UserAggregate userAggregate = null;
-        UserAggregateRepresentation userAggregateRepresentation;
+        UserAggregate userAggregateRepresentation;
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         int statusCode = response.getStatus();
         String responseBody = response.readEntity(String.class);
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("getUserAggregateByUid-Response from Uib {}", responseBody);
-                userAggregateRepresentation = UserAggregateRepresentation.fromJson(responseBody);
-                if (userAggregateRepresentation != null) {
-                    userAggregate = userAggregateRepresentation.getUserAggregate();
-                }
+                userAggregate = UserAggregateMapper.fromJson(responseBody);
                 break;
             case STATUS_FORBIDDEN:
                 log.error("getUserAggregateByUid-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);

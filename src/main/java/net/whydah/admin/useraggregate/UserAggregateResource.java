@@ -3,7 +3,9 @@ package net.whydah.admin.useraggregate;
 import net.whydah.admin.user.UserService;
 import net.whydah.admin.user.uib.*;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +54,7 @@ public class UserAggregateResource {
             UserAggregate createdUserAggregate = UserAggregateMapper.fromJson(createdUser.toJson());
             List<UserApplicationRoleEntry> roleList = userAggregate.getRoleList();
             for (UserApplicationRoleEntry role : roleList) {
-                userService.addUserRole(applicationTokenId, userTokenId, createdUser.getUid(), RoleRepresentationRequest.fromJson(role.toJson()));
+                userService.addUserRole(applicationTokenId, userTokenId, createdUser.getUid(), role);
             }
             createdUserAggregate.setRoleList(roleList);
 

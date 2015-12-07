@@ -31,7 +31,7 @@ public class UsersService {
      *
      * @param applicationTokenId
      * @param userTokenId
-     * @param query searchstring to be matched against UserAggregate values
+     * @param query searchstring to be matched against UserAggregateDeprecated values
      * @return Json formatted string of UserAggregates
      */
     public String findUsers(String applicationTokenId, String userTokenId, String query) {
@@ -49,7 +49,7 @@ public class UsersService {
      *
      * @param applicationTokenId
      * @param userTokenId
-     * @param query searchstring to be matched against UserIdentity values
+     * @param query searchstring to be matched against UserIdentityDeprecated values
      * @return Json formatted string of Useridentities
      */
     public String searchUsers(String applicationTokenId, String userTokenId, String query) {

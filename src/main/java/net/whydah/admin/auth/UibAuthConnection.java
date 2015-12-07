@@ -2,7 +2,6 @@ package net.whydah.admin.auth;
 
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.admin.user.uib.UserIdentity;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -127,7 +126,4 @@ public class UibAuthConnection {
         return output;
     }
 
-    public UserIdentity findUserIdentity(String username) {
-        return null;
-    }
 }

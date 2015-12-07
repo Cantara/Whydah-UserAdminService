@@ -1,7 +1,12 @@
 package net.whydah.admin.user.uib;
 
+import net.whydah.sso.user.helpers.UserRoleXpathHelper;
+import net.whydah.sso.user.mappers.UserRoleMapper;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -15,7 +20,7 @@ public class RoleRepresentationMapperTest {
     @Test
     public void testFromJson() throws Exception {
 
-        List<RoleRepresentation> role = RoleRepresentationMapper.fromJson(roleJson);
+        List<UserApplicationRoleEntry> role = Arrays.asList(UserRoleXpathHelper.getUserRoleFromUserAggregateJson(roleJson));
         assertNotNull(role);
         assertEquals(role.size(),1);
 

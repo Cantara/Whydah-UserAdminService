@@ -2,15 +2,18 @@ package net.whydah.admin.createlogon;
 
 import net.whydah.admin.auth.UibAuthConnection;
 import net.whydah.admin.email.PasswordSender;
-import net.whydah.admin.user.uib.RoleRepresentation;
-import net.whydah.admin.user.uib.UserAggregateRepresentation;
-import net.whydah.admin.user.uib.UserIdentityRepresentation;
-import net.whydah.admin.user.uib.UserPropertyAndRole;
+import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.constretto.ConstrettoConfiguration;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -66,12 +69,12 @@ public class SignupService {
         this.fbRoleName = configuration.evaluateToString("adduser.facebook.defaultrole.name");
     }
 
-    public String signupUser(String applicationtokenId, UserIdentityRepresentation signupUser, UserAction userAction) {
+    public String signupUser(String applicationtokenId, UserIdentity signupUser, UserAction userAction) {
         String passwordResetToken = null;
         //Add default roles
-        UserAggregateRepresentation createUserRepresentation = buildUserWithDefaultRoles(signupUser);
+        UserAggregate createUserRepresentation = buildUserWithDefaultRoles(signupUser);
         //1.Create User (UIB)
-        UserAggregateRepresentation  createdUser =  uibConnection.createAggregateUser(applicationtokenId, createUserRepresentation);
+        UserAggregate  createdUser =  uibConnection.createAggregateUser(applicationtokenId, createUserRepresentation);
         //2.CreateResetPasswordToken
         if (createdUser != null) {
             String username = createdUser.getUsername();
@@ -88,7 +91,7 @@ public class SignupService {
         return passwordResetToken;
     }
 
-    protected boolean sendNotification(UserAggregateRepresentation createdUser, UserAction userAction, String passwordResetToken) {
+    protected boolean sendNotification(UserAggregate createdUser, UserAction userAction, String passwordResetToken) {
         boolean notificationIsSent = false;
         if (createdUser != null) {
             if (userAction != null && userAction.equals(UserAction.PIN)) {
@@ -105,18 +108,26 @@ public class SignupService {
         return notificationIsSent;
     }
 
-    protected UserAggregateRepresentation buildUserWithDefaultRoles(UserIdentityRepresentation signupUser) {
-        UserAggregateRepresentation userAggregate = null;
+    protected UserAggregate buildUserWithDefaultRoles(UserIdentity signupUser) {
+        UserAggregate userAggregate = null;
         if (signupUser != null) {
-            userAggregate = UserAggregateRepresentation.fromUserIdentityRepresentation(signupUser);
-            RoleRepresentation defaultRole = buildDefaultRole();
-            userAggregate.addRole(defaultRole);
+            userAggregate = UserAggregateMapper.fromUserIdentityJson(signupUser.toJson());
+            UserApplicationRoleEntry defaultRole = buildDefaultRole();
+            List<UserApplicationRoleEntry> roleList = new LinkedList<UserApplicationRoleEntry>() ;
+            roleList.add(defaultRole);
+            userAggregate.setRoleList(roleList);
         }
         return userAggregate;
     }
 
-    protected RoleRepresentation buildDefaultRole() {
-        UserPropertyAndRole userRole = new UserPropertyAndRole(null, null, defaultApplicationId,defaultApplicationName,defaultOrganizationName,defaultRoleName,defaultRoleValue);
-        return RoleRepresentation.fromUserPropertyAndRole(userRole);
+    protected UserApplicationRoleEntry buildDefaultRole() {
+        UserApplicationRoleEntry role = new UserApplicationRoleEntry();
+        role.setApplicationId(defaultApplicationId);
+        role.setApplicationName(defaultApplicationName);
+        role.setOrgName(defaultOrganizationName);
+        role.setRoleName(defaultRoleName);
+        role.setRoleValue(defaultRoleValue);
+
+        return role;
     }
 }

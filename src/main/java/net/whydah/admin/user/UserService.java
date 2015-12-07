@@ -3,6 +3,12 @@ package net.whydah.admin.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.user.uib.*;
+import net.whydah.sso.user.helpers.UserRoleXpathHelper;
+import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +16,7 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.NotAuthorizedException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,13 +51,7 @@ public class UserService {
     }
 
     public UserIdentity createUserFromXml(String applicationTokenId, String userTokenId, String userXml) {
-        UserIdentity createdUser = null;
-        UserAggregate userAggregate = UserAggregate.fromXML(userXml);
-        UserIdentityRepresentation userIdentity = userAggregate.getIdentity();
-        if (userIdentity != null) {
-            String userJson = userIdentity.toJson();
-            createdUser = createUser(applicationTokenId, userTokenId, userJson);
-        }
+        UserIdentity createdUser = UserIdentityMapper.fromUserAggregateJson(userXml);
         return createdUser;
     }
 
@@ -62,10 +63,10 @@ public class UserService {
             throw new NotAuthorizedException("Not Authorized to getUserIdentity()");
         }
         /*
-        UserIdentity userIdentity = new UserIdentity("uid","username","first", "last", "", "first.last@example.com", "12234", "");
+        UserIdentityDeprecated userIdentity = new UserIdentityDeprecated("uid","username","first", "last", "", "first.last@example.com", "12234", "");
         List<UserPropertyAndRole> roles = new ArrayList<>();
         roles.add(buildStubRole());
-        userAggregate = new UserAggregate(userIdentity, roles);
+        userAggregate = new UserAggregateDeprecated(userIdentity, roles);
         */
         log.trace("found {}", userIdentity);
         return userIdentity;
@@ -86,19 +87,9 @@ public class UserService {
         return isUpdated;
     }
 
-    public UserAggregate addUserRoleFromXml(String applicationTokenId, String adminUserTokenId, String uid, String propertyOrRoleXml) {
-        UserAggregate updatedUser = null;
-        if (hasAccess(applicationTokenId, adminUserTokenId)) {
-            UserPropertyAndRole userPropertyAndRole = UserPropertyAndRole.fromXml(propertyOrRoleXml);
-            updatedUser = uibUserConnection.addPropertyOrRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, uid, userPropertyAndRole);
-        } else {
-            throw new NotAuthorizedException("Not Authorized to add user role()");
-        }
-        return updatedUser;
-    }
 
-    public RoleRepresentation addUserRole(String applicationTokenId, String adminUserTokenId, String uid, RoleRepresentationRequest roleRequest) {
-        RoleRepresentation role;
+    public UserApplicationRoleEntry addUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
+        UserApplicationRoleEntry role;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             role = uibUserConnection.addRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, uid, roleRequest);
         } else {
@@ -115,7 +106,7 @@ public class UserService {
         }
     }
 
-    public UserAggregate updateUserRole(String applicationId,String applicationName, String applicationRoleName, String applicationRoleValue) {
+    public UserAggregate updateUserRole(String applicationId, String applicationName, String applicationRoleName, String applicationRoleValue) {
         throw new NotImplementedException();
     }
 
@@ -128,7 +119,7 @@ public class UserService {
         }
 
         userAggregate = uibUserConnection.getUserAggregateByUid(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
-        log.trace("found UserAggregate {}", userAggregate);
+        log.trace("found UserAggregateDeprecated {}", userAggregate);
         return userAggregate;
     }
 
@@ -138,13 +129,10 @@ public class UserService {
         }
 
         String userAggregate = uibUserConnection.getUserAggregateByUidAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
-        log.trace("found UserAggregate {}", userAggregate);
+        log.trace("found UserAggregateDeprecated {}", userAggregate);
         return userAggregate;
     }
 
-    private UserPropertyAndRole buildStubRole() {
-        return new UserPropertyAndRole("id", "uid", "1", "appname", "orgName", "user", "true");
-    }
 
     boolean hasAccess(String applicationTokenId, String userTokenId) {
         //FIXME validate user and applciation trying to create a new user.
@@ -152,17 +140,6 @@ public class UserService {
     }
 
 
-    /*
-    public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) {
-        String roles;
-        if (hasAccess(applicationTokenId, userTokenId)) {
-            roles = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
-        } else {
-            throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
-        }
-        return roles;
-    }
-    */
 
     public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) {
         if (hasAccess(applicationTokenId, userTokenId)) {
@@ -172,35 +149,35 @@ public class UserService {
         }
 
         /*
-        List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
+        List<UserApplicationRoleEntry> roles = getRoles(applicationTokenId, userTokenId, uid);
         String result;
         try {
             result = mapper.writeValueAsString(roles);
         } catch (IOException e) {
-            log.error("Error converting List<RoleRepresentation> to json. ", e);
+            log.error("Error converting List<RoleRepresentationDeprecated> to json. ", e);
             return null;
         }
         return result;
         */
         /*
         String result = "";
-        for (RoleRepresentation role : roles) {
+        for (RoleRepresentationDeprecated role : roles) {
             result += role.toJson();
         }
         */
 
     }
     public String getRolesAsXml(String applicationTokenId, String userTokenId, String uid) {
-        List<RoleRepresentation> roles = getRoles(applicationTokenId, userTokenId, uid);
+        List<UserApplicationRoleEntry> roles = getRoles(applicationTokenId, userTokenId, uid);
         String result = "<applications>";
-        for (RoleRepresentation role : roles) {
+        for (UserApplicationRoleEntry role : roles) {
             result += role.toXML();
         }
         result += "</applications>";
         return result;
     }
-    private List<RoleRepresentation> getRoles(String applicationTokenId, String userTokenId, String uid) {
-        List<RoleRepresentation> roles;
+    private List<UserApplicationRoleEntry> getRoles(String applicationTokenId, String userTokenId, String uid) {
+        List<UserApplicationRoleEntry> roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
             String rolesJson = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
             log.debug("rolesJson {}", rolesJson);
@@ -212,8 +189,9 @@ public class UserService {
     }
 
 
-    private List<RoleRepresentation> mapRolesFromString(String rolesJson) {
-        return RoleRepresentationMapper.fromJson(rolesJson);
+    private List<UserApplicationRoleEntry> mapRolesFromString(String rolesJson) {
+        UserApplicationRoleEntry[] roleArray= UserRoleXpathHelper.getUserRoleFromUserAggregateJson(rolesJson);
+        return Arrays.asList(roleArray);
     }
 
 

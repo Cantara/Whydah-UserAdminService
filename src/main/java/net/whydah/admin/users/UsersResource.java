@@ -30,7 +30,7 @@ public class UsersResource {
     }
 
     /**
-     * UserAdmin Find, return UserAggregate
+     * UserAdmin Find, return UserAggregateDeprecated
      */
     @GET
     @Path("/find/{q}")
@@ -57,7 +57,7 @@ public class UsersResource {
     }
 
     /**
-     * Directory search, return only UserIdentity
+     * Directory search, return only UserIdentityDeprecated
      */
     @GET
     @Path("/search/{q}")

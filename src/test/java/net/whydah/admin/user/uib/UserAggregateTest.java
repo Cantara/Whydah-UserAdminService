@@ -1,5 +1,10 @@
 package net.whydah.admin.user.uib;
 
+import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -20,29 +25,30 @@ public class UserAggregateTest {
 
     @Test
     public void buildUserAggregate() throws Exception {
-        UserAggregateRepresentation userAggregate = UserAggregateRepresentation.fromJson(userAgregateTemplate);
+        UserAggregate userAggregate = UserAggregateMapper.fromJson(userAgregateTemplate);
         assertNotNull(userAggregate);
         assertEquals("uid", userAggregate.getUid());
         assertEquals("personRef", userAggregate.getPersonRef());
         assertEquals("12345678", userAggregate.getCellPhone());
-        List<RoleRepresentation> userRoles = userAggregate.getRoles();
+        List<UserApplicationRoleEntry> userRoles = userAggregate.getRoleList();
         assertNotNull(userRoles);
         //TODO bli: work in progress
     }
 
     @Test
     public void buildXml() throws Exception {
-        UserIdentity userIdentity = new UserIdentity("uid1", "userName1", "firstName1", "lastName1", "personRef1", "first.last@example.com", "93333000", "pwdPwd1234");
-        List<UserPropertyAndRole> userPropertiesAndRoles = new ArrayList<>();
-        UserPropertyAndRole userPropertyAndRole = new UserPropertyAndRole();
+        UserIdentity userIdentity = new UserIdentity();
+        List<UserApplicationRoleEntry> userPropertiesAndRoles = new ArrayList<>();
+        UserApplicationRoleEntry userPropertyAndRole = new UserApplicationRoleEntry();
         userPropertyAndRole.setId("id1");
         userPropertyAndRole.setApplicationId("appid1");
         userPropertyAndRole.setApplicationName("appName");
-        userPropertyAndRole.setOrganizationName("orgName");
-        userPropertyAndRole.setApplicationRoleName("roleName");
-        userPropertyAndRole.setApplicationRoleValue("roleValue");
+        userPropertyAndRole.setOrgName("orgName");
+        userPropertyAndRole.setRoleName("roleName");
+        userPropertyAndRole.setRoleName("roleValue");
         userPropertiesAndRoles.add(userPropertyAndRole);
-        UserAggregate userAggregate = new UserAggregate(userIdentity, userPropertiesAndRoles);
+        UserAggregate userAggregate = UserAggregateMapper.fromJson(userAgregateTemplate);
+        userAggregate.setRoleList(userPropertiesAndRoles);;
         log.info("userAggregate: {}", userAggregate.toXML());
         assertNotNull(userAggregate.toXML());
 
@@ -50,8 +56,6 @@ public class UserAggregateTest {
 
     @Test
     public void buildJson() throws Exception {
-        UserIdentity userIdentity = new UserIdentity("uid1", "userName1", "firstName1", "lastName1", "personRef1", "first.last@example.com", "93333000", "pwdPwd1234");
-        log.debug("userIdentity, toJson {}", userIdentity.toJson());
         String fromJson = "{\n" +
                 "    \"username\": \"userName1\",\n" +
                 "    \"firstName\": \"firstName1\",\n" +
@@ -63,8 +67,7 @@ public class UserAggregateTest {
                 "    \"password\": \"pwdPwd1234\",\n" +
                 "    \"personName\": \"firstName1 lastName1\"\n" +
                 "}";
-        UserIdentity uiFromJson = UserIdentity.fromJson(fromJson);
-        assertEquals(userIdentity.toJson(), uiFromJson.toJson());
+        UserIdentity uiFromJson = UserIdentityMapper.fromUserIdentityJson(fromJson);
 
     }
 }

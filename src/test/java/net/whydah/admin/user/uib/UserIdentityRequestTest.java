@@ -1,5 +1,6 @@
 package net.whydah.admin.user.uib;
 
+import net.whydah.sso.user.types.UserIdentity;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
@@ -15,7 +16,7 @@ public class UserIdentityRequestTest {
 
     @Test
     public void testToJson() throws Exception {
-        UserIdentityRequest userIdentityRequest = new UserIdentityRequest("username", "fn", "ln", "pR", "@","1234");
+        UserIdentity userIdentityRequest = new UserIdentity("username", "fn", "ln", "pR", "@","1234");
         assertNotNull(userIdentityRequest.toJson());
 
     }

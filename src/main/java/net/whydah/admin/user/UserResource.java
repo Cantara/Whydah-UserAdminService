@@ -4,6 +4,11 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.user.uib.*;
+import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserRoleMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +41,8 @@ public class UserResource {
 
     /**
      * Create a new user from xml.
-     *
-     *
+     * <p>
+     * <p>
      * Password is left out deliberately. A password belong to user credential as in user login. We will support multiple ways for logging in,
      * where uid/passord is one. Another login is via FB and Windows AD tokens.
      *
@@ -46,8 +51,8 @@ public class UserResource {
      */
     @POST
     @Path("/")
-    @Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response createUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                                String userXmlOrJson, @Context Request request) {
         log.trace("createUser is called with userXmlOrJson={}", userXmlOrJson);
@@ -57,22 +62,13 @@ public class UserResource {
         String userResponse;
         UserAggregate userAggregate = null;
         try {
-            if (isXmlContent(userXmlOrJson) || responseMediaType == MediaType.APPLICATION_XML_TYPE) {
-                createdUser = userService.createUserFromXml(applicationTokenId, userTokenId, userXmlOrJson);
-            } else {
-                createdUser = userService.createUser(applicationTokenId, userTokenId, userXmlOrJson);
-            }
+
+            createdUser = userService.createUser(applicationTokenId, userTokenId, userXmlOrJson);
 
 
             if (createdUser != null) {
-                userAggregate = new UserAggregate(createdUser, new ArrayList<UserPropertyAndRole>());
-                if (responseMediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)){
-                    userResponse = mapper.writeValueAsString(userAggregate);
-                } else {
-                    userResponse = buildUserXml(userAggregate);
-                }
-
-                return Response.ok(userResponse).build();
+                userAggregate = UserAggregateMapper.fromUserIdentityJson(createdUser.toJson());
+                return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
             } else {
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
@@ -92,15 +88,6 @@ public class UserResource {
             */
 
             return Response.status(Response.Status.CONFLICT).entity(ce.getMessage()).build();
-        }  catch (JsonMappingException e) {
-            log.error("", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch (JsonGenerationException e) {
-            log.error("Could not map created user to Json. User: {}", userAggregate.toString(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch (IOException e) {
-            log.error("Could not map created user to Json. User: {}", userAggregate.toString(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
             log.error("Unkonwn error.", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -119,7 +106,7 @@ public class UserResource {
     @POST
     @Path("/xml")
     public Response createUserFromXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId, String userXml, @Context Request request) {
-        return  createUser(applicationTokenId,userTokenId,userXml,request);
+        return createUser(applicationTokenId, userTokenId, userXml, request);
     }
 
 
@@ -162,8 +149,7 @@ public class UserResource {
             log.warn("Could not responseobject from {}", userIdentity.toString());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        */
-        catch (RuntimeException e) {
+        */ catch (RuntimeException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -187,7 +173,7 @@ public class UserResource {
         log.trace("deleteUser, uid={}, roleid={}", uid);
 
         try {
-            userService.deleteUser(applicationTokenId, userTokenId,uid);
+            userService.deleteUser(applicationTokenId, userTokenId, uid);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (RuntimeException e) {
             log.error("deleteUser-RuntimeException. uid {}", uid, e);
@@ -211,7 +197,7 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        String passwdOk = "<passwordUpdated><username>" + userName +"</username><status>" + isPasswordUpdated+"</status></passwordUpdated>";
+        String passwdOk = "<passwordUpdated><username>" + userName + "</username><status>" + isPasswordUpdated + "</status></passwordUpdated>";
         return Response.ok(passwdOk).build();
     }
 
@@ -262,24 +248,13 @@ public class UserResource {
                             @PathParam("uid") String uid, String roleXmlOrJson) {
         log.trace("addRole is called with uid={}, roleXmlOrJson={}", uid, roleXmlOrJson);
 
-        MediaType responseMediaType = findPreferredResponseMediaType();
 
         try {
-            RoleRepresentationRequest roleRequest;
-            if (responseMediaType == MediaType.APPLICATION_XML_TYPE) {
-                roleRequest = RoleRepresentationRequest.fromXml(roleXmlOrJson);
-                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
-                return Response.ok(roleRepresentation.toXML()).build();
-            } else if (responseMediaType == MediaType.APPLICATION_JSON_TYPE) {
-                roleRequest = RoleRepresentationRequest.fromJson(roleXmlOrJson);
-                RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
-                return Response.ok(roleRepresentation.toJson()).build();
-            }  else {
-                log.error("addRole failed. Invalid roleXmlOrJson={}, uid={}", roleXmlOrJson, uid);
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
+            UserApplicationRoleEntry roleRequest = UserRoleMapper.fromJson(roleXmlOrJson);
+            UserApplicationRoleEntry roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
+            return Response.ok(roleRepresentation.toJson()).build();
         } catch (IllegalArgumentException iae) {
-            log.error("addRole: Invalid xml={}, uid={}", roleXmlOrJson,uid, iae);
+            log.error("addRole: Invalid xml={}, uid={}", roleXmlOrJson, uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
             log.error("addRole: IllegalStateException roleXmlOrJson={}, uid={}", roleXmlOrJson, uid, ise);
@@ -314,7 +289,7 @@ public class UserResource {
         log.trace("addRoleJson is called with uid={}, roleJson {}", uid, roleJson);
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
-            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
+            RoleRepresentationDeprecated roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
             return Response.ok(roleRepresentation.toJson()).build();
         } catch (IllegalArgumentException iae) {
             log.error("addRoleJson: Invalid json={}, uid {}", roleJson,uid, iae);
@@ -340,7 +315,7 @@ public class UserResource {
 
         try {
             RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromXml(roleXml);
-            RoleRepresentation roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
+            RoleRepresentationDeprecated roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
             return Response.ok(roleRepresentation.toXML()).build();
         } catch (IllegalArgumentException iae) {
             log.error("addRoleXml: Invalid xml={}, uid {}", roleXml,uid, iae);
@@ -363,7 +338,7 @@ public class UserResource {
         log.trace("deleteRole, uid={}, roleid={}", uid, roleid);
 
         try {
-            userService.deleteUserRole(applicationTokenId, userTokenId,uid, roleid);
+            userService.deleteUserRole(applicationTokenId, userTokenId, uid, roleid);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (RuntimeException e) {
             log.error("deleteRole-RuntimeException. roleId {}", roleid, e);
@@ -389,11 +364,4 @@ public class UserResource {
         return applicationCreatedJson;
     }
 
-    protected String buildUserXml(UserAggregate userAggregate) {
-        String userXml = null;
-        if (userAggregate != null) {
-            userXml = userAggregate.toXML();
-        }
-        return userXml;
-    }
 }

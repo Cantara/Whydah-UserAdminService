@@ -1,7 +1,8 @@
 package net.whydah.admin.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.whydah.admin.user.uib.UserIdentityRepresentation;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.types.UserIdentity;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -23,7 +24,7 @@ public class MinimalUserTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = "\n" +
                 "{\"username\":\"helloMe\", \"firstName\":\"hello\", \"lastName\":\"me\", \"personRef\":\"\", \"email\":\"hello.me@example.com\", \"cellPhone\":\"+47 90221133\"}";
-        UserIdentityRepresentation minimalUser = objectMapper.readValue(userJson,UserIdentityRepresentation.class);
+        UserIdentity minimalUser = UserIdentityMapper.fromUserIdentityJson(userJson);
         assertNotNull(minimalUser);
         assertEquals(minimalUser.getUsername(),"helloMe");
         assertEquals(minimalUser.getFirstName(),"hello");

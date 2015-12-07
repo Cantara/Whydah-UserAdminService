@@ -2,8 +2,9 @@ package net.whydah.admin.createlogon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.AuthenticationFailedException;
-import net.whydah.admin.user.uib.UserAggregate;
-import net.whydah.admin.user.uib.UserIdentityRepresentation;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,17 +95,15 @@ public class CreateLogonUserController {
 
         Response response = null;
         try {
-            UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
+            UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJson);
             String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
             String responseJson = "{\"resetPasswordToken\": \"" + passwordResetToken+"\"}";
             if (passwordResetToken != null) {
                 response = Response.ok(responseJson).build();
             } else {
-                log.debug("UserIdentity was not created. Input Json {}", userJson);
+                log.debug("UserIdentityDeprecated was not created. Input Json {}", userJson);
                 response = Response.status(Status.PRECONDITION_FAILED).build();
             }
-        } catch (IOException ioe){
-            response = Response.status(Status.BAD_REQUEST).build();
         } catch (AuthenticationFailedException e) {
             log.trace("Failed to create user with applicationtokenid {}, userJson: {}", applicationtokenid, userJson);
             response = Response.serverError().build();
@@ -126,30 +125,20 @@ public class CreateLogonUserController {
 
         Response response = null;
         try {
-            UserIdentityRepresentation signupUser = objectMapper.readValue(userJson, UserIdentityRepresentation.class);
+            UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJson);
             String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
             if (passwordResetToken != null) {
                 response = Response.ok(passwordResetToken).build();
             } else {
-                log.debug("UserIdentity was not created. Input Json {}, userAction {}", userJson, userAction);
+                log.debug("UserIdentityDeprecated was not created. Input Json {}, userAction {}", userJson, userAction);
                 response = Response.status(Status.PRECONDITION_FAILED).build();
             }
-        } catch (IOException ioe){
-            response = Response.status(Response.Status.BAD_REQUEST).build();
         } catch (AuthenticationFailedException e) {
             log.trace("Failed to create user with applicationtokenid {}, userJson: {}", applicationtokenid, userJson);
             response = Response.serverError().build();
         }
         return response;
 
-    }
-
-    protected String buildUserXml(UserAggregate userAggregate) {
-        String userXml = null;
-        if (userAggregate != null) {
-            userXml = userAggregate.toXML();
-        }
-        return userXml;
     }
 
 

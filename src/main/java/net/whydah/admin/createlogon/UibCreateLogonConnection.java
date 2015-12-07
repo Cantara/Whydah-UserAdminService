@@ -1,9 +1,9 @@
 package net.whydah.admin.createlogon;
 
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.admin.user.uib.UserAggregateRepresentation;
-import net.whydah.admin.user.uib.UserIdentity;
-import net.whydah.admin.user.uib.UserIdentityRepresentation;
+import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.types.UserAggregate;
+import net.whydah.sso.user.types.UserIdentity;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -56,10 +56,10 @@ public class UibCreateLogonConnection {
 
     }
 
-    public UserIdentity createUser(String applicationTokenId, UserIdentityRepresentation minimalUser) {
+    public UserIdentity createUser(String applicationTokenId, UserIdentity minimalUser) {
 
         UserIdentity userIdentity = null;
-//        userIdentity = new UserIdentity("temp-uid", minimalUser.getUsername(),minimalUser.getFirstName(),minimalUser.getLastName(),minimalUser.getPersonRef(),
+//        userIdentity = new UserIdentityDeprecated("temp-uid", minimalUser.getUsername(),minimalUser.getFirstName(),minimalUser.getLastName(),minimalUser.getPersonRef(),
 //                minimalUser.getEmail(),minimalUser.getCellPhone(),null);
         if ( minimalUser != null) {
 
@@ -73,12 +73,13 @@ public class UibCreateLogonConnection {
             }
             String responseJson = response.getEntity().toString();
             log.debug("Response from UIB {} ", responseJson);
+            userIdentity = UserAggregateMapper.fromJson(responseJson);
         }
         return userIdentity;
     }
 
-    public UserAggregateRepresentation createAggregateUser(String applicationTokenId, UserAggregateRepresentation userAggregate) {
-        UserAggregateRepresentation createdUser = null;
+    public UserAggregate createAggregateUser(String applicationTokenId, UserAggregate userAggregate) {
+        UserAggregate createdUser = null;
         if (userAggregate != null) {
             WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
@@ -100,7 +101,7 @@ public class UibCreateLogonConnection {
             }
             if (responseJson != null) {
                 log.debug("Try to build createdUser from json {}", responseJson);
-                createdUser = UserAggregateRepresentation.fromJson(responseJson);
+                createdUser = UserAggregateMapper.fromJson(responseJson);
             }
             log.debug("Response from UIB {} ", responseJson);
         }

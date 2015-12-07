@@ -27,14 +27,6 @@ public class UserServiceTest {
         userService = new UserService(uibUserConnection, credentialStore);
     }
 
-    @Test
-    public void testGetRolesAsXml() throws Exception {
-        when(uibUserConnection.getRolesAsJson(anyString(),anyString(),anyString())).thenReturn(rolesJson);
-        String rolesXml = userService.getRolesAsXml("","","");
-        assertNotNull(rolesXml);
-        assertTrue(rolesXml.contains("<applications>"));
-
-    }
 
     private static String rolesJson = "[{\"roleId\":\"296fcbd3-21f0-42c9-81eb-35c0fa41bd81\",\"uid\":\"useradmin\",\"applicationId\":\"19\",\"applicationRoleName\":\"WhydahUserAdmin\",\"applicationRoleValue\":\"99\",\"organizationName\":\"Whydah\",\"applicationName\":\"UserAdminWebApp\"}]";
 }
