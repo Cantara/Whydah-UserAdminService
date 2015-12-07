@@ -20,9 +20,8 @@ public class RoleRepresentationMapperTest {
     @Test
     public void testFromJson() throws Exception {
 
-        List<UserApplicationRoleEntry> role = Arrays.asList(UserRoleXpathHelper.getUserRoleFromUserAggregateJson(roleJson));
+        UserApplicationRoleEntry role = UserRoleMapper.fromJson(roleJson);
         assertNotNull(role);
-        assertEquals(role.size(),1);
 
     }
 

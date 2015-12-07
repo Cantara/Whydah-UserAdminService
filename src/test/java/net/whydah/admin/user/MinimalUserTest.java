@@ -24,7 +24,7 @@ public class MinimalUserTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = "\n" +
                 "{\"username\":\"helloMe\", \"firstName\":\"hello\", \"lastName\":\"me\", \"personRef\":\"\", \"email\":\"hello.me@example.com\", \"cellPhone\":\"+47 90221133\"}";
-        UserIdentity minimalUser = UserIdentityMapper.fromUserIdentityJson(userJson);
+        UserIdentity minimalUser = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
         assertNotNull(minimalUser);
         assertEquals(minimalUser.getUsername(),"helloMe");
         assertEquals(minimalUser.getFirstName(),"hello");

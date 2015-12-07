@@ -26,8 +26,7 @@ public class UserAggregateTest {
 
     @Test
     public void buildUserAggregate() throws Exception {
-        String e = JsonPathHelper.getStringFromJsonpathExpression(userAgregateTemplate,"$.uid");
-        UserAggregate userAggregate = UserAggregateMapper.parseUserAggregateNoIdentityJson(userAgregateTemplate);
+        UserAggregate userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(userAgregateTemplate);
         assertNotNull(userAggregate);
         assertEquals("uid", userAggregate.getUid());
         assertEquals("personRef", userAggregate.getPersonRef());
@@ -49,7 +48,7 @@ public class UserAggregateTest {
         userPropertyAndRole.setRoleName("roleName");
         userPropertyAndRole.setRoleName("roleValue");
         userPropertiesAndRoles.add(userPropertyAndRole);
-        UserAggregate userAggregate = UserAggregateMapper.fromJson(userAgregateTemplate);
+        UserAggregate userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(userAgregateTemplate);
         userAggregate.setRoleList(userPropertiesAndRoles);;
         log.info("userAggregate: {}", userAggregate.toXML());
         assertNotNull(userAggregate.toXML());
