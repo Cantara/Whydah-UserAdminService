@@ -16,7 +16,7 @@ import java.io.Serializable;
  * See getLdapAttributes in LDAPHelper for mapping to LDAP attributes.
  *
  */
-@Deprecated
+@Deprecated  // Use UserIdnetity and Useridentitymapper in TypeLib
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class UserIdentity extends UserIdentityRepresentation implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(UserIdentity.class);

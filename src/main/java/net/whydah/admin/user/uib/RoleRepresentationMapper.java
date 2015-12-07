@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Created by baardl on 22.06.15.
  */
+@Deprecated // Use UserAggregateMapper
 public class RoleRepresentationMapper {
 
     public static List<RoleRepresentation> fromJson(String roleJson) {

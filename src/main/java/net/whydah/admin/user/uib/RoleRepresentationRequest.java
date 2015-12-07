@@ -19,6 +19,7 @@ import java.io.StringReader;
 /**
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 08/04/14
  */
+@Deprecated // Use UserAggregateMapper
 public class RoleRepresentationRequest {
     private static final Logger log = LoggerFactory.getLogger(RoleRepresentationRequest.class);
     private String applicationId;

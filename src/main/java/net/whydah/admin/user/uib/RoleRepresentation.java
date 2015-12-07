@@ -9,6 +9,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 12/04/14
  */
+@Deprecated // Use UserAggregateMapper
 public class RoleRepresentation extends RoleRepresentationRequest {
     private String id;
     private String uid;

@@ -16,7 +16,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
+@Deprecated  // Use UserAggregate in TypeLib
 public class UserAggregate {
     private static final Logger log = LoggerFactory.getLogger(UserAggregate.class);
     private UserIdentity identity = null;

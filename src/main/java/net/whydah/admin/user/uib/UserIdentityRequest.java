@@ -18,7 +18,7 @@ import java.io.StringReader;
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
-@Deprecated
+@Deprecated  // Use UserIdnetity and Useridentitymapper in TypeLib
 public class UserIdentityRequest implements Serializable{
 
     private static final Logger log = LoggerFactory.getLogger(UserIdentityRepresentation.class);

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 12/04/14
  */
-@Deprecated
+@Deprecated  // Use UserAggregate and userAggregatemapper in TypeLib
 public class UserAggregateRepresentation {
     private static final Logger log = LoggerFactory.getLogger(UserAggregateRepresentation.class);
     private String uid;

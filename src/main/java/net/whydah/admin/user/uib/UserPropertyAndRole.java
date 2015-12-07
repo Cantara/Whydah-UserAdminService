@@ -36,7 +36,7 @@ import java.io.StringReader;
  *
  * @since 1/11/11
  */
-@Deprecated
+@Deprecated  // Use UserApplicationRoleEntry in TypeLib
 public class UserPropertyAndRole {
 
     private static final Logger log = LoggerFactory.getLogger(UserPropertyAndRole.class);
