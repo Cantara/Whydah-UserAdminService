@@ -1,5 +1,6 @@
 package net.whydah.admin.user.uib;
 
+import net.whydah.sso.basehelpers.JsonPathHelper;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
@@ -21,11 +22,12 @@ import static org.testng.AssertJUnit.assertNotNull;
 public class UserAggregateTest {
     private static final Logger log = LoggerFactory.getLogger(UserAggregateTest.class);
 
-    private String userAgregateTemplate = "{\"uid\":\"uid\",\"username\":\"usernameABC\",\"firstName\":\"firstName\",\"lastName\":\"lastName\",\"personRef\":\"personRef\",\"email\":\"email\",\"cellPhone\":\"12345678\",\"password\":\"password\",\"roles\":[{\"applicationId\":\"applicationId\",\"applicationName\":\"applicationName\",\"organizationName\":\"organizationName\",\"applicationRoleName\":\"roleName\",\"applicationRoleValue\":\"email\",\"id\":null},{\"applicationId\":\"applicationId123\",\"applicationName\":\"applicationName123\",\"organizationName\":\"organizationName123\",\"applicationRoleName\":\"roleName123\",\"applicationRoleValue\":\"roleValue123\",\"id\":null}]}\n";
+    private String userAgregateTemplate = "{\"uid\":\"uid\",\"username\":\"usernameABC\",\"firstName\":\"firstName\",\"lastName\":\"lastName\",\"personRef\":\"personRef\",\"email\":\"email\",\"cellPhone\":\"12345678\",\"password\":\"password\",\"roles\":[{\"applicationId\":\"applicationId\",\"applicationName\":\"applicationName\",\"organizationName\":\"organizationName\",\"applicationRoleName\":\"roleName\",\"applicationRoleValue\":\"email\",\"id\":\"null\"},{\"applicationId\":\"applicationId123\",\"applicationName\":\"applicationName123\",\"organizationName\":\"organizationName123\",\"applicationRoleName\":\"roleName123\",\"applicationRoleValue\":\"roleValue123\",\"id\":\"null\"}]}\n";
 
     @Test
     public void buildUserAggregate() throws Exception {
-        UserAggregate userAggregate = UserAggregateMapper.fromJson(userAgregateTemplate);
+        String e = JsonPathHelper.getStringFromJsonpathExpression(userAgregateTemplate,"$.uid");
+        UserAggregate userAggregate = UserAggregateMapper.parseUserAggregateNoIdentityJson(userAgregateTemplate);
         assertNotNull(userAggregate);
         assertEquals("uid", userAggregate.getUid());
         assertEquals("personRef", userAggregate.getPersonRef());
