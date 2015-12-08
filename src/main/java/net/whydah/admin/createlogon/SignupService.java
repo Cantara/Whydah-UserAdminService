@@ -111,7 +111,7 @@ public class SignupService {
     protected UserAggregate buildUserWithDefaultRoles(UserIdentity signupUser) {
         UserAggregate userAggregate = null;
         if (signupUser != null) {
-            userAggregate = UserAggregateMapper.fromUserIdentityJson(signupUser.toJson());
+            userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(signupUser.toJson());
             UserApplicationRoleEntry defaultRole = buildDefaultRole();
             List<UserApplicationRoleEntry> roleList = new LinkedList<UserApplicationRoleEntry>() ;
             roleList.add(defaultRole);
