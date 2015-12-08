@@ -95,7 +95,7 @@ public class CreateLogonUserController {
 
         Response response = null;
         try {
-            UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJson);
+            UserIdentity signupUser = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
             String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
             String responseJson = "{\"resetPasswordToken\": \"" + passwordResetToken+"\"}";
             if (passwordResetToken != null) {
@@ -125,7 +125,7 @@ public class CreateLogonUserController {
 
         Response response = null;
         try {
-            UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJson);
+            UserIdentity signupUser = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
             String passwordResetToken = signupService.signupUser(applicationtokenid, signupUser, userAction);
             if (passwordResetToken != null) {
                 response = Response.ok(passwordResetToken).build();
