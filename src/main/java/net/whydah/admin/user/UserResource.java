@@ -67,7 +67,7 @@ public class UserResource {
 
 
             if (createdUser != null) {
-                userAggregate = UserAggregateMapper.fromUserIdentityJson(createdUser.toJson());
+                userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(createdUser.toJson());
                 return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
             } else {
                 return Response.status(Response.Status.NO_CONTENT).build();
