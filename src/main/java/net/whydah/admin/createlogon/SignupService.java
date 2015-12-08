@@ -1,5 +1,6 @@
 package net.whydah.admin.createlogon;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.auth.UibAuthConnection;
 import net.whydah.admin.email.PasswordSender;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -41,14 +44,17 @@ public class SignupService {
     private String fbapplicationName;
     private String fborganizationName;
     private String fbRoleName;
+    private final ObjectMapper objectMapper;
+    static final String CHANGE_PASSWORD_TOKEN = "changePasswordToken";
 
     @Autowired
     public SignupService(UibCreateLogonConnection uibConnection, ConstrettoConfiguration configuration,
-                         UibAuthConnection uibAuthConnection, PasswordSender passwordSender) {
+                         UibAuthConnection uibAuthConnection, PasswordSender passwordSender, ObjectMapper objectMapper) {
         this.uibConnection = uibConnection;
         this.configuration = configuration;
         this.uibAuthConnection = uibAuthConnection;
         this.passwordSender = passwordSender;
+        this.objectMapper = objectMapper;
         initAddUserDefaults(this.configuration);
     }
     private void initAddUserDefaults(ConstrettoConfiguration configuration) {
@@ -80,11 +86,29 @@ public class SignupService {
             String username = createdUser.getUsername();
             String uid = createdUser.getUid();
             //String resetPasswordToken = uibAuthConnection.resetPassword_new(applicationtokenId, uid);
-            String resetPasswordToken = uibAuthConnection.resetPassword(applicationtokenId, username);
             //3.Send email or sms pin (STS)
-            boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
-            if (notificationSent) {
-                passwordResetToken = resetPasswordToken;
+            String passwordResetJson = uibAuthConnection.resetPassword(applicationtokenId, username);
+            log.trace("resetPassword from UIB returned: {}",passwordResetJson);
+            boolean passwordResetOk = false;
+            try {
+                Map<String, String> passwordResetMap = objectMapper.readValue(passwordResetJson, Map.class);
+                String email = passwordResetMap.get("email");
+                String cellPhone = passwordResetMap.get("cellPhone");
+                String resetPasswordToken = passwordResetMap.get(CHANGE_PASSWORD_TOKEN);
+                if (resetPasswordToken == null || resetPasswordToken.length() < 7) {
+                    log.warn("UIB returned empty reset_password_token");
+                } else {
+                    passwordResetOk = sendNotification(createdUser, userAction, resetPasswordToken);
+                    passwordResetOk = true;
+                }
+
+                boolean notificationSent = sendNotification(createdUser, userAction, resetPasswordToken);
+
+                if (notificationSent) {
+                    passwordResetToken = resetPasswordToken;
+                }
+            } catch (IOException ioe){
+                log.warn(ioe.getMessage());
             }
         }
 
