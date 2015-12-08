@@ -138,18 +138,7 @@ public class UserResource {
             log.error(ise.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
         }
-        /*
-        catch (JsonMappingException e) {
-            log.warn("Could not create json from {}", userIdentity.toString());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch (JsonGenerationException e) {
-            log.warn("Could not create json from {}", userIdentity.toString());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch (IOException e) {
-            log.warn("Could not responseobject from {}", userIdentity.toString());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-        */ catch (RuntimeException e) {
+        catch (RuntimeException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -265,70 +254,6 @@ public class UserResource {
         }
     }
 
-    /*
-     *
-     * @param applicationTokenId
-     * @param userTokenId
-     * @param uid
-     * @param roleJson expect to be on the forme like this
-     *                 {"uid":"test.me@example.com","
-     *                 applicationId":"12",
-     *                 "applicationRoleName":"developer",
-     *                 "applicationRoleValue":"30",
-     *                 "applicationName":"UserAdminService",
-     *                 "organizationName":"Verification"}
-     * @return
-     */
-    /*
-    @POST
-    @Path("/{uid}/role/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addRoleJson(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                @PathParam("uid") String uid, String roleJson) {
-        log.trace("addRoleJson is called with uid={}, roleJson {}", uid, roleJson);
-        try {
-            RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromJson(roleJson);
-            RoleRepresentationDeprecated roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
-            return Response.ok(roleRepresentation.toJson()).build();
-        } catch (IllegalArgumentException iae) {
-            log.error("addRoleJson: Invalid json={}, uid {}", roleJson,uid, iae);
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (IllegalStateException ise) {
-            log.error("addRoleJson: IllegalStateException json={}, uid {}", roleJson,uid, ise);
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("addRoleJson: RuntimeException json={}, uid {}", roleJson,uid, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-    */
-
-    /*
-    @POST
-    @Path("/{uid}/rolexml")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response addRoleXml(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("uid") String uid, String roleXml) {
-        log.trace("addRole is called with uid={}, roleXml {}", uid, roleXml);
-
-        try {
-            RoleRepresentationRequest roleRequest = RoleRepresentationRequest.fromXml(roleXml);
-            RoleRepresentationDeprecated roleRepresentation = userService.addUserRole(applicationTokenId, userTokenId, uid, roleRequest);
-            return Response.ok(roleRepresentation.toXML()).build();
-        } catch (IllegalArgumentException iae) {
-            log.error("addRoleXml: Invalid xml={}, uid {}", roleXml,uid, iae);
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (IllegalStateException ise) {
-            log.error("addRoleXml: IllegalStateException xml={}, uid {}", roleXml,uid, ise);
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("addRoleXml: RuntimeException xml={}, uid {}", roleXml,uid, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-    */
 
 
     @DELETE
