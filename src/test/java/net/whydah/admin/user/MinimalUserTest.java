@@ -1,6 +1,5 @@
 package net.whydah.admin.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserIdentity;
 import org.testng.annotations.BeforeMethod;
@@ -21,7 +20,6 @@ public class MinimalUserTest {
 
     @Test
     public void createFromJson() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
         String userJson = "\n" +
                 "{\"username\":\"helloMe\", \"firstName\":\"hello\", \"lastName\":\"me\", \"personRef\":\"\", \"email\":\"hello.me@example.com\", \"cellPhone\":\"+47 90221133\"}";
         UserIdentity minimalUser = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
