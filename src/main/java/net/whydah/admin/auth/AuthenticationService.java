@@ -36,10 +36,11 @@ public class AuthenticationService {
     public boolean resetPassword(String applicationtokenId,String username, UserAction userAction){
         boolean passwordResetOk = false;
         String passwordResetJson = uibAuthConnection.resetPassword(applicationtokenId, username);
+        log.trace("resetPassword from UIB returned: {}",passwordResetJson);
         try {
             Map<String,String> passwordResetMap = objectMapper.readValue(passwordResetJson,Map.class);
             String email = passwordResetMap.get("email");
-            String cellPhone = passwordResetMap.get("cellPhone");
+            String cellPhone = passwordResetMap.get("cellPhone");wr
             String resetPasswordToken = passwordResetMap.get(CHANGE_PASSWORD_TOKEN);
             if (resetPasswordToken==null || resetPasswordToken.length()<7){
                 log.warn("UIB returned empty reset_password_token");
