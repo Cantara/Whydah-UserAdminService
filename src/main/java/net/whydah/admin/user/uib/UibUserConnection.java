@@ -64,11 +64,11 @@ public class UibUserConnection {
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("createUser-Response from UIB {}", userJson);
-                userIdentity = UserIdentityMapper.fromUserIdentityJson(userJson);
+                userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
                 break;
             case STATUS_CREATED:
                 log.trace("createUser-userCreated {}", userJson);
-                userIdentity = UserIdentityMapper.fromUserIdentityJson(userJson);
+                userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
                 break;
             case STATUS_CONFLICT:
                 log.info("Duplicate creation of user attempted on {}", userIdentityJson);
@@ -202,6 +202,7 @@ public class UibUserConnection {
     public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry userPropertyAndRole) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         UserAggregate updatedUser = null;
+        UserAggregate userAggregateRepresentation = null;
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userPropertyAndRole.toJson(), MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         switch (statusCode) {
@@ -228,7 +229,7 @@ public class UibUserConnection {
         switch (response.getStatus()) {
             case STATUS_OK:
                 log.trace("getUserIdentity-Response from Uib {}", responseBody);
-                UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(responseBody);
+                UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(responseBody);
                 return userIdentity;
             case STATUS_FORBIDDEN:
                 log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
