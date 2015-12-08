@@ -88,7 +88,7 @@
         <dependency>
             <groupId>net.whydah.sso</groupId>
             <artifactId>Whydah-TypeLib</artifactId>
-            <version>1.0.24</version>
+            <version>1.0.25</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
