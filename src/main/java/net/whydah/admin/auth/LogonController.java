@@ -28,13 +28,13 @@ public class LogonController {
     }
 
     @POST
-    @Path("logon")
+    @Deprecated // this should not be here or?
+    @Path("logon_deprecated")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response logon(@PathParam("applicationtokenid") String applicationTokenId, String usercredentialsXml) {
         log.trace("logon is called with usercredentialsXml={}", usercredentialsXml);
-        String userToken = bulidStubUserToken();
-            return Response.ok(userToken).build();
+            return Response.ok("<xml><usertoken><params><name>admin</name></params></usertoken></xml>").build();
         //FIXME real implementation to UIB.
         }
 
@@ -49,24 +49,11 @@ public class LogonController {
         if (UserCredentialMapper.fromXml(userCredentialsXml).getUserName().length()<1){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        // TODO This method should only be available for STS to use...
-        if (!isSTS()) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
 
         String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
         return Response.ok(userXml).build();
     }
 
 
-    private String bulidStubUserToken() {
-        return "<xml><usertoken><params><name>admin</name></params></usertoken></xml>";
-    }
-
-    private boolean isSTS(){
-        // TODO This method should only be available for STS to use...
-        return true;
-    }
 
 }
