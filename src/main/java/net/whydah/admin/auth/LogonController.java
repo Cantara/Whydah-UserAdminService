@@ -1,5 +1,8 @@
 package net.whydah.admin.auth;
 
+import net.whydah.sso.user.mappers.UserCredentialMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
+import net.whydah.sso.user.types.UserCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,10 @@ public class LogonController {
     public Response logonUser(@PathParam("applicationtokenid") String applicationTokenId, String userCredentialsXml) {
         log.trace("logon is called with usercredentialsXml={}", userCredentialsXml);
 
+        // Block and return on empty username
+        if (UserCredentialMapper.fromXml(userCredentialsXml).getUserName().length()<1){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         // TODO This method should only be available for STS to use...
         if (!isSTS()) {
             return Response.status(Response.Status.FORBIDDEN).build();
