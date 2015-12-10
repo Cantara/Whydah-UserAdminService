@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.whydah.identity</groupId>
     <artifactId>UserAdminService</artifactId>
-    <version>2.1.30-SNAPSHOT</version>
+    <version>2.1-beta-1</version>
     <name>UserAdminService</name>
     <url>https://wiki.cantara.no/display/iam/UserAdminService</url>
 
@@ -16,7 +16,7 @@
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
         <url>https://github.com/altran/Whydah-UserAdminService</url>
-    <tag>HEAD</tag>
+    <tag>UserAdminService-2.1-beta-1</tag>
   </scm>
 
     <properties>
