@@ -1,5 +1,7 @@
 # -DCONSTRETTO_TAGS=DEV is set
-
+#
+#  Used by Dockerfiles and ansible provisioning
+#
 service.port=9992
 myuri=http://localhost:9992/uas/
 sslverification=disabled
