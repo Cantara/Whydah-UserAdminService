@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.user.uib.*;
+import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.mappers.UserRoleMapper;
@@ -29,7 +30,6 @@ import java.util.List;
 public class UserResource {
     private static final Logger log = LoggerFactory.getLogger(UserResource.class);
     UserService userService;
-    ObjectMapper mapper = new ObjectMapper();
 
     @Context
     private Request request;
@@ -47,16 +47,16 @@ public class UserResource {
      * Password is left out deliberately. A password belong to user credential as in user login. We will support multiple ways for logging in,
      * where uid/passord is one. Another login is via FB and Windows AD tokens.
      *
-     * @param userXmlOrJson xml representing a User
+     * @param userJson xml representing a User
      * @return Application
      */
     @POST
     @Path("/")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Response createUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                               String userXmlOrJson, @Context Request request) {
-        log.trace("createUser is called with userXmlOrJson={}", userXmlOrJson);
+                               String userJson, @Context Request request) {
+        log.trace("createUser is called with userJson={}", userJson);
         MediaType responseMediaType = findPreferredResponseMediaType();
 
         UserIdentity createdUser;
@@ -64,7 +64,7 @@ public class UserResource {
         UserAggregate userAggregate = null;
         try {
 
-            createdUser = userService.createUser(applicationTokenId, userTokenId, userXmlOrJson);
+            createdUser = userService.createUser(applicationTokenId, userTokenId, userJson);
 
 
             if (createdUser != null) {
@@ -74,7 +74,7 @@ public class UserResource {
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
         } catch (IllegalArgumentException iae) {
-            log.error("createUser: Invalid xml={}", userXmlOrJson, iae);
+            log.error("createUser: Invalid json={}", userJson, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
             log.info(ise.getMessage());
@@ -93,14 +93,6 @@ public class UserResource {
             log.error("Unkonwn error.", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    private boolean isXmlContent(String userXml) {
-        boolean isXml = false;
-        if (userXml != null) {
-            isXml = userXml.trim().startsWith("<");
-        }
-        return isXml;
     }
 
     @Deprecated //TODO merge with normal endpoint
@@ -225,8 +217,8 @@ public class UserResource {
      */
     @POST
     @Path("/{uid}/role")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("uid") String uid, String roleXmlOrJson) {
         log.trace("addRole is called with uid={}, roleJson={}", uid, roleXmlOrJson);
@@ -250,8 +242,8 @@ public class UserResource {
 
     @PUT
     @Path("/{uid}/role/{roleid}")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Response updateRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("uid") String uid, @PathParam("roleid") String roleid, String roleJson) {
         log.trace("addRole is called with uid={}, roleid={},roleJson={}", uid, roleid,roleJson);
@@ -297,14 +289,5 @@ public class UserResource {
         return Response.ok("pong").build();
     }
 
-    protected String buildApplicationJson(Application application) {
-        String applicationCreatedJson = null;
-        try {
-            applicationCreatedJson = mapper.writeValueAsString(application);
-        } catch (IOException e) {
-            log.warn("Could not convert application to Json {}", application.toString());
-        }
-        return applicationCreatedJson;
-    }
 
 }
