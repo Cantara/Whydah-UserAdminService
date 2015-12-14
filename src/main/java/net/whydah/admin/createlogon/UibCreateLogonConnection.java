@@ -2,6 +2,7 @@ package net.whydah.admin.createlogon;
 
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserIdentity;
 import org.constretto.annotation.Configuration;
@@ -65,7 +66,7 @@ public class UibCreateLogonConnection {
 
             WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
-            Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(minimalUser.toJson(), MediaType.APPLICATION_JSON));
+            Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(UserIdentityMapper.toJson(minimalUser), MediaType.APPLICATION_JSON));
             int statusCode = response.getStatus();
             if (statusCode != 200) {
                 log.info("Request to UIB failed status {}, response {}", statusCode, response.getEntity());
@@ -83,7 +84,7 @@ public class UibCreateLogonConnection {
         if (userAggregate != null) {
             WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
-            Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userAggregate.toJson(), MediaType.APPLICATION_JSON));
+            Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(UserAggregateMapper.toJson(userAggregate), MediaType.APPLICATION_JSON));
             int statusCode = response.getStatus();
             String responseJson = null;
             switch (statusCode) {

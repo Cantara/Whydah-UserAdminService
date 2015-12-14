@@ -51,7 +51,7 @@ public class UserAggregateResource {
         UserAggregate userAggregate = UserAggregateMapper.fromJson(userAggregateJson);
         UserIdentity createdUser = userService.createUser(applicationTokenId, userTokenId, userAggregateJson);
         if (createdUser != null) {
-            UserAggregate createdUserAggregate = UserAggregateMapper.fromJson(createdUser.toJson());
+            UserAggregate createdUserAggregate = UserAggregateMapper.fromJson(UserIdentityMapper.toJson(createdUser));
             List<UserApplicationRoleEntry> roleList = userAggregate.getRoleList();
             for (UserApplicationRoleEntry role : roleList) {
                 userService.addUserRole(applicationTokenId, userTokenId, createdUser.getUid(), role);
@@ -82,7 +82,7 @@ public class UserAggregateResource {
         UserAggregate userAggregate = null;
 
         try {
-            userAggregate = UserAggregateMapper.fromJson(userService.getUserAggregateByUid(applicationTokenId, userTokenId, uid).toJson());
+            userAggregate = UserAggregateMapper.fromJson(UserAggregateMapper.toJson(userService.getUserAggregateByUid(applicationTokenId, userTokenId, uid)));
             return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
         } catch (IllegalArgumentException iae) {
             log.error("getUserIdentity: Invalid xml={}", uid, iae);
@@ -106,11 +106,4 @@ public class UserAggregateResource {
     }
 
 
-    protected String buildUserXml(UserAggregate userAggregate) {
-        String userXml = null;
-        if (userAggregate != null) {
-            userXml = userAggregate.toXML();
-        }
-        return userXml;
-    }
 }

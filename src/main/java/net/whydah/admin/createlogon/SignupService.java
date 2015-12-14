@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.auth.UibAuthConnection;
 import net.whydah.admin.email.PasswordSender;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
@@ -135,7 +136,7 @@ public class SignupService {
     protected UserAggregate buildUserWithDefaultRoles(UserIdentity signupUser) {
         UserAggregate userAggregate = null;
         if (signupUser != null) {
-            userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(signupUser.toJson());
+            userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(UserIdentityMapper.toJson(signupUser));
             UserApplicationRoleEntry defaultRole = buildDefaultRole();
             List<UserApplicationRoleEntry> roleList = new LinkedList<UserApplicationRoleEntry>() ;
             roleList.add(defaultRole);

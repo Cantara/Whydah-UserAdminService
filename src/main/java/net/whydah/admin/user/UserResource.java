@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.user.uib.*;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
+import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
@@ -67,7 +68,7 @@ public class UserResource {
 
 
             if (createdUser != null) {
-                userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(createdUser.toJson());
+                userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(UserIdentityMapper.toJson(createdUser));
                 return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
             } else {
                 return Response.status(Response.Status.NO_CONTENT).build();
@@ -123,13 +124,7 @@ public class UserResource {
 
         try {
             userIdentity = userService.getUserIdentity(applicationTokenId, userTokenId, uid);
-            if (mediaType == MediaType.APPLICATION_XML_TYPE) {
-                //userResponse = buildUserXml(userIdentity);
-                userResponse = userIdentity.toXML();
-            } else {
-                //userResponse = mapper.writeValueAsString(userIdentity);
-                userResponse = userIdentity.toJson();
-            }
+            userResponse = UserIdentityMapper.toJson(userIdentity);
             return Response.ok(userResponse).build();
         } catch (IllegalArgumentException iae) {
             log.error("getUserIdentity: Invalid xml={}", uid, iae);
@@ -137,8 +132,7 @@ public class UserResource {
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -253,7 +247,6 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
 
     @DELETE

@@ -36,24 +36,6 @@ public class UserAggregateTest {
         //TODO bli: work in progress
     }
 
-    @Test
-    public void buildXml() throws Exception {
-        UserIdentity userIdentity = new UserIdentity();
-        List<UserApplicationRoleEntry> userPropertiesAndRoles = new ArrayList<>();
-        UserApplicationRoleEntry userPropertyAndRole = new UserApplicationRoleEntry();
-        userPropertyAndRole.setId("id1");
-        userPropertyAndRole.setApplicationId("appid1");
-        userPropertyAndRole.setApplicationName("appName");
-        userPropertyAndRole.setOrgName("orgName");
-        userPropertyAndRole.setRoleName("roleName");
-        userPropertyAndRole.setRoleName("roleValue");
-        userPropertiesAndRoles.add(userPropertyAndRole);
-        UserAggregate userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(userAgregateTemplate);
-        userAggregate.setRoleList(userPropertiesAndRoles);;
-        log.info("userAggregate: {}", userAggregate.toXML());
-        assertNotNull(userAggregate.toXML());
-
-    }
 
     @Test
     public void buildJson() throws Exception {
