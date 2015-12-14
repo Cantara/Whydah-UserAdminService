@@ -106,8 +106,15 @@ public class UserService {
         }
     }
 
-    public UserAggregate updateUserRole(String applicationId, String applicationName, String applicationRoleName, String applicationRoleValue) {
-        throw new NotImplementedException();
+    public UserApplicationRoleEntry updateUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
+        UserApplicationRoleEntry role;
+        if (hasAccess(applicationTokenId, adminUserTokenId)) {
+            role = uibUserConnection.updateRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, uid, roleRequest);
+        } else {
+            throw new NotAuthorizedException("Not Authorized to update user role()");
+        }
+        return role;
+
     }
 
 

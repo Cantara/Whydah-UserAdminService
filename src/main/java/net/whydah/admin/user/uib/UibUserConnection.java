@@ -177,6 +177,34 @@ public class UibUserConnection {
         }
         return role;
     }
+    public UserApplicationRoleEntry updateRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid).path("role").path(roleRequest.getId());
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
+        String roleJson = response.readEntity(String.class);
+        UserApplicationRoleEntry role = null;
+        int statusCode = response.getStatus();
+
+        switch (statusCode) {
+            case STATUS_OK:
+                log.trace("updateRole-Response from UIB {}", roleJson);
+                role = UserRoleMapper.fromJson(roleJson);
+                break;
+            case STATUS_CREATED:
+                log.trace("updateRole-roleCreated {}", roleJson);
+                role = UserRoleMapper.fromJson(roleJson);
+                break;
+            case STATUS_CONFLICT:
+                log.info("Duplicate creation of role attempted on {}", roleJson);
+                throw new ConflictExeption("DuplicateCreateAttempted on " + roleJson);
+            case STATUS_BAD_REQUEST:
+                log.error("updateRole-Response from UIB: {}: {}",statusCode, roleJson);
+                throw new BadRequestException("BadRequest for Json " + roleJson + ",  Status code " + statusCode);
+            default:
+                log.error("updateRole-Response from UIB: {}: {}", statusCode, roleJson);
+                throw new AuthenticationFailedException("Authentication failed. Status code " + statusCode);
+        }
+        return role;
+    }
 
     public void deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) {
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role").path(userRoleId);
