@@ -229,7 +229,7 @@ public class UserResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("uid") String uid, String roleXmlOrJson) {
-        log.trace("addRole is called with uid={}, roleXmlOrJson={}", uid, roleXmlOrJson);
+        log.trace("addRole is called with uid={}, roleJson={}", uid, roleXmlOrJson);
 
 
         try {
@@ -249,26 +249,26 @@ public class UserResource {
     }
 
     @PUT
-    @Path("/{uid}/role")
+    @Path("/{uid}/role/{roleid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response updateRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("uid") String uid, String roleXmlOrJson) {
-        log.trace("addRole is called with uid={}, roleXmlOrJson={}", uid, roleXmlOrJson);
+                            @PathParam("uid") String uid, @PathParam("roleid") String roleid, String roleJson) {
+        log.trace("addRole is called with uid={}, roleid={},roleJson={}", uid, roleid,roleJson);
 
 
         try {
-            UserApplicationRoleEntry roleRequest = UserRoleMapper.fromJson(roleXmlOrJson);
-            UserApplicationRoleEntry roleRepresentation = userService.updateUserRole(applicationTokenId, userTokenId, uid, roleRequest);
-            return Response.ok(roleRepresentation.toJson()).build();
+            UserApplicationRoleEntry roleRequest = UserRoleMapper.fromJson(roleJson);
+            UserApplicationRoleEntry updatedRole = userService.updateUserRole(applicationTokenId, userTokenId, uid, roleRequest);
+            return Response.ok(updatedRole.toJson()).build();
         } catch (IllegalArgumentException iae) {
-            log.error("addRole: Invalid xml={}, uid={}", roleXmlOrJson, uid, iae);
+            log.error("addRole: Invalid xml={}, uid={}", roleJson, uid, iae);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (IllegalStateException ise) {
-            log.error("addRole: IllegalStateException roleXmlOrJson={}, uid={}", roleXmlOrJson, uid, ise);
+            log.error("addRole: IllegalStateException roleJson={}, uid={}", roleJson, uid, ise);
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("addRole: RuntimeException roleXmlOrJson={}, uid={}", roleXmlOrJson, uid, e);
+            log.error("addRole: RuntimeException roleJson={}, uid={}", roleJson, uid, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
