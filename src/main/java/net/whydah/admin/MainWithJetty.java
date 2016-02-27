@@ -10,6 +10,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.valuereporter.agent.http.HttpObservationDistributer;
 
 import java.net.URL;
 import java.util.Map;
@@ -50,6 +51,11 @@ public class MainWithJetty {
             SSLTool.disableCertificateValidation();
         }
 
+        //Start Valuereporter event distributer.
+        String reporterHost = configuration.evaluateToString("valuereporter.host");
+        String reporterPort = configuration.evaluateToString("valuereporter.port");
+        String prefix = configuration.evaluateToString("applicationname");
+        new Thread(new HttpObservationDistributer(reporterHost, reporterPort, prefix)).start();
         Integer webappPort = configuration.evaluateToInt("service.port");
         MainWithJetty main = new MainWithJetty(webappPort);
         main.start();

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.valuereporter.agent.MonitorReporter;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -41,6 +42,7 @@ public class UibAuthConnection {
     }
 
     public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
+        long startTime = System.currentTimeMillis();
         WebTarget logonUserResource = uib.path("/" + userAdminServiceTokenId).path("authenticate/user");
         Response response = logonUserResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
@@ -64,6 +66,9 @@ public class UibAuthConnection {
                         logonUserResource.getUri(), userCredentialsXml, response.getStatus(), response.readEntity(String.class));
                 throw new RuntimeException("LogonUser failed. Status code " + response.getStatus());
         }
+        //Event UserLogon
+        //TODO Will change to concrete method for reporting event later.
+        MonitorReporter.reportTime("userLogon", startTime, System.currentTimeMillis());
         return userXml;
     }
 

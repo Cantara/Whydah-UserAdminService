@@ -91,6 +91,11 @@
             <version>1.0.36</version>
         </dependency>
         <dependency>
+            <groupId>org.valuereporter</groupId>
+            <artifactId>valuereporter-agent</artifactId>
+            <version>0.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.servlet</artifactId>
             <version>3.0</version>
