@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.valuereporter.agent.MonitorReporter;
+import org.valuereporter.agent.activity.ObservedActivity;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -68,6 +69,8 @@ public class UibAuthConnection {
         }
         //Event UserLogon
         //TODO Will change to concrete method for reporting event later.
+        String userid = "TODO";
+        ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
         MonitorReporter.reportTime("userLogon", startTime, System.currentTimeMillis());
         return userXml;
     }
