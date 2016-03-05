@@ -2,6 +2,7 @@ package net.whydah.admin.auth;
 
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
+import net.whydah.sso.user.helpers.UserXpathHelper;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -70,6 +71,7 @@ public class UibAuthConnection {
         //Event UserLogon
         //TODO Will change to concrete method for reporting event later.
         String userid = "TODO";
+        userid = UserXpathHelper.getUserIdFromUserIdentityXml(userXml);
         ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
         MonitorReporter.reportActivity(observedActivity);
         log.trace("Adding activity to cache {}", observedActivity);
