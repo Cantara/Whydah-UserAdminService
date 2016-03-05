@@ -71,7 +71,8 @@ public class UibAuthConnection {
         //TODO Will change to concrete method for reporting event later.
         String userid = "TODO";
         ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
-        MonitorReporter.reportTime("userLogon", startTime, System.currentTimeMillis());
+        MonitorReporter.reportActivity(observedActivity);
+        log.trace("Adding activity to cache {}", observedActivity);
         return userXml;
     }
 
