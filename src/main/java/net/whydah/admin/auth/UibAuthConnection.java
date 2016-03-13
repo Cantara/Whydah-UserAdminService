@@ -33,11 +33,13 @@ public class UibAuthConnection {
     private final UASCredentials uasCredentials;
 
     private final WebTarget uib;
+    private static String uibUrl=null;
 
     @Autowired
     @Configure
     public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
+        this.uibUrl=uibUrl;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
@@ -135,6 +137,10 @@ public class UibAuthConnection {
                 throw new AuthenticationFailedException("ResetPassword failed. Status code " + response.getStatus());
         }
         return output;
+    }
+
+    public  String getUIBUri(){
+        return uibUrl;
     }
 
 }
