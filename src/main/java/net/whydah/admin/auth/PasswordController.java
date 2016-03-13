@@ -2,6 +2,8 @@ package net.whydah.admin.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.createlogon.UserAction;
+import net.whydah.sso.commands.adminapi.user.CommandListUsers;
+import net.whydah.sso.commands.userauth.CommandResetUserPassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,14 @@ public class PasswordController {
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) {
         log.trace("reset username={}", username);
         boolean passwordResetOk = false;
+
+        if (false) {  // TODO BLI FIXME  :)
+        // Lookup username to find uid
+        String uid = null;//new CommandListUsers().execute();
+        Response response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+        return copyResponse(response);
+        }
+
 //        String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
         if (username != null && !username.isEmpty()) {
              passwordResetOk = authenticationService.resetPassword(applicationTokenId,username, UserAction.EMAIL);
@@ -76,6 +86,14 @@ public class PasswordController {
         }
         return Response.accepted(newPasswordJson).build();
 
+    }
+
+    private Response copyResponse(Response responseFromUib) {
+        Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
+        if (responseFromUib.hasEntity()) {
+            rb.entity(responseFromUib.getEntity());
+        }
+        return rb.build();
     }
 
 
