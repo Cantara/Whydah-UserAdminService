@@ -35,22 +35,22 @@ public class UibAuthConnection {
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
     private final UASCredentials uasCredentials;
 
-    private final WebTarget uib;
-//    private final String myuibUrl;
+    private  WebTarget uib;
+    private final String myuibUrl;
 
     @Autowired
     @Configure
     public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
         SSLTool.disableCertificateValidation();
-  //      this.myuibUrl =uibUrl;
-        Client client = ClientBuilder.newClient();
+        this.myuibUrl =uibUrl;
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
-        uib = client.target(uibUrl);
     }
 
     public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
         long startTime = System.currentTimeMillis();
+        Client client = ClientBuilder.newClient();
+        uib = client.target(myuibUrl);
         WebTarget logonUserResource = uib.path("/" + userAdminServiceTokenId).path("authenticate/user");
         Response response = logonUserResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
@@ -85,6 +85,8 @@ public class UibAuthConnection {
     }
 
     public String resetPassword(String userAdminServiceTokenId, String username) {
+        Client client = ClientBuilder.newClient();
+        uib = client.target(myuibUrl);
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username);
         Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("",MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
