@@ -33,13 +33,13 @@ public class UibAuthConnection {
     private final UASCredentials uasCredentials;
 
     private final WebTarget uib;
-    private final String myuibUrl;
+//    private final String myuibUrl;
 
     @Autowired
     @Configure
     public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
-        this.myuibUrl =uibUrl;
+  //      this.myuibUrl =uibUrl;
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
@@ -140,7 +140,7 @@ public class UibAuthConnection {
     }
 
     public  String getUIBUri(){
-        return myuibUrl;
+        return "";// myuibUrl;
     }
 
 }
