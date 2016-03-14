@@ -15,7 +15,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
-        <url>https://github.com/altran/Whydah-UserAdminService</url>
+        <url>https://github.com/cantara/Whydah-UserAdminService</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -97,7 +97,8 @@
         <dependency>
             <groupId>org.valuereporter</groupId>
             <artifactId>valuereporter-agent</artifactId>
-            <version>0.7</version>
+            <version>0.4-SNAPSHOT</version>
+<!--            <version>0.7</version> -->
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
