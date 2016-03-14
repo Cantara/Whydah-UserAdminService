@@ -32,20 +32,22 @@ public class UibCreateLogonConnection {
     private static final String CREATE_AND_LOGON_OPERATION = "createandlogon";
 
 
-    private final WebTarget uibService;
+    private  WebTarget uibService;
     private final UASCredentials uasCredentials;
+    private final String myUibUrl;
 
     @Autowired
     @Configure
     public UibCreateLogonConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , uibUrl);
-        uibService = client.target(uibUrl);
+        this.myUibUrl=uibUrl;
     }
 
     public String createUser(String applicationTokenId, String fbUserXml) {
 
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+        uibService = client.target(myUibUrl);
         WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH).path(CREATE_AND_LOGON_OPERATION);
         log.debug("URI to use {}",webResource.getUri());
         Response response = webResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
@@ -60,6 +62,9 @@ public class UibCreateLogonConnection {
 
     public UserIdentity createUser(String applicationTokenId, UserIdentity minimalUser) {
 
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+        uibService = client.target(myUibUrl);
         UserIdentity userIdentity = null;
 //        userIdentity = new UserIdentityDeprecated("temp-uid", minimalUser.getUsername(),minimalUser.getFirstName(),minimalUser.getLastName(),minimalUser.getPersonRef(),
 //                minimalUser.getEmail(),minimalUser.getCellPhone(),null);
@@ -81,6 +86,9 @@ public class UibCreateLogonConnection {
     }
 
     public UserAggregate createAggregateUser(String applicationTokenId, UserAggregate userAggregate) {
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+        uibService = client.target(myUibUrl);
         UserAggregate createdUser = null;
         if (userAggregate != null) {
             WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
