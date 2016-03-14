@@ -28,21 +28,22 @@ public class UibApplicationsConnection {
     private static final int NOT_AUTHERIZED = 403;
 
 
-    private final WebTarget uib;
-    private final String userIdentityBackendUri = "http://localhost:9995/uib";
+    private  WebTarget uib;
+    private final String userIdentityBackendUri;
     private final UASCredentials uasCredentials;
 
     @Autowired
     @Configure
     public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , uibUrl);
-        uib = client.target(uibUrl);
+        this.userIdentityBackendUri=uibUrl;
     }
 
 
     public String listAll(String userAdminServiceTokenId, String userTokenId) {
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
+        uib = client.target(userIdentityBackendUri);
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
        // String output = response.readEntity(String.class);
@@ -68,6 +69,9 @@ public class UibApplicationsConnection {
     }
 
     public String findApplications(String userAdminServiceTokenId, String userTokenId, String query) {
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
+        uib = client.target(userIdentityBackendUri);
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications/find/"+query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         // String output = response.readEntity(String.class);
