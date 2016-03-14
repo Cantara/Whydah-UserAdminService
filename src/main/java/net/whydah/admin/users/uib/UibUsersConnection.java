@@ -31,22 +31,24 @@ public class UibUsersConnection {
     private static final int STATUS_NO_CONTENT = 204;
 
 
-    private final WebTarget uib;
+    private  WebTarget uib;
     private final UASCredentials uasCredentials;
+    private final String myUibUrl;
 
     @Autowired
     @Configure
     public UibUsersConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
-        Client client = ClientBuilder.newClient();
+        this.myUibUrl=uibUrl;
 //        URI useridbackendUri = URI.create(appConfig.getProperty("userIdentityBackendUri"));
         // uib = client.target(userIdentityBackendUri);
-        log.info("Connection to UserIdentityBackend on {}" , uibUrl);
-        uib = client.target(uibUrl);
     }
 
     public String findUsers(String userAdminServiceTokenId, String userTokenId, String query) {
         String resultJson = null;
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+        uib = client.target(myUibUrl);
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         int statusCode = response.getStatus();
