@@ -3,6 +3,7 @@ package net.whydah.admin.auth;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.helpers.UserXpathHelper;
+import net.whydah.sso.util.SSLTool;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class UibAuthConnection {
         this.uasCredentials = uasCredentials;
   //      this.myuibUrl =uibUrl;
         Client client = ClientBuilder.newClient();
+        SSLTool.disableCertificateValidation();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
     }
