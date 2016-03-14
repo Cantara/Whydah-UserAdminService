@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.valuereporter.agent.MonitorReporter;
-import org.valuereporter.agent.activity.ObservedActivity;
+//import org.valuereporter.agent.MonitorReporter;
+//import org.valuereporter.agent.activity.ObservedActivity;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -21,6 +21,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
@@ -41,9 +42,9 @@ public class UibAuthConnection {
     @Configure
     public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
+        SSLTool.disableCertificateValidation();
   //      this.myuibUrl =uibUrl;
         Client client = ClientBuilder.newClient();
-        SSLTool.disableCertificateValidation();
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
         uib = client.target(uibUrl);
     }
@@ -77,9 +78,9 @@ public class UibAuthConnection {
         //TODO Will change to concrete method for reporting event later.
         String userid = "TODO";
         userid = UserXpathHelper.getUserIdFromUserIdentityXml(userXml);
-        ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
-        MonitorReporter.reportActivity(observedActivity);
-        log.trace("Adding activity to cache {}", observedActivity);
+  //      ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
+  //      MonitorReporter.reportActivity(observedActivity);
+  //      log.trace("Adding activity to cache {}", observedActivity);
         return userXml;
     }
 
