@@ -33,7 +33,7 @@ public class UibAuthConnection {
     private final UASCredentials uasCredentials;
 
     private final WebTarget uib;
-    private static String uibUrl=null;
+    private final String uibUrl;
 
     @Autowired
     @Configure
