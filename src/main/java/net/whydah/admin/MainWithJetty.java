@@ -1,6 +1,6 @@
 package net.whydah.admin;
 
-import net.whydah.admin.config.SSLTool;
+import net.whydah.sso.util.SSLTool;
 import org.constretto.ConstrettoBuilder;
 import org.constretto.ConstrettoConfiguration;
 import org.constretto.model.Resource;

@@ -2,8 +2,8 @@ package net.whydah.admin.createlogon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.createlogon.uib.UibCreateLogonConnection;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
-import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static javax.ws.rs.core.Response.Status;
 

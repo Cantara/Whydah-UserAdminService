@@ -1,8 +1,7 @@
 package net.whydah.admin.auth;
 
+import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.sso.user.mappers.UserCredentialMapper;
-import net.whydah.sso.user.mappers.UserIdentityMapper;
-import net.whydah.sso.user.types.UserCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

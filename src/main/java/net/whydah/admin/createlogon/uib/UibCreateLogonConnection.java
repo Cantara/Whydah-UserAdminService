@@ -1,5 +1,6 @@
-package net.whydah.admin.createlogon;
+package net.whydah.admin.createlogon.uib;
 
+import net.whydah.admin.createlogon.ConnectionFailedException;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;

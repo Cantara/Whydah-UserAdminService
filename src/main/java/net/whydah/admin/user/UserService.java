@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.user.uib.*;
 import net.whydah.sso.user.helpers.UserRoleXpathHelper;
-import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.NotAuthorizedException;
 import java.util.Arrays;

@@ -1,8 +1,7 @@
-package net.whydah.admin.applications;
+package net.whydah.admin.applications.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
-import org.apache.commons.lang.NotImplementedException;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;

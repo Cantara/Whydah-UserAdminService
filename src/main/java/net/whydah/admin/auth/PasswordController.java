@@ -1,8 +1,8 @@
 package net.whydah.admin.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
-import net.whydah.sso.commands.adminapi.user.CommandListUsers;
 import net.whydah.sso.commands.userauth.CommandResetUserPassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

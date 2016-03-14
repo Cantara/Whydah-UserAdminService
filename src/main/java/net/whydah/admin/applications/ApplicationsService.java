@@ -1,6 +1,7 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.CredentialStore;
+import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import org.constretto.annotation.Configuration;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.UriBuilder;
-import java.text.SimpleDateFormat;
 
 /**
  * Created by baardl on 29.03.14.

@@ -1,6 +1,7 @@
-package net.whydah.admin.auth;
+package net.whydah.admin.auth.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.auth.UserLogonObservedActivity;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.util.SSLTool;
