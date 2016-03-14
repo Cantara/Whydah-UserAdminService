@@ -59,8 +59,8 @@
             <roles>
                 <role>Developer</role>
             </roles>
-            <organization>Altran Norge AS</organization>
-            <organizationUrl>http://www.altran.no/</organizationUrl>
+            <organization>Capra Consulting AS</organization>
+            <organizationUrl>http://www.capraconsulting.no/</organizationUrl>
         </developer>
         <developer>
             <id>baardl</id>
@@ -69,6 +69,8 @@
             <roles>
                 <role>Developer</role>
             </roles>
+            <organization>Capra Consulting AS</organization>
+            <organizationUrl>http://www.capraconsulting.no/</organizationUrl>
         </developer>
         <developer>
             <name>Erik Drolshammer</name>
@@ -76,6 +78,8 @@
             <roles>
                 <role>Developer</role>
             </roles>
+            <organization>Capra Consulting AS</organization>
+            <organizationUrl>http://www.capraconsulting.no/</organizationUrl>
         </developer>
     </developers>
 
