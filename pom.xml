@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.valuereporter</groupId>
             <artifactId>valuereporter-agent</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>0.7.1</version>
 <!--            <version>0.7</version> -->
         </dependency>
         <dependency>
@@ -121,6 +121,16 @@
             <artifactId>hk2-api</artifactId>
             <version>2.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-locator</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+
+
+
+
 
         <!--
         <dependency>
