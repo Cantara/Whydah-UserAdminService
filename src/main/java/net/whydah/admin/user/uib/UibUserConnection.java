@@ -290,6 +290,9 @@ public class UibUserConnection {
 
 
     public UserAggregate getUserAggregateByUid(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+        uib = client.target(myUibUrl);
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         UserAggregate userAggregate = null;
         UserAggregate userAggregateRepresentation;
