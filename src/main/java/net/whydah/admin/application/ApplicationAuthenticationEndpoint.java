@@ -52,10 +52,10 @@ public class ApplicationAuthenticationEndpoint {
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String callingApplicationtokenId,
                                             @FormParam(CommandAuthenticateApplicationUAS.APP_CREDENTIAL_XML) String appCredentialXml) {
 
-        log.info("authenticateApplication - trying to authenticate applicationcredential: {}  callingApplicationtokenId: {} ",appCredentialXml, callingApplicationtokenId);
+        log.info("authenticateApplication - trying to authenticate applicationcredential: {}  callingApplicationtokenId: {}  stsUri: {} ",appCredentialXml, callingApplicationtokenId,stsUri);
 
         // verify stsApplicationtokenId
-        Boolean stsAuthenticationOK =  new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
+        Boolean stsAuthenticationOK =  false;  // new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
         if (!stsAuthenticationOK) {
             log.warn("Invalid securitytokenservice session. callingApplicationtokenId={}. Returning Forbidden.", callingApplicationtokenId);
             return Response.status(Response.Status.FORBIDDEN).build();
