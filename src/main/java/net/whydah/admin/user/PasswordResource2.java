@@ -43,7 +43,7 @@ public class PasswordResource2 {
     @Path("/user/{uid}/reset_password")
     public Response resetPassword(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("uid") String uid) {
         log.info("Reset password for uid={} using applicationtokenid={}", uid, applicationtokenid);
-        Response response = new CommandResetUserPassword(uibUri, applicationtokenid, uid).execute();
+        String response = new CommandResetUserPassword(uibUri, applicationtokenid, uid).execute();
         return copyResponse(response);
     }
 
@@ -58,16 +58,20 @@ public class PasswordResource2 {
                                                             @QueryParam("changePasswordToken") String changePasswordToken,
                                                             String json) {
         log.info("authenticateAndChangePasswordUsingToken for uid={} using applicationtokenid={}", uid, applicationtokenid);
-        Response response =
+        String response =
                 new CommandChangeUserPasswordUsingToken(uibUri, applicationtokenid, uid, changePasswordToken, json).execute();
         return copyResponse(response);
 
     }
 
-    private Response copyResponse(Response responseFromUib) {
-        Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
-        if (responseFromUib.hasEntity()) {
-            rb.entity(responseFromUib.getEntity());
+    private Response copyResponse(String responseFromUib) {
+        Response.ResponseBuilder rb;
+        if (responseFromUib!=null && responseFromUib.length()>100){
+             rb = Response.status(200);
+                rb.entity(responseFromUib);
+
+        } else {
+            rb = Response.status(500);
         }
         return rb.build();
     }

@@ -44,7 +44,7 @@ public class PasswordController {
         if (false) {  // TODO BLI FIXME  :)
         // Lookup username to find uid
         String uid = null;//new CommandListUsers().execute();
-        Response response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+        String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
         return copyResponse(response);
         }
 
@@ -88,13 +88,15 @@ public class PasswordController {
 
     }
 
-    private Response copyResponse(Response responseFromUib) {
-        Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
-        if (responseFromUib.hasEntity()) {
-            rb.entity(responseFromUib.getEntity());
+    private Response copyResponse(String responseFromUib) {
+        Response.ResponseBuilder rb;
+        if (responseFromUib!=null && responseFromUib.length()>100){
+            rb = Response.status(200);
+            rb.entity(responseFromUib);
+
+        } else {
+            rb = Response.status(500);
         }
         return rb.build();
     }
-
-
 }
