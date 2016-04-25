@@ -49,22 +49,21 @@ public class ApplicationAuthenticationEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response authenticateApplication(@PathParam("stsApplicationtokenId") String stsApplicationtokenId,
+    public Response authenticateApplication(@PathParam("stsApplicationtokenId") String callingApplicationtokenId,
                                             @FormParam(CommandAuthenticateApplicationUAS.APP_CREDENTIAL_XML) String appCredentialXml) {
 
-        log.info("authenticateApplication - trying to authenticate applicationcredential: {}",appCredentialXml);
+        log.info("authenticateApplication - trying to authenticate applicationcredential: {}  callingApplicationtokenId: {} ",appCredentialXml, callingApplicationtokenId);
 
         // verify stsApplicationtokenId
-        log.info("=>>>>>>>>>>>>> {}",new CommandValidateApplicationTokenId(stsUri, stsApplicationtokenId).execute());
-        boolean stsAuthenticationOK = new CommandValidateApplicationTokenId(stsUri, stsApplicationtokenId).execute();
+        Boolean stsAuthenticationOK =  new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
         if (!stsAuthenticationOK) {
-            log.warn("Invalid securitytokenservice session. stsApplicationtokenId={}. Returning Forbidden.", stsApplicationtokenId);
+            log.warn("Invalid securitytokenservice session. callingApplicationtokenId={}. Returning Forbidden.", callingApplicationtokenId);
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         String uasAppCredentialXml = ApplicationCredentialMapper.toXML(uasApplicationCredential);
         Response responseFromUib =
-                new CommandAuthenticateApplicationUIB(uibUri, stsApplicationtokenId, uasAppCredentialXml, appCredentialXml).execute();
+                new CommandAuthenticateApplicationUIB(uibUri, callingApplicationtokenId, uasAppCredentialXml, appCredentialXml).execute();
         return copyResponse(responseFromUib);
     }
 
