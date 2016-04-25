@@ -55,7 +55,7 @@ public class ApplicationAuthenticationEndpoint {
         log.info("authenticateApplication - trying to authenticate applicationcredential: {}  callingApplicationtokenId: {}  stsUri: {} ",appCredentialXml, callingApplicationtokenId,stsUri);
 
         // verify stsApplicationtokenId
-        Boolean stsAuthenticationOK =  true;  // new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
+        Boolean stsAuthenticationOK =   new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
         if (!stsAuthenticationOK) {
             log.warn("Invalid securitytokenservice session. callingApplicationtokenId={}. Returning Forbidden.", callingApplicationtokenId);
             return Response.status(Response.Status.FORBIDDEN).build();
