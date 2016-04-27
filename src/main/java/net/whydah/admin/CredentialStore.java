@@ -36,7 +36,7 @@ public class CredentialStore {
 
     public String getUserAdminServiceTokenId() {
         if (was == null) {
-            was = new WhydahApplicationSession(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
+            was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
         }
         return was.getActiveApplicationTokenId();
 
@@ -46,7 +46,7 @@ public class CredentialStore {
     public void setUserAdminServiceTokenId(String userAdminServiceTokenId) {
         this.userAdminServiceTokenId = userAdminServiceTokenId;
         if (was == null) {
-            was = new WhydahApplicationSession(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
+            was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
         }
     }
 }
