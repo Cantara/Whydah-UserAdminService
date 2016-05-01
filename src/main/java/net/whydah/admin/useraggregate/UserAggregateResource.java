@@ -82,7 +82,7 @@ public class UserAggregateResource {
         UserAggregate userAggregate = null;
 
         try {
-            userAggregate = UserAggregateMapper.fromJson(UserAggregateMapper.toJson(userService.getUserAggregateByUid(applicationTokenId, userTokenId, uid)));
+            userAggregate =userService.getUserAggregateByUid(applicationTokenId, userTokenId, uid);
             return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
         } catch (IllegalArgumentException iae) {
             log.error("getUserIdentity: Invalid xml={}", uid, iae);
