@@ -276,8 +276,8 @@ public class UibUserConnection {
         String responseBody = response.readEntity(String.class);
         switch (response.getStatus()) {
             case STATUS_OK:
-                log.trace("getUserIdentity-Response from Uib {}", responseBody);
-                UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(responseBody);
+                log.info("getUserIdentity-Response from Uib {}", responseBody);
+                UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(responseBody);
                 return userIdentity;
             case STATUS_FORBIDDEN:
                 log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);

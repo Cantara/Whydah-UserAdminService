@@ -125,7 +125,7 @@ public class UserResource {
             log.error(ise.getMessage());
             return Response.status(Response.Status.CONFLICT).build();
         } catch (RuntimeException e) {
-            log.error("", e);
+            log.error("Internal error", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
