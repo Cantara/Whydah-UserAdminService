@@ -302,7 +302,7 @@ public class UibUserConnection {
         switch (statusCode) {
             case STATUS_OK:
                 log.trace("getUserAggregateByUid-Response from Uib {}", responseBody);
-                userAggregate = UserAggregateMapper.fromJson(responseBody);
+                userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(responseBody);
                 break;
             case STATUS_FORBIDDEN:
                 log.error("getUserAggregateByUid-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
