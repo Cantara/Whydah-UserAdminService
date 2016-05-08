@@ -23,7 +23,7 @@
 
 
     <logger name="org.eclipse.jetty" level="INFO"/>
-    <logger name="org.glassfish.jersey" level="INFO"/>
+    <logger name="org.glassfish.jersey" level="WARN"/>
     <logger name="net.whydah.sso.application.helpers" level="INFO" />
     <logger name="net.whydah" level="INFO"/>
 
