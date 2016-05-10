@@ -44,7 +44,7 @@ public class UibApplicationsConnection {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications");
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/applications");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
