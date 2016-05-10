@@ -56,7 +56,7 @@ public class ApplicationsAdminResource {
                             @PathParam("applicationName") String applicationName) {
         log.trace("findByName(Admin) is called ");
         try {
-            String application = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
+            String application = applicationsService.findApplication(applicationTokenId,applicationName);
             return Response.ok(application).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());

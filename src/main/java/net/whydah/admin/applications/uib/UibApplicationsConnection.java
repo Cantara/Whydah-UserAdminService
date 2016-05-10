@@ -68,11 +68,11 @@ public class UibApplicationsConnection {
         return output;
     }
 
-    public String findApplications(String userAdminServiceTokenId, String userTokenId, String query) {
+    public String findApplications(String userAdminServiceTokenId,  String query) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/applications/find/"+query);
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/applications/find/"+query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();

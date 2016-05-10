@@ -48,25 +48,21 @@ public class ApplicationsService {
         return applications;
     }
 
-    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
+    public String findApplication(String applicationTokenId,  String applicationName) {
         String applications = null;
-        if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId,applicationName);
-        } else {
+        //if (hasAccess(applicationTokenId)) {
+            applications = uibApplicationsConnection.findApplications(applicationTokenId,applicationName);
+        //} else {
             //FIXME handle no access to this method.
-        }
-        if (isUAWA(applicationTokenId, userTokenId)){
-            applications= ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
-        } else {
+        //}
             applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
-        }
         return applications;
     }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, query);
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, query);
         } else {
             //FIXME handle no access to this method.
         }

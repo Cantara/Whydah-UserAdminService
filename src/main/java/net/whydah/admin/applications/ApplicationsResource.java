@@ -53,11 +53,11 @@ public class ApplicationsResource {
     @GET
     @Path("/find/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByName(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+    public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
                             @PathParam("applicationName") String applicationName) {
         log.trace("findByName - listAll is called, query {}",applicationName);
         try {
-            String applications = applicationsService.findApplication(applicationTokenId, userTokenId,applicationName);
+            String applications = applicationsService.findApplication(applicationTokenId,applicationName);
 //            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
