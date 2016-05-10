@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 
-@Path("/{applicationtokenid}/applications")
+@Path("/{applicationtokenid}")
 @Component
 public class ApplicationsResource {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsResource.class);
@@ -34,7 +34,7 @@ public class ApplicationsResource {
 
 
     @GET
-    @Path("/")
+    @Path("/applications")
     @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
     public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
         log.trace("listAll is called ");
@@ -52,7 +52,7 @@ public class ApplicationsResource {
     }
 
     @GET
-    @Path("/find/{applicationName}")
+    @Path("/find/applications/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
                             @PathParam("applicationName") String applicationName) {
@@ -71,7 +71,7 @@ public class ApplicationsResource {
     }
 
     @GET
-    @Path("{userTokenId}/")
+    @Path("{userTokenId}/applications")
     @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
     public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
         log.trace("listAll is called ");
@@ -89,7 +89,7 @@ public class ApplicationsResource {
     }
 
     @GET
-    @Path("{userTokenId}/find/{applicationName}")
+    @Path("{userTokenId}/applications/find/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
                                @PathParam("applicationName") String applicationName) {
