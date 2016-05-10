@@ -18,7 +18,9 @@ import javax.ws.rs.core.Response;
  *  - http://localhost:9992/useradminservice/1/1/adminapplications/1
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
-@Path("/{applicationtokenid}/{userTokenId}/adminapplications")
+
+
+@Path("/{applicationtokenid}/adminapplications")
 @Component
 public class ApplicationsAdminResource {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsAdminResource.class);
@@ -67,6 +69,41 @@ public class ApplicationsAdminResource {
         }
     }
 
+    @GET
+    @Path("{userTokenId}//")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
+        log.trace("listAll(Admin) is called ");
+        try {
+            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            log.trace("Returning applicationlist as json \n",applications);
+            return Response.ok(applications).build();
+        } catch (IllegalStateException ise) {
+            log.error(ise.getMessage());
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("Failed to list all.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GET
+    @Path("{userTokenId}//{applicationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+                               @PathParam("applicationName") String applicationName) {
+        log.trace("findByName(Admin) is called ");
+        try {
+            String application = applicationsService.findApplication(applicationTokenId,applicationName);
+            return Response.ok(application).build();
+        } catch (IllegalStateException ise) {
+            log.error(ise.getMessage());
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (RuntimeException e) {
+            log.error("Failed to list all.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)
