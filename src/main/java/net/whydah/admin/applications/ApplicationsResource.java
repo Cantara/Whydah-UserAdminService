@@ -1,7 +1,5 @@
 package net.whydah.admin.applications;
 
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,9 @@ import javax.ws.rs.core.Response;
 
 /**
  * Accessable in DEV mode:
- *  - http://localhost:9992/useradminservice/1/1/applications
- *  - http://localhost:9992/useradminservice/1/1/applications/1
+ * - http://localhost:9992/useradminservice/1/1/applications
+ * - http://localhost:9992/useradminservice/1/1/applications/1
+ *
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
 
@@ -35,11 +34,11 @@ public class ApplicationsResource {
 
     @GET
     @Path("/applications")
-    @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-    public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
+    @Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
+    public Response listAll(@PathParam("applicationtokenid") String applicationTokenId) {
         log.trace("listAll is called ");
         try {
-            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            String applications = applicationsService.listAll(applicationTokenId);
             log.trace("listAll {}", applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
@@ -52,13 +51,14 @@ public class ApplicationsResource {
     }
 
     @GET
-    @Path("/find/applications/{applicationName}")
+    @Path("{userTokenId}/find/applications/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
-                            @PathParam("applicationName") String applicationName) {
-        log.trace("findByName - listAll is called, query {}",applicationName);
+                               @PathParam("userTokenId") String userTokenId,
+                               @PathParam("applicationName") String applicationName) {
+        log.trace("findByName - listAll is called, query {}", applicationName);
         try {
-            String applications = applicationsService.findApplication(applicationTokenId,applicationName);
+            String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
 //            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
@@ -72,11 +72,11 @@ public class ApplicationsResource {
 
     @GET
     @Path("{userTokenId}/applications")
-    @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-    public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
+    @Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
+    public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) {
         log.trace("listAll is called ");
         try {
-            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            String applications = applicationsService.listAll(applicationTokenId);
             log.trace("listAll {}", applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
@@ -92,10 +92,11 @@ public class ApplicationsResource {
     @Path("{userTokenId}/applications/find/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
-                               @PathParam("applicationName") String applicationName) {
-        log.trace("findByName - listAll is called, query {}",applicationName);
+                                  @PathParam("userTokenId") String userTokenId,
+                                  @PathParam("applicationName") String applicationName) {
+        log.trace("findByName - listAll is called, query {}", applicationName);
         try {
-            String applications = applicationsService.findApplication(applicationTokenId,applicationName);
+            String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
 //            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
@@ -106,6 +107,7 @@ public class ApplicationsResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @GET
     @Path("/ping/pong")
     @Produces(MediaType.TEXT_HTML)

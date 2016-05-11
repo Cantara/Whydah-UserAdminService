@@ -22,40 +22,34 @@ public class ApplicationsService {
     private final UibApplicationsConnection uibApplicationsConnection;
     private final CredentialStore credentialStore;
     private final String stsUrl;
-    private static final String UAWA_ID="2219";
+    private static final String UAWA_ID = "2219";
 
 
     @Autowired
     @Configure
-    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore,@Configuration("securitytokenservice") String stsUri) {
+    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore, @Configuration("securitytokenservice") String stsUri) {
         this.uibApplicationsConnection = uibApplicationsConnection;
         this.credentialStore = credentialStore;
-        this.stsUrl=stsUri;
+        this.stsUrl = stsUri;
     }
 
-    public String listAll(String applicationTokenId, String userTokenId) {
+    public String listAll(String applicationTokenId) {
         String applications = null;
-        if (hasAccess(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.listAll(applicationTokenId, userTokenId);
-        } else {
-            //FIXME handle no access to this method.
-        }
-        if (isUAWA(applicationTokenId, userTokenId)){
-            applications= ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
-        } else {
-            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        if (hasAccess(applicationTokenId)) {
+            applications = uibApplicationsConnection.listAll(applicationTokenId);
+            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
         return applications;
     }
 
-    public String findApplication(String applicationTokenId,  String applicationName) {
+    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
         String applications = null;
-        //if (hasAccess(applicationTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId,applicationName);
-        //} else {
+        if (hasAccess(applicationTokenId, userTokenId)) {
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
+        } else {
             //FIXME handle no access to this method.
-        //}
-            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        }
+        applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         return applications;
     }
 
@@ -66,10 +60,10 @@ public class ApplicationsService {
         } else {
             //FIXME handle no access to this method.
         }
-        if (isUAWA(applicationTokenId, userTokenId)){
-            applications= ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
+        if (isUAWA(applicationTokenId, userTokenId)) {
+            applications = ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
         } else {
-            applications= ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
         return applications;
     }
@@ -79,10 +73,15 @@ public class ApplicationsService {
         return true;
     }
 
-    boolean isUAWA(String applicationTokenId, String userTokenId){
-        log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ",UAWA_ID,applicationTokenId, userTokenId);
+    boolean hasAccess(String applicationTokenId) {
+        //FIXME validate user and applciation trying to create a new application.
+        return true;
+    }
+
+    boolean isUAWA(String applicationTokenId, String userTokenId) {
+        log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ", UAWA_ID, applicationTokenId, userTokenId);
         String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
-        log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ",applicationID);
+        log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationID);
         return (UAWA_ID.equals(applicationID));
         //return true;
     }
