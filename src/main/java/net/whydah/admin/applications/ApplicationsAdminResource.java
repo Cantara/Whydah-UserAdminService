@@ -39,7 +39,7 @@ public class ApplicationsAdminResource {
     public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
         log.trace("listAll(Admin) is called ");
         try {
-            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            String applications = applicationsService.listAll(applicationTokenId);
             log.trace("Returning applicationlist as json \n",applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
@@ -58,7 +58,7 @@ public class ApplicationsAdminResource {
                             @PathParam("applicationName") String applicationName) {
         log.trace("findByName(Admin) is called ");
         try {
-            String application = applicationsService.findApplication(applicationTokenId,applicationName);
+            String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
             return Response.ok(application).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
@@ -75,7 +75,7 @@ public class ApplicationsAdminResource {
     public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
         log.trace("listAll(Admin) is called ");
         try {
-            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+            String applications = applicationsService.listAll(applicationTokenId);
             log.trace("Returning applicationlist as json \n",applications);
             return Response.ok(applications).build();
         } catch (IllegalStateException ise) {
@@ -94,7 +94,7 @@ public class ApplicationsAdminResource {
                                @PathParam("applicationName") String applicationName) {
         log.trace("findByName(Admin) is called ");
         try {
-            String application = applicationsService.findApplication(applicationTokenId,applicationName);
+            String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
             return Response.ok(application).build();
         } catch (IllegalStateException ise) {
             log.error(ise.getMessage());
