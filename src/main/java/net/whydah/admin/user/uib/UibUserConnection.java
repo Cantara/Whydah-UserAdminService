@@ -335,6 +335,8 @@ public class UibUserConnection {
 
 
     public String getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) {
+    	Client client = ClientBuilder.newClient();
+    	uib =  client.target(myUibUrl);
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(uid).path("roles");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return findResponseBody("getRolesAsJson", response);
