@@ -3,6 +3,7 @@ package net.whydah.admin.user;
 import net.whydah.admin.users.UsersService;
 import net.whydah.sso.commands.userauth.CommandChangeUserPasswordUsingToken;
 import net.whydah.sso.commands.userauth.CommandResetUserPassword;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -26,14 +27,17 @@ import javax.ws.rs.core.Response;
 public class PasswordResource2 {
     private static final Logger log = LoggerFactory.getLogger(PasswordResource2.class);
     private final String uibUri;
+
     private final UsersService usersService;
+    private final UserService userService;
 
 
     @Autowired
     @Configure
-    public PasswordResource2(@Configuration("useridentitybackend") String uibUri, UsersService usersService) {
+    public PasswordResource2(@Configuration("useridentitybackend") String uibUri, UsersService usersService, UserService userService) {
         this.uibUri = uibUri;
         this.usersService = usersService;
+        this.userService = userService;
     }
 
     /**
@@ -60,6 +64,18 @@ public class PasswordResource2 {
         log.info("authenticateAndChangePasswordUsingToken for uid={} using applicationtokenid={}", uid, applicationtokenid);
         String response =
                 new CommandChangeUserPasswordUsingToken(uibUri, applicationtokenid, uid, changePasswordToken, json).execute();
+        
+        try {
+            UserApplicationRoleEntry role = new UserApplicationRoleEntry();
+            role.setApplicationId("2212");
+            role.setApplicationName("UserAdminService");
+            role.setOrgName("Whydah");
+            role.setRoleName("PW_SET");
+            role.setRoleValue("true");
+            userService.addUserRole(applicationtokenid, "admintokenid", uid, role);
+        } catch (Exception e) {
+            log.warn("Adding user password tag failed, not fully implemented");
+        }
         return copyResponse(response);
 
     }
