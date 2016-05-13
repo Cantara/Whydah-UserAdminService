@@ -160,6 +160,21 @@ public class UibUserConnection {
         return updatedOk;
     }
 
+    public boolean hasUserSetPassword(String userAdminServiceTokenId, String userName) {
+        Client client = ClientBuilder.newClient();
+        log.info("Connection to UserIdentityBackend on {}", myUibUrl);
+        uib = client.target(myUibUrl);   // /user/{username}/password_login_enabled"
+        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/user").path(userName).path("password_login_enabled");
+        boolean updatedOk = false;
+        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+        int statusCode = responseFromUib.getStatus();
+        if (responseFromUib.hasEntity()) {
+            Boolean responseBody = responseFromUib.readEntity(Boolean.class);
+            return responseBody;
+        }
+        return false;
+    }
+
     public UserApplicationRoleEntry addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);

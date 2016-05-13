@@ -2,7 +2,7 @@ package net.whydah.admin.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.user.uib.*;
+import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.user.helpers.UserRoleXpathHelper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
@@ -85,6 +85,11 @@ public class UserService {
         return isUpdated;
     }
 
+    public boolean hasUserSetPassword(String applicationTokenId, String userName) {
+        boolean hasSetPW;
+        hasSetPW = uibUserConnection.hasUserSetPassword(credentialStore.getUserAdminServiceTokenId(), userName);
+        return hasSetPW;
+    }
 
     public UserApplicationRoleEntry addUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
         UserApplicationRoleEntry role;

@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 /**
@@ -67,6 +64,21 @@ public class PasswordResource2 {
         return copyResponse(response);
 
     }
+
+    /**
+     * Proxy for authenticateAndChangePasswordUsingToken
+     */
+    @GET
+    @Path("/user/{username}/password_login_enabled")
+    public Response hasUserNameSetPassword(@PathParam("applicationtokenid") String applicationtokenid,
+                                           @PathParam("username") String username) {
+        log.info("hasUserNameSetPassword for username={} using applicationtokenid={}", username, applicationtokenid);
+
+        boolean response = userService.hasUserSetPassword(applicationtokenid, username);
+        return Response.status(200).entity(Boolean.toString(response)).build();
+
+    }
+    // /user/{username}/password_login_enabled"
 
     private Response copyResponse(String responseFromUib) {
         Response.ResponseBuilder rb;
