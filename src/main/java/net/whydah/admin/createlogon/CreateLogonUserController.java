@@ -20,7 +20,7 @@ import static javax.ws.rs.core.Response.Status;
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
  */
-@Path("/{applicationtokenid}/")
+@Path("/{applicationtokenid}")
 @Component
 public class CreateLogonUserController {
     private static final Logger log = LoggerFactory.getLogger(CreateLogonUserController.class);
