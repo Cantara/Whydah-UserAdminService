@@ -150,7 +150,7 @@ public class CreateLogonUserController {
                                          @FormParam("emailaddress") String emailaddress,
                                          @FormParam("subject") String subject,
                                          @FormParam("emailMessage") String emailMessage) {
-        log.trace("Try to mail user with emailaddress {}", emailaddress);
+        log.info("send_scheduled_email - Try to schedule mail user with emailaddress {}", emailaddress);
         new ScheduledSendEMailTask(Long.parseLong(timestamp),emailaddress,subject,emailMessage);
         return Response.ok("email scheduled").build();
 
