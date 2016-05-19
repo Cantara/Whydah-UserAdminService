@@ -3,7 +3,7 @@ package net.whydah.admin.application;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUAS;
+import net.whydah.sso.internal.commands.uib.adminapi.application.CommandAuthenticateApplicationUAS;
 import org.slf4j.Logger;
 
 import javax.ws.rs.client.Client;

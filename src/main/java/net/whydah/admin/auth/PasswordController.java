@@ -3,7 +3,7 @@ package net.whydah.admin.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
-import net.whydah.sso.commands.userauth.CommandResetUserPassword;
+import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

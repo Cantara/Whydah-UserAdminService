@@ -1,8 +1,8 @@
 package net.whydah.admin.user;
 
 import net.whydah.admin.users.UsersService;
-import net.whydah.sso.commands.userauth.CommandChangeUserPasswordUsingToken;
-import net.whydah.sso.commands.userauth.CommandResetUserPassword;
+import net.whydah.sso.internal.commands.uib.userauth.CommandChangeUserPasswordUsingToken;
+import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPassword;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;

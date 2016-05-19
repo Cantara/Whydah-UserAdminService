@@ -2,8 +2,8 @@ package net.whydah.admin.application;
 
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.types.ApplicationCredential;
-import net.whydah.sso.commands.adminapi.application.CommandAuthenticateApplicationUAS;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
+import net.whydah.sso.internal.commands.uib.adminapi.application.CommandAuthenticateApplicationUAS;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -11,11 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
