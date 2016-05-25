@@ -165,10 +165,8 @@ public class UibUserConnection {
         log.info("Connection to UserIdentityBackend on {}", myUibUrl);
         uib = client.target(myUibUrl);   // /user/{username}/password_login_enabled"
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/user").path(userName).path("password_login_enabled");
-        boolean updatedOk = false;
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+        Response responseFromUib = webResource.request(MediaType.TEXT_PLAIN).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         log.debug("Response from UIB: {}", responseFromUib.getEntity().toString());
-        int statusCode = responseFromUib.getStatus();
         if (responseFromUib.hasEntity()) {
             Boolean responseBody = Boolean.valueOf(responseFromUib.readEntity(String.class));
             return responseBody;
