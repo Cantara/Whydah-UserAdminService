@@ -75,6 +75,7 @@ public class PasswordResource2 {
         log.info("hasUserNameSetPassword for username={} using applicationtokenid={}", username, applicationtokenid);
 
         boolean response = userService.hasUserSetPassword(applicationtokenid, username);
+        log.info("hasUserNameSetPassword for username={} response={}", username, response);
         return Response.status(200).entity(Boolean.toString(response)).build();
 
     }
