@@ -169,7 +169,7 @@ public class UibUserConnection {
         Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         int statusCode = responseFromUib.getStatus();
         if (responseFromUib.hasEntity()) {
-            Boolean responseBody = responseFromUib.readEntity(Boolean.class);
+            Boolean responseBody = Boolean.valueOf(responseFromUib.readEntity(String.class));
             return responseBody;
         }
         return false;
