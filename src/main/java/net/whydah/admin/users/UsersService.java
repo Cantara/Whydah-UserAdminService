@@ -23,7 +23,6 @@ public class UsersService {
     public UsersService(UibUsersConnection uibUsersConnection, CredentialStore credentialStore) {
         this.uibUsersConnection = uibUsersConnection;
         this.credentialStore = credentialStore;
-        credentialStore.setUserAdminServiceTokenId("2ff16f110b320dcbacf050b3b9062465");
     }
 
     /**

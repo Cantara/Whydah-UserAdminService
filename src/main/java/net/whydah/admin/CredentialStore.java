@@ -12,21 +12,17 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class CredentialStore {
-    private String userAdminServiceTokenId;
     private static WhydahApplicationSession was = null;
-    private final String uibUri;
     private final String stsUri;
     private final ApplicationCredential uasApplicationCredential;
 
 
     @Autowired
     @Configure
-    public CredentialStore(@Configuration("useridentitybackend") String uibUri,
-                                             @Configuration("securitytokenservice") String stsUri,
-                                             @Configuration("applicationid") String applicationid,
-                                             @Configuration("applicationname") String applicationname,
-                                             @Configuration("applicationsecret") String applicationsecret) {
-        this.uibUri = uibUri;
+    public CredentialStore(@Configuration("securitytokenservice") String stsUri,
+                           @Configuration("applicationid") String applicationid,
+                           @Configuration("applicationname") String applicationname,
+                           @Configuration("applicationsecret") String applicationsecret) {
         this.stsUri = stsUri;
         this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationname, applicationsecret);
     }
@@ -38,15 +34,8 @@ public class CredentialStore {
         }
         return was.getActiveApplicationTokenId();
 
-        //return userAdminServiceTokenId;
     }
 
-    public void setUserAdminServiceTokenId(String userAdminServiceTokenId) {
-        this.userAdminServiceTokenId = userAdminServiceTokenId;
-        if (was == null) {
-            was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
-        }
-    }
 
     public WhydahApplicationSession getWas() {
         if (was == null) {

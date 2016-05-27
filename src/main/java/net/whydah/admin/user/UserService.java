@@ -33,7 +33,6 @@ public class UserService {
     public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore) {
         this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
-        credentialStore.setUserAdminServiceTokenId("2ff16f110b320dcbacf050b3b9062465");
         this.mapper = new ObjectMapper();
     }
 
