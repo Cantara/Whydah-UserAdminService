@@ -7,8 +7,6 @@ import org.constretto.annotation.Configure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Properties;
-
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
@@ -48,5 +46,12 @@ public class CredentialStore {
         if (was == null) {
             was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
         }
+    }
+
+    public WhydahApplicationSession getWas() {
+        if (was == null) {
+            was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
+        }
+        return was;
     }
 }

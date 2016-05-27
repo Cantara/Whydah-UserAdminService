@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 /**
@@ -28,11 +27,13 @@ public class SecurityFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
 
     private final String stsUri;
+    URI tokenServiceUri;
 
     @Autowired
     @Configure
     public SecurityFilter(@Configuration("securitytokenservice") String stsUri) {
         this.stsUri = stsUri;
+        tokenServiceUri = URI.create(stsUri);
     }
 
     @Override
@@ -104,13 +105,6 @@ public class SecurityFilter implements Filter {
          */
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
 
-        URI tokenServiceUri;
-        try {
-            tokenServiceUri = new URI(stsUri);
-        } catch (URISyntaxException e) {
-            log.error("{} is not a valid URI.", stsUri, e);
-            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        }
         Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
         if (!userTokenIsValid) {
             return HttpServletResponse.SC_UNAUTHORIZED;
