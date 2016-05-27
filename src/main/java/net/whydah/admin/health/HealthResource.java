@@ -4,6 +4,7 @@ import net.whydah.admin.CredentialStore;
 import net.whydah.sso.util.WhydahUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
@@ -22,6 +23,7 @@ public class HealthResource {
     private final CredentialStore credentialStore;
 
 
+    @Autowired
     public HealthResource(CredentialStore credentialStore) {
         this.credentialStore = credentialStore;
 
