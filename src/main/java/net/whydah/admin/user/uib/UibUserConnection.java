@@ -52,9 +52,7 @@ public class UibUserConnection {
     }
 
     public UserIdentity createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
 
@@ -85,10 +83,14 @@ public class UibUserConnection {
         return userIdentity;
     }
 
-    public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
-        Client client = ClientBuilder.newClient();
+	private WebTarget getWebTarget() {
+		Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+        return client.target(myUibUrl);
+	}
+
+    public UserAggregate addUserAgregate(String userAdminServiceTokenId, String userTokenId, String userAggregateJson) {
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userAggregateJson, MediaType.APPLICATION_JSON));
 
@@ -111,9 +113,7 @@ public class UibUserConnection {
 
 
     public Response updateUserIdentity(String userAdminServiceTokenId, String userTokenId, String uid, String userIdentityJson) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+    	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user").path(uid);
         Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
 
@@ -137,9 +137,7 @@ public class UibUserConnection {
 
 
     public boolean changePassword(String userAdminServiceTokenId, String adminUserTokenId, String userName, String password) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(userName).path("changepassword");
         boolean updatedOk = false;
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(password, MediaType.APPLICATION_JSON));
@@ -161,9 +159,7 @@ public class UibUserConnection {
     }
 
     public boolean hasUserSetPassword(String userAdminServiceTokenId, String userName) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}", myUibUrl);
-        uib = client.target(myUibUrl);   // /user/{username}/password_login_enabled"
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/user").path(userName).path("password_login_enabled");
         Response responseFromUib = webResource.request(MediaType.TEXT_PLAIN).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         log.debug("Response from UIB: {}", responseFromUib.getEntity().toString());
@@ -175,9 +171,7 @@ public class UibUserConnection {
     }
 
     public UserApplicationRoleEntry addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         String roleJson = response.readEntity(String.class);
@@ -206,9 +200,7 @@ public class UibUserConnection {
         return role;
     }
     public UserApplicationRoleEntry updateRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+    	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid).path("role").path(roleRequest.getId());
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         String roleJson = response.readEntity(String.class);
@@ -238,9 +230,7 @@ public class UibUserConnection {
     }
 
     public void deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role").path(userRoleId);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
         int statusCode = response.getStatus();
@@ -262,6 +252,7 @@ public class UibUserConnection {
 
 
     public UserAggregate addPropertyOrRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry userPropertyAndRole) {
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         UserAggregate updatedUser = null;
         UserAggregate userAggregateRepresentation = null;
@@ -285,6 +276,7 @@ public class UibUserConnection {
 
     //TODO Clean up exception/failure handling
     public UserIdentity getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         String responseBody = response.readEntity(String.class);
@@ -304,9 +296,7 @@ public class UibUserConnection {
 
 
     public UserAggregate getUserAggregateByUid(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
-        uib = client.target(myUibUrl);
+    	 uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         UserAggregate userAggregate = null;
         UserAggregate userAggregateRepresentation;
@@ -329,6 +319,7 @@ public class UibUserConnection {
     }
 
     public String getUserAggregateByUidAsJson(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+    	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         int statusCode = response.getStatus();
@@ -349,8 +340,7 @@ public class UibUserConnection {
 
 
     public String getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) {
-    	Client client = ClientBuilder.newClient();
-    	uib =  client.target(myUibUrl);
+    	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(uid).path("roles");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return findResponseBody("getRolesAsJson", response);
@@ -377,6 +367,7 @@ public class UibUserConnection {
 
 
     public void deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
+    	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
         int statusCode = response.getStatus();
