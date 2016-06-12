@@ -37,6 +37,7 @@ public class MailSender {
                       @Configuration("gmail.password") String smtpPassword) {
         this.smtpUsername = smtpUsername;
         this.smtpPassword = smtpPassword;
+        // https://accounts.google.com/DisplayUnlockCaptcha
     }
 
     /*
