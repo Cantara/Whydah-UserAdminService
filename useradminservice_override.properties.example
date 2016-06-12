@@ -2,10 +2,29 @@
 #
 #  Used by Dockerfiles and ansible provisioning
 #
+# Normal operations
 service.port=9992
-myuri=http://localhost:9992/uas/
-sslverification=disabled
+useridentitybackend=http://localhost:9995/uib/
+securitytokenservice=http://localhost:9998/tokenservice/
+ssologinservice=http://localhost:9997/sso/
+sslverification=enabled
 
 applicationname=Whydah-UserAdminService
 applicationid=2212
 applicationsecret=9ju592A4t8dzz8mz7a5QQJ7Px
+
+
+# Mail sending
+gmail.username=whydahuib@gmail.com
+gmail.password=passWordHere
+# https://accounts.google.com/DisplayUnlockCaptcha
+
+
+#
+# Valuereporter
+#
+valuereporter.host=localhost
+valuereporter.port=4901
+valuereporter.activity.batchsize=500
+valuereporter.activity.postintervalms=10000
+
