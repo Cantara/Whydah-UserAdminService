@@ -1,7 +1,6 @@
 package net.whydah.admin.auth.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
-import net.whydah.admin.auth.UserLogonObservedActivity;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.util.SSLTool;
@@ -11,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-//import org.valuereporter.agent.MonitorReporter;
-//import org.valuereporter.agent.activity.ObservedActivity;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -21,6 +18,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+//import org.valuereporter.agent.MonitorReporter;
+//import org.valuereporter.agent.activity.ObservedActivity;
 
 
 /**
@@ -66,7 +66,7 @@ public class UibAuthConnection {
                 throw new BadRequestException("BadRequest for Json " + response.toString() + ",  Status code " + response.getStatus());
             case FORBIDDEN:
                 //log.trace("LogonUser failed, not allowed from UIB: {}: {}", response.getStatus(), response.readEntity(String.class));
-                log.trace("logonUser failed (FORBIDDEN). url={}, body={}, Response from UIB: {}: {}",
+                log.warn("logonUser failed (FORBIDDEN). url={}, body={}, Response from UIB: {}: {}",
                         logonUserResource.getUri(), userCredentialsXml, response.getStatus(), response.readEntity(String.class));
                 throw new AuthenticationFailedException("LogonUser request not allowed.");
             default:
