@@ -48,6 +48,7 @@ public class UibAuthConnection {
     }
 
     public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
+        log.trace("logonUser(userAdminServiceTokenId: {}, userCredentialsXml:{})", userAdminServiceTokenId, userCredentialsXml);
         long startTime = System.currentTimeMillis();
         Client client = ClientBuilder.newClient();
         uib = client.target(myuibUrl);
