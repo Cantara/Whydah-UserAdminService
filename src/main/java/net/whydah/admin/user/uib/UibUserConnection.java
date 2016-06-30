@@ -32,10 +32,11 @@ public class UibUserConnection {
     private static final Logger log = LoggerFactory.getLogger(UibUserConnection.class);
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
-    private static final int STATUS_FORBIDDEN = 403;
     private static final int STATUS_CREATED = 201;
-    private static final int STATUS_CONFLICT = 409;
     private static final int STATUS_NO_CONTENT = 204;
+    private static final int STATUS_UNAUTHORIZED = 401;
+    private static final int STATUS_FORBIDDEN = 403;
+    private static final int STATUS_CONFLICT = 409;
 
 
     private  WebTarget uib;
@@ -286,6 +287,9 @@ public class UibUserConnection {
                 UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(responseBody);
                 return userIdentity;
             case STATUS_FORBIDDEN:
+                log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
+                return null;
+            case STATUS_UNAUTHORIZED:
                 log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
                 return null;
             default:
