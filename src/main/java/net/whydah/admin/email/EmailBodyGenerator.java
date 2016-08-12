@@ -7,7 +7,6 @@ import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
-
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -31,7 +30,7 @@ public class EmailBodyGenerator {
         if (customTemplate.exists()) {
             ftl = new FileTemplateLoader(customTemplate);
         }
-        ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates/emai");
+        ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates/email");
         
         TemplateLoader[] loaders = null;
         if (ftl != null) {
