@@ -60,6 +60,8 @@ public class EmailBodyGenerator {
         HashMap<String, String> model = new HashMap<>();
         model.put("username", username);
         model.put("url", url);
+        model.put("name", username);
+        model.put("systemName", "Whydah system" );
         if (passwordResetEmailTemplateName == null || passwordResetEmailTemplateName.length() < 4) {
             return createBody(RESET_PASSWORD_EMAIL_TEMPLATE, model);
         }
