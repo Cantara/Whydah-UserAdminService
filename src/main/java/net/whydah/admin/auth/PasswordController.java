@@ -68,7 +68,7 @@ public class PasswordController {
     }
 
     @POST
-    @Path("/reset/username/{username}/{resetPasswordTemplateName}")
+    @Path("/reset/username/{username}/template/{resetPasswordTemplateName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("resetPasswordTemplateName") String resetPasswordTemplateName) {
         log.trace("reset username={}, resetPasswordTemplateName:{}", username, resetPasswordTemplateName);
