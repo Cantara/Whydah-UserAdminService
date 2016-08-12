@@ -11,6 +11,6 @@ Welcome as user of ${systemName} for username: ${username!}.<br>
 <br>
 To be able to log on you need to chose a username and password:<br>
 <br>
-<a href="${url}">${url}</a><br/>
+<a href="${url}">${url}</a><br>
 </body>
 </html>
