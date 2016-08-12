@@ -25,7 +25,7 @@ public class EmailBodyGenerator {
     public EmailBodyGenerator() throws IOException {
         freemarkerConfig = new Configuration(Configuration.VERSION_2_3_0);
         // freemarkerConfig.setTemplateLoader(new ClassTemplateLoader(getClass(), "/templates/email"));
-        FileTemplateLoader ftl1 = new FileTemplateLoader(new File("."));
+        FileTemplateLoader ftl1 = new FileTemplateLoader(new File("./templates/email"));
         ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates/email");
         MultiTemplateLoader mtl = new MultiTemplateLoader(new TemplateLoader[]{ftl1, ctl});
         freemarkerConfig.setTemplateLoader(mtl);
