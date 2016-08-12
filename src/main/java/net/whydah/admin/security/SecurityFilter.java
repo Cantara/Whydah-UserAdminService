@@ -75,6 +75,7 @@ public class SecurityFilter implements Filter {
         //strip applicationTokenId from pathInfo
         path = path.substring(path.indexOf("/"));
         /*
+        /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource2
         /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource2
         /{applicationTokenId}/user/{uid}/change_password    //PasswordResource2
         /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
@@ -83,10 +84,11 @@ public class SecurityFilter implements Filter {
         String applicationAuthPattern = "/application/auth";
         String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
         String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
+        String pwResetAuthPattern = "/auth/password/reset/username";
         String pwPattern = "/user/.+/(reset|change)_password";
         String userSignupPattern = "/signup/user";
         String listApplicationsPattern ="/applications";
-        String [] patternsWithoutUserTokenId = {applicationAuthPattern,userLogonPattern, pwPattern, userAuthPattern, userSignupPattern,listApplicationsPattern};
+        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern};
         for (String pattern : patternsWithoutUserTokenId) {
             if (Pattern.compile(pattern).matcher(path).matches()) {
                 log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);

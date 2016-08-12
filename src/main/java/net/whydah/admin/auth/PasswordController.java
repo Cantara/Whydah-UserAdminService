@@ -39,64 +39,74 @@ public class PasswordController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) {
         log.trace("reset username={}", username);
-        boolean passwordResetOk = false;
+        try {
+            boolean passwordResetOk = false;
 
-        if (false) {  // TODO BLI FIXME  :)
-        // Lookup username to find uid
-        String uid = null;//new CommandListUsers().execute();
-        String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
-        return copyResponse(response);
-        }
+            if (false) {  // TODO BLI FIXME  :)
+                // Lookup username to find uid
+                String uid = null;//new CommandListUsers().execute();
+                String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+                return copyResponse(response);
+            }
 
 //        String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
-        if (username != null && !username.isEmpty()) {
-            passwordResetOk = authenticationService.resetPassword(applicationTokenId, username, UserAction.EMAIL, "");
+            if (username != null && !username.isEmpty()) {
+                passwordResetOk = authenticationService.resetPassword(applicationTokenId, username, UserAction.EMAIL, "");
 //            String resetPasswordToken = uibAuthConnection.resetPassword(applicationTokenId, username);
 //            3.Send email or sms pin (STS)
 //            boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
 //            if (notificationSent) {
 //                passwordResetToken = resetPasswordToken;
 //            }
-        }
-        if (passwordResetOk) {
-            log.trace("Password reset ok. Username {}", username);
-            return Response.ok(username).build();
-        } else {
-            log.trace("Password reset failed. Username {}", username);
+            }
+            if (passwordResetOk) {
+                log.trace("Password reset ok. Username {}", username);
+                return Response.ok(username).build();
+            } else {
+                log.trace("Password reset failed. Username {}", username);
+                return Response.accepted("Unable to send reset password notification to user").build();
+            }
+        } catch (Exception e) {
             return Response.accepted("Unable to send reset password notification to user").build();
+
         }
     }
 
     @POST
-    @Path("/reset/username/{username}/{resetPasswordTemplateName}")
+    @Path("/reset/username/{username}/template/{resetPasswordTemplateName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("resetPasswordTemplateName") String resetPasswordTemplateName) {
         log.trace("reset username={}, resetPasswordTemplateName:{}", username, resetPasswordTemplateName);
-        boolean passwordResetOk = false;
+        try {
+            boolean passwordResetOk = false;
 
-        if (false) {  // TODO BLI FIXME  :)
-            // Lookup username to find uid
-            String uid = null;//new CommandListUsers().execute();
-            String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
-            return copyResponse(response);
-        }
+            if (false) {  // TODO BLI FIXME  :)
+                // Lookup username to find uid
+                String uid = null;//new CommandListUsers().execute();
+                String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+                return copyResponse(response);
+            }
 
 //        String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
-        if (username != null && !username.isEmpty()) {
-            passwordResetOk = authenticationService.resetPassword(applicationTokenId, username, UserAction.EMAIL, resetPasswordTemplateName);
+            if (username != null && !username.isEmpty()) {
+                passwordResetOk = authenticationService.resetPassword(applicationTokenId, username, UserAction.EMAIL, resetPasswordTemplateName);
 //            String resetPasswordToken = uibAuthConnection.resetPassword(applicationTokenId, username);
 //            3.Send email or sms pin (STS)
 //            boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
 //            if (notificationSent) {
 //                passwordResetToken = resetPasswordToken;
 //            }
-        }
-        if (passwordResetOk) {
-            log.trace("Password reset ok. Username {}", username);
-            return Response.ok(username).build();
-        } else {
-            log.trace("Password reset failed. Username {}", username);
+            }
+            if (passwordResetOk) {
+                log.trace("Password reset ok. Username {}", username);
+                return Response.ok(username).build();
+            } else {
+                log.trace("Password reset failed. Username {}", username);
+                return Response.accepted("Unable to send reset password notification to user").build();
+            }
+        } catch (Exception e) {
             return Response.accepted("Unable to send reset password notification to user").build();
+
         }
     }
 
@@ -104,14 +114,14 @@ public class PasswordController {
     @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username,@PathParam("passwordChangeToken") String passwordChangeToken,String newPasswordJson) {
+    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("passwordChangeToken") String passwordChangeToken, String newPasswordJson) {
 
         log.trace("resetNewPW - username={}", username);
         String password = null;
         try {
-            Map<String,String> newPasswordMap = objectMapper.readValue(newPasswordJson, Map.class);
+            Map<String, String> newPasswordMap = objectMapper.readValue(newPasswordJson, Map.class);
             password = newPasswordMap.get("newpassword");
-            String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken,password);
+            String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken, password);
             return Response.ok(username).build();
         } catch (IOException e) {
             log.trace("Failed to parse inncomming newPasswordJson {}", newPasswordJson);
@@ -122,7 +132,7 @@ public class PasswordController {
 
     private Response copyResponse(String responseFromUib) {
         Response.ResponseBuilder rb;
-        if (responseFromUib!=null && responseFromUib.length()>100){
+        if (responseFromUib != null && responseFromUib.length() > 100) {
             rb = Response.status(200);
             rb.entity(responseFromUib);
 
