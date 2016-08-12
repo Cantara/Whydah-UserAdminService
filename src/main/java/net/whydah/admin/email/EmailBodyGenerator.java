@@ -5,7 +5,9 @@ import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
+
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -24,14 +26,27 @@ public class EmailBodyGenerator {
 
     public EmailBodyGenerator() throws IOException {
         freemarkerConfig = new Configuration(Configuration.VERSION_2_3_0);
-        // freemarkerConfig.setTemplateLoader(new ClassTemplateLoader(getClass(), "/templates/email"));
-        FileTemplateLoader ftl1 = new FileTemplateLoader(new File("./templates/email"));
-        ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates/email");
-        MultiTemplateLoader mtl = new MultiTemplateLoader(new TemplateLoader[]{ftl1, ctl});
+        File customTemplate = new File("./templates/email");
+        FileTemplateLoader ftl = null;
+        if (customTemplate.exists()) {
+            ftl = new FileTemplateLoader(customTemplate);
+        }
+        ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates/emai");
+        
+        TemplateLoader[] loaders = null;
+        if (ftl != null) {
+          loaders = new TemplateLoader[]{ftl, ctl};
+        } else {
+          loaders = new TemplateLoader[]{ctl};
+        }
+        
+        MultiTemplateLoader mtl = new MultiTemplateLoader(loaders);
         freemarkerConfig.setTemplateLoader(mtl);
+        freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
         freemarkerConfig.setDefaultEncoding("UTF-8");
         freemarkerConfig.setLocalizedLookup(false);
         freemarkerConfig.setTemplateUpdateDelayMilliseconds(6000);
+        
     }
 
 
