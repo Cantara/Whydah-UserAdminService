@@ -34,7 +34,7 @@ public class AuthenticationService {
         this.objectMapper = objectMapper;
     }
 
-    public boolean resetPassword(String applicationtokenId,String username, UserAction userAction){
+    public boolean resetPassword(String applicationtokenId, String username, UserAction userAction, String resetPasswordTemplateName) {
         boolean passwordResetOk = false;
         String passwordResetJson = uibAuthConnection.resetPassword(applicationtokenId, username);
         log.trace("resetPassword from UIB returned: {}",passwordResetJson);
@@ -46,7 +46,7 @@ public class AuthenticationService {
             if (resetPasswordToken==null || resetPasswordToken.length()<7){
                 log.warn("UIB returned empty reset_password_token");
             } else {
-                passwordResetOk = sendNotification (email, cellPhone, username,userAction, resetPasswordToken);
+                passwordResetOk = sendNotification(email, cellPhone, username, userAction, resetPasswordToken, resetPasswordTemplateName);
                 passwordResetOk = true;
             }
         } catch (IOException e) {
@@ -57,15 +57,14 @@ public class AuthenticationService {
     }
 
 
-
-    protected boolean sendNotification(String userEmail, String cellPhone, String username,UserAction userAction, String passwordResetToken) {
+    protected boolean sendNotification(String userEmail, String cellPhone, String username, UserAction userAction, String passwordResetToken, String resetPasswordTemplateName) {
         boolean notificationIsSent = false;
             if (userAction != null && userAction.equals(UserAction.PIN)) {
                 //TODO send PIN notification see https://github.com/Cantara/Whydah-UserAdminService/issues/31
                 throw new NotImplementedException();
             } else {
                 if (userEmail != null && !userEmail.isEmpty()) {
-                    notificationIsSent = passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail);
+                    notificationIsSent = passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail, resetPasswordTemplateName);
                 }
             }
         return notificationIsSent;

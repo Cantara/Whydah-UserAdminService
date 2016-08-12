@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PasswordSender {
     private static final Logger log = LoggerFactory.getLogger(PasswordSender.class);
-    private static final String RESET_PASSWORD_SUBJECT = "Whydah password reset";
+    private static final String RESET_PASSWORD_SUBJECT = "Whydah password reset request";
     private static final String CHANGE_PASSWORD_PATH = "changepassword/";
     private final String ssoLoginServiceUrl;
 
@@ -35,6 +35,21 @@ public class PasswordSender {
         String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
         log.info("Sending resetPassword email for user {} to {}, token={}", username, userEmail, token);
         String body = bodyGenerator.resetPassword(resetUrl, username);
+        try {
+            mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+            messageSent = true;
+        } catch (Exception e) {
+            log.info("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
+        }
+        return messageSent;
+    }
+
+
+    public boolean sendResetPasswordEmail(String username, String token, String userEmail, String templateName) {
+        boolean messageSent = false;
+        String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
+        log.info("Sending resetPassword email for user {} to {}, token={}, tampleteName={}", username, userEmail, token, templateName);
+        String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
         try {
             mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
             messageSent = true;

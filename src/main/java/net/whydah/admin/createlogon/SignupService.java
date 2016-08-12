@@ -100,11 +100,11 @@ public class SignupService {
                 if (resetPasswordToken == null || resetPasswordToken.length() < 7) {
                     log.warn("UIB returned empty reset_password_token");
                 } else {
-                    passwordResetOk = sendNotification(createdUser, userAction, resetPasswordToken);
+                    passwordResetOk = sendNotification(createdUser, userAction, resetPasswordToken, "");
                     passwordResetOk = true;
                 }
 
-                boolean notificationSent = sendNotification(createdUser, userAction, resetPasswordToken);
+                boolean notificationSent = sendNotification(createdUser, userAction, resetPasswordToken, "");
 
                 if (notificationSent) {
                     passwordResetToken = resetPasswordToken;
@@ -117,7 +117,7 @@ public class SignupService {
         return passwordResetToken;
     }
 
-    protected boolean sendNotification(UserAggregate createdUser, UserAction userAction, String passwordResetToken) {
+    protected boolean sendNotification(UserAggregate createdUser, UserAction userAction, String passwordResetToken, String passwordResetEmailTemplateName) {
         boolean notificationIsSent = false;
         if (createdUser != null) {
             if (userAction != null && userAction.equals(UserAction.PIN)) {
@@ -127,7 +127,7 @@ public class SignupService {
                 String username = createdUser.getUsername();
                 String userEmail = createdUser.getEmail();
                 if (userEmail != null && !userEmail.isEmpty()) {
-                    notificationIsSent = passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail);
+                    notificationIsSent = passwordSender.sendResetPasswordEmail(username, passwordResetToken, userEmail, passwordResetEmailTemplateName);
                 }
             }
         }

@@ -50,7 +50,7 @@ public class PasswordController {
 
 //        String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
         if (username != null && !username.isEmpty()) {
-             passwordResetOk = authenticationService.resetPassword(applicationTokenId,username, UserAction.EMAIL);
+            passwordResetOk = authenticationService.resetPassword(applicationTokenId, username, UserAction.EMAIL, "");
 //            String resetPasswordToken = uibAuthConnection.resetPassword(applicationTokenId, username);
 //            3.Send email or sms pin (STS)
 //            boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
@@ -67,6 +67,38 @@ public class PasswordController {
         }
     }
 
+    @POST
+    @Path("/reset/username/{username}/{resetPasswordTemplateName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("resetPasswordTemplateName") String resetPasswordTemplateName) {
+        log.trace("reset username={}, resetPasswordTemplateName:{}", username, resetPasswordTemplateName);
+        boolean passwordResetOk = false;
+
+        if (false) {  // TODO BLI FIXME  :)
+            // Lookup username to find uid
+            String uid = null;//new CommandListUsers().execute();
+            String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+            return copyResponse(response);
+        }
+
+//        String userToken = uibAuthConnection.resetPassword(applicationTokenId, username);
+        if (username != null && !username.isEmpty()) {
+            passwordResetOk = authenticationService.resetPassword(applicationTokenId, username, UserAction.EMAIL, resetPasswordTemplateName);
+//            String resetPasswordToken = uibAuthConnection.resetPassword(applicationTokenId, username);
+//            3.Send email or sms pin (STS)
+//            boolean notificationSent = sendNotification (createdUser, userAction, resetPasswordToken);
+//            if (notificationSent) {
+//                passwordResetToken = resetPasswordToken;
+//            }
+        }
+        if (passwordResetOk) {
+            log.trace("Password reset ok. Username {}", username);
+            return Response.ok(username).build();
+        } else {
+            log.trace("Password reset failed. Username {}", username);
+            return Response.accepted("Unable to send reset password notification to user").build();
+        }
+    }
 
     @POST
     @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
