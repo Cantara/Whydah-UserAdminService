@@ -1,5 +1,6 @@
 package net.whydah.admin.email;
 
+import org.constretto.ConstrettoConfiguration;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class PasswordSender {
     private static final Logger log = LoggerFactory.getLogger(PasswordSender.class);
+    private final ConstrettoConfiguration configuration;
+
     private static final String RESET_PASSWORD_SUBJECT = "Whydah password reset request";
     private static final String CHANGE_PASSWORD_PATH = "changepassword/";
     private final String ssoLoginServiceUrl;
@@ -24,7 +27,8 @@ public class PasswordSender {
 
     @Autowired
     @Configure
-    public PasswordSender(EmailBodyGenerator bodyGenerator, MailSender mailSender, @Configuration("ssologinservice") String ssoLoginServiceUrl) {
+    public PasswordSender(ConstrettoConfiguration configuration, EmailBodyGenerator bodyGenerator, MailSender mailSender, @Configuration("ssologinservice") String ssoLoginServiceUrl) {
+        this.configuration = configuration;
         this.bodyGenerator = bodyGenerator;
         this.mailSender = mailSender;
         this.ssoLoginServiceUrl = ssoLoginServiceUrl;
@@ -50,8 +54,14 @@ public class PasswordSender {
         String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
         log.info("Sending resetPassword email for user {} to {}, token={}, tampleteName={}", username, userEmail, token, templateName);
         String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
+        String templateRESET_PASSWORD_SUBJECT = configuration.evaluateToString("email.subject." + templateName);
         try {
-            mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+            if (templateRESET_PASSWORD_SUBJECT != null && templateRESET_PASSWORD_SUBJECT.length() > 10) {
+                mailSender.send(userEmail, templateRESET_PASSWORD_SUBJECT, body);
+            } else {
+                mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+
+            }
             messageSent = true;
         } catch (Exception e) {
             log.info("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
