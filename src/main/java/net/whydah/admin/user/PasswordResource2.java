@@ -2,7 +2,7 @@ package net.whydah.admin.user;
 
 import net.whydah.admin.users.UsersService;
 import net.whydah.sso.internal.commands.uib.userauth.CommandChangeUserPasswordUsingToken;
-import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPassword;
+import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class PasswordResource2 {
     @Path("/user/{uid}/reset_password")
     public Response resetPassword(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("uid") String uid) {
         log.info("Reset password for uid={} using applicationtokenid={}", uid, applicationtokenid);
-        String response = new CommandResetUserPassword(uibUri, applicationtokenid, uid).execute();
+        String response = new CommandResetUserPasswordUAS(uibUri, applicationtokenid, uid).execute();
         return copyResponse(response);
     }
 

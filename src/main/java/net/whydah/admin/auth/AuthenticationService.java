@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
 import net.whydah.admin.email.PasswordSender;
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.Map;

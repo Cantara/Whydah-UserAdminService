@@ -3,7 +3,7 @@ package net.whydah.admin.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
-import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPassword;
+import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class PasswordController {
             if (false) {  // TODO BLI FIXME  :)
                 // Lookup username to find uid
                 String uid = null;//new CommandListUsers().execute();
-                String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+                String response = new CommandResetUserPasswordUAS(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
                 return copyResponse(response);
             }
 
@@ -83,7 +83,7 @@ public class PasswordController {
             if (false) {  // TODO BLI FIXME  :)
                 // Lookup username to find uid
                 String uid = null;//new CommandListUsers().execute();
-                String response = new CommandResetUserPassword(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
+                String response = new CommandResetUserPasswordUAS(uibAuthConnection.getUIBUri(), applicationTokenId, uid).execute();
                 return copyResponse(response);
             }
 
