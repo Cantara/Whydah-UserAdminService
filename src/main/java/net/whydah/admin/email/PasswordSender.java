@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
+ * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 18.08.13
  * @Deprecated Functionallity is moved to UserAdminService
  * Send reset password email to user.
- * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 18.08.13
  */
 @Service
 public class PasswordSender {
@@ -54,13 +54,13 @@ public class PasswordSender {
         String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
         log.info("Sending resetPassword email for user {} to {}, token={}, tampleteName={}", username, userEmail, token, templateName);
         String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
-        String templateRESET_PASSWORD_SUBJECT = configuration.evaluateToString("email.subject." + templateName);
         try {
-            if (templateRESET_PASSWORD_SUBJECT != null && templateRESET_PASSWORD_SUBJECT.length() > 10) {
-                mailSender.send(userEmail, templateRESET_PASSWORD_SUBJECT, body);
-            } else {
+            if (templateName == null || templateName.length() < 10) {
                 mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
 
+            } else {
+                String templateRESET_PASSWORD_SUBJECT = configuration.evaluateToString("email.subject." + templateName);
+                mailSender.send(userEmail, templateRESET_PASSWORD_SUBJECT, body);
             }
             messageSent = true;
         } catch (Exception e) {
