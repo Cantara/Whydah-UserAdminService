@@ -24,7 +24,7 @@
         <jersey.version>2.22.1</jersey.version>
         <jetty.version>9.3.0.v20150612</jetty.version>
         <spring.version>4.1.6.RELEASE</spring.version>
-        <slf4j.version>1.7.13</slf4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
     </properties>
 
     <repositories>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>net.whydah.sso</groupId>
             <artifactId>Whydah-Java-SDK</artifactId>
-            <version>2.2-beta-12</version>
+            <version>2.2-beta-13</version>
         </dependency>
         <dependency>
             <groupId>org.valuereporter</groupId>
@@ -243,7 +243,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.3</version>
+            <version>1.1.7</version>
         </dependency>
         <!-- javax.mail and javax.activation is used by logback SmtpAppender -->
         <dependency>
@@ -258,31 +258,31 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.8.8</version>
+            <version>6.9.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <version>2.0.2-beta</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>json-path</artifactId>
-            <version>2.4.0</version>
+            <version>2.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>xml-path</artifactId>
-            <version>2.4.0</version>
+            <version>2.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
-            <version>2.4.0</version>
+            <version>2.9.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
