@@ -1,9 +1,12 @@
 package net.whydah.admin.application;
 
+import net.whydah.errorhandling.AppException;
+import net.whydah.errorhandling.AppExceptionCode;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.types.ApplicationCredential;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.internal.commands.uib.adminapi.application.CommandAuthenticateApplicationUAS;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -41,12 +44,44 @@ public class ApplicationAuthenticationEndpoint {
 
 
     /**
-     * Proxy for UIB application auth endpoint
-     */
+	 * @throws AppException 
+	 * @api {post} :stsApplicationtokenId/application/auth authenticateApplication
+	 * @apiName authenticateApplication
+	 * @apiGroup User Admin Service (UAS)
+	 * @apiDescription Validate an application from a request of STS
+	 * 
+	 * @apiParam {String} appCredentialXml A label for this address.
+	 * @apiParamExample {xml} Request-Example:
+	 * &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt; 
+ 	 * &lt;applicationcredential&gt;
+     * &lt;params&gt;
+     * &lt;applicationID&gt;101&lt;/applicationID&gt;
+     *  &lt;applicationName&gt;Whydah-SystemTests&lt;/applicationName&gt;
+     *   &lt;applicationSecret&gt;55fhRM6nbKZ2wfC6RMmMuzXpk&lt;/applicationSecret&gt;
+     * &lt;/params&gt;
+	 * &lt;/applicationcredential&gt;
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 204 No Content
+	 *
+	 *
+	 * @apiError 403/8000 Illegal Token Service
+	 * @apiError 500/9999 A generic exception or an unexpected error 
+	 *
+	 * @apiErrorExample Error-Response:
+	 *     HTTP/1.1 403 Forbidden
+	 *     {
+	 *  		"status": 403,
+	 *  		"code": 8000,
+	 *  		"message": "Illegal Token Service.",
+	 *  		"link": "",
+	 *  		"developerMessage": "Illegal Token Service."
+	 *		}
+	 */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateApplication(@PathParam("stsApplicationtokenId") String callingApplicationtokenId,
-                                            @FormParam(CommandAuthenticateApplicationUAS.APP_CREDENTIAL_XML) String appCredentialXml) {
+                                            @FormParam(CommandAuthenticateApplicationUAS.APP_CREDENTIAL_XML) String appCredentialXml) throws AppException {
 
         log.info("authenticateApplication - trying to authenticate applicationcredential: {}  callingApplicationtokenId: {}  stsUri: {} ",appCredentialXml, callingApplicationtokenId,stsUri);
 
@@ -54,7 +89,8 @@ public class ApplicationAuthenticationEndpoint {
         Boolean stsAuthenticationOK =   new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
         if (!stsAuthenticationOK) {
             log.warn("Invalid securitytokenservice session. callingApplicationtokenId={}. Returning Forbidden.", callingApplicationtokenId);
-            return Response.status(Response.Status.FORBIDDEN).build();
+            //return Response.status(Response.Status.FORBIDDEN).build();
+            throw AppExceptionCode.STSAPP_ILLEGAL_8000;
         }
 
         String uasAppCredentialXml = ApplicationCredentialMapper.toXML(uasApplicationCredential);

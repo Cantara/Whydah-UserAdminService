@@ -1,9 +1,12 @@
 package net.whydah.admin.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
+import net.whydah.errorhandling.AppException;
 import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -34,6 +38,23 @@ public class PasswordController {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * @apiIgnore
+  	 * @throws AppException 
+     * @throws Exception 
+     * @api {get} :applicationtokenid}/auth/password/reset/username/:username Reset password
+  	 * @apiName reset
+  	 * @apiGroup User Admin Service (UAS)
+  	 * @apiDescription A link sent to the registered email provides user a way to change/reset their password 
+  	 * 
+  	 *
+  	 * @apiSuccessExample Success-Response:
+  	 *	HTTP/1.1 200 OK
+  	 *  
+  	 *
+  	 * @apiError 500/9999 A generic exception or an unexpected error 
+  	 *
+  	 */
     @POST
     @Path("/reset/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
