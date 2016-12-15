@@ -2,8 +2,10 @@ package net.whydah.admin.applications;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
+import net.whydah.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -33,7 +35,7 @@ public class ApplicationsService {
         this.stsUrl = stsUri;
     }
 
-    public String listAll(String applicationTokenId) {
+    public String listAll(String applicationTokenId) throws AppException {
         String applications = null;
         if (hasAccess(applicationTokenId)) {
             applications = uibApplicationsConnection.listAll(applicationTokenId);
@@ -42,7 +44,7 @@ public class ApplicationsService {
         return applications;
     }
 
-    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
+    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) throws AppException {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
@@ -53,7 +55,7 @@ public class ApplicationsService {
         return applications;
     }
 
-    public String findApplications(String applicationTokenId, String userTokenId, String query) {
+    public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
         String applications = null;
         if (hasAccess(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, query);

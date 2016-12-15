@@ -62,6 +62,10 @@ public class AppException extends Exception {
 		this.developerMessage = developerMessage;
 		return this;
 	}
+	public AppException setDeveloperMessage(String developerMessage, Object...args) {
+		this.developerMessage = String.format(developerMessage, args);
+		return this;
+	}
 
 	public String getLink() {
 		return link;

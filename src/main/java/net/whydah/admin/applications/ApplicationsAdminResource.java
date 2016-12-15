@@ -1,5 +1,7 @@
 package net.whydah.admin.applications;
 
+import net.whydah.errorhandling.AppException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,73 +38,48 @@ public class ApplicationsAdminResource {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
+    public Response listAll(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) throws AppException {
         log.trace("listAll(Admin) is called ");
-        try {
-            String applications = applicationsService.listAll(applicationTokenId);
-            log.trace("Returning applicationlist as json \n",applications);
-            return Response.ok(applications).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
+
+        String applications = applicationsService.listAll(applicationTokenId);
+        log.trace("Returning applicationlist as json \n",applications);
+        return Response.ok(applications).build();
+      
     }
 
     @GET
     @Path("/{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                            @PathParam("applicationName") String applicationName) {
-        log.trace("findByName(Admin) is called ");
-        try {
-            String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
-            return Response.ok(application).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
+                            @PathParam("applicationName") String applicationName) throws AppException {
+    	log.trace("findByName(Admin) is called ");
+
+    	String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
+    	return Response.ok(application).build();
+
     }
 
     @GET
     @Path("{userTokenId}//")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) {
+    public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId) throws AppException {
         log.trace("listAll(Admin) is called ");
-        try {
-            String applications = applicationsService.listAll(applicationTokenId);
-            log.trace("Returning applicationlist as json \n",applications);
-            return Response.ok(applications).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
+        String applications = applicationsService.listAll(applicationTokenId);
+        log.trace("Returning applicationlist as json \n",applications);
+        return Response.ok(applications).build();
+
     }
 
     @GET
     @Path("{userTokenId}//{applicationName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                               @PathParam("applicationName") String applicationName) {
+                               @PathParam("applicationName") String applicationName) throws AppException {
         log.trace("findByName(Admin) is called ");
-        try {
-            String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
-            return Response.ok(application).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
+
+        String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
+        return Response.ok(application).build();
+
     }
     @GET
     @Path("/ping/pong")

@@ -2,6 +2,9 @@ package net.whydah.admin.user;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.whydah.errorhandling.AppException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +44,16 @@ public class UserAggregateResource2 {
     @Path("/{uid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public Response getUserAggregateByUid(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("usertokenid") String userTokenId,
-                                          @PathParam("uid") String uid) {
+                                          @PathParam("uid") String uid) throws AppException {
         log.trace("getUserAggregateByUid with uid={}", uid);
-        try {
-            String userAggregateJson = userAggregateService.getUserAggregateByUidAsJson(applicationTokenId, userTokenId, uid);
-            if (userAggregateJson == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("no user with uid" + uid).build();
-            }
-            return Response.ok(userAggregateJson).build();
-
-        } catch (RuntimeException e) {
-            log.error("", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+       
+        String userAggregateJson = userAggregateService.getUserAggregateByUidAsJson(applicationTokenId, userTokenId, uid);
+        if (userAggregateJson == null) {
+        	return Response.status(Response.Status.NOT_FOUND).entity("no user with uid" + uid).build();
         }
+        return Response.ok(userAggregateJson).build();
+
+
 
     }
 }

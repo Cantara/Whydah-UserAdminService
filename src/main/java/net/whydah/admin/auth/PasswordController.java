@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
 import net.whydah.errorhandling.AppException;
+import net.whydah.errorhandling.AppExceptionCode;
 import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
 
 import org.slf4j.Logger;
@@ -39,26 +40,37 @@ public class PasswordController {
     }
 
     /**
-     * @apiIgnore
+     * @Ignore Can do via SSO log on service
   	 * @throws AppException 
      * @throws Exception 
-     * @api {get} :applicationtokenid}/auth/password/reset/username/:username Reset password
+     * @api {post} :applicationtokenid}/auth/password/reset/username/:username Reset password
   	 * @apiName reset
   	 * @apiGroup User Admin Service (UAS)
   	 * @apiDescription A link sent to the registered email provides user a way to change/reset their password 
   	 * 
   	 *
   	 * @apiSuccessExample Success-Response:
-  	 *	HTTP/1.1 200 OK
-  	 *  
+  	 *	HTTP/1.1 200 OK plain/text
+  	 *  :username (it is the same username as a part of the request)
   	 *
   	 * @apiError 500/9999 A generic exception or an unexpected error 
-  	 *
+  	 * @apiError 202/8004 Unable to send reset password notification to user
+  	 * 
+  	 * @apiErrorExample Error-Response:
+   	 * HTTP/1.1 202 Accepted
+   	 * {
+   	 *  	"status": 202,
+   	 *  	"code": 8004,
+   	 *  	"message": "Unable to send reset password notification to user",
+   	 *  	"link": "",
+   	 *  	"developerMessage": ""
+   	 * }
+  	 * 
   	 */
     @POST
     @Path("/reset/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) {
+    public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) throws AppException {
         log.trace("reset username={}", username);
         try {
             boolean passwordResetOk = false;
@@ -85,14 +97,44 @@ public class PasswordController {
                 return Response.ok(username).build();
             } else {
                 log.trace("Password reset failed. Username {}", username);
-                return Response.accepted("Unable to send reset password notification to user").build();
+                //return Response.accepted("Unable to send reset password notification to user").build();
+                throw AppExceptionCode.APP_UNABLE_TO_RESET_PASSWORD_8004;
             }
         } catch (Exception e) {
-            return Response.accepted("Unable to send reset password notification to user").build();
+            //return Response.accepted("Unable to send reset password notification to user").build();
+        	throw AppExceptionCode.APP_UNABLE_TO_RESET_PASSWORD_8004.setDeveloperMessage(e.getMessage());
 
         }
     }
 
+    /**
+     * @apiIgnore Internal
+  	 * @throws AppException 
+     * @throws Exception 
+     * @api {post} :applicationtokenid}/auth/password/reset/username/:username/template/:resetPasswordTemplateName Reset password with a template
+  	 * @apiName resetWithTemplate
+  	 * @apiGroup User Admin Service (UAS)
+  	 * @apiDescription Reset password with a template
+  	 * 
+  	 *
+  	 * @apiSuccessExample Success-Response:
+  	 *	HTTP/1.1 200 OK plain/text
+  	 *  :username (it is the same username as a part of the request)
+  	 *
+  	 * @apiError 500/9999 A generic exception or an unexpected error 
+  	 * @apiError 202/8004 Unable to send reset password notification to user
+  	 * 
+  	 * @apiErrorExample Error-Response:
+   	 * HTTP/1.1 202 Accepted
+   	 * {
+   	 *  	"status": 202,
+   	 *  	"code": 8004,
+   	 *  	"message": "Unable to send reset password notification to user",
+   	 *  	"link": "",
+   	 *  	"developerMessage": ""
+   	 * }
+  	 * 
+  	 */
     @POST
     @Path("/reset/username/{username}/template/{resetPasswordTemplateName}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -131,6 +173,9 @@ public class PasswordController {
         }
     }
 
+    /**
+     * @apiIgnore Internal
+  	 */
     @POST
     @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
     @Consumes(MediaType.APPLICATION_JSON)

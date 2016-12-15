@@ -27,154 +27,134 @@ import javax.ws.rs.core.Response;
 @Path("/{applicationtokenid}")
 @Component
 public class ApplicationsResource {
-    private static final Logger log = LoggerFactory.getLogger(ApplicationsResource.class);
-    private final ApplicationsService applicationsService;
+	private static final Logger log = LoggerFactory.getLogger(ApplicationsResource.class);
+	private final ApplicationsService applicationsService;
 
-    @Autowired
-    public ApplicationsResource(ApplicationsService applicationsService) {
-        this.applicationsService = applicationsService;
-    }
+	@Autowired
+	public ApplicationsResource(ApplicationsService applicationsService) {
+		this.applicationsService = applicationsService;
+	}
 
 
-    /**
-     * @apiIgnore
-  	 * @throws AppException 
-     * @throws Exception 
-     * @api {get} :applicationtokenid}/applications listAll
-  	 * @apiName listAll
-  	 * @apiGroup User Admin Service (UAS)
-  	 * @apiDescription List all applications
-  	 * 
-  	 *
-  	 * @apiSuccessExample Success-Response:
-  	 *	HTTP/1.1 200 OK
-  	 * 
-  	 *[{"id":"03847c72-6bc3-46e6-94d2-07a4d9c3f35b","name":"ACS_2744","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tilpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":"http://my.application.com","logoUrl":"http://my.application.com/mylogo.png","fullTokenApplication":false,"roles":[{"id":"roleId-133","name":"superuser"}],"defaultRoleName":"Employee","orgs":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[],"organizationNames":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}]},{"id":"100","name":"ACS","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tillpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":null,"logoUrl":null,"fullTokenApplication":false,"roles":[{"id":"acs101","name":"Employee"},{"id":"acs102","name":"Manager"},{"id":"acs103","name":"Administrator"}],"defaultRoleName":"Employee","orgs":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[{"applicationId":"11","applicationACLPath":"/user","accessRights":null}],"organizationNames":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}]}]
-  	 *
-  	 * @apiError 409/8003 IllegalStateException
-  	 * @apiError 500/9999 A generic exception or an unexpected error 
-  	 *
-  	 * @apiErrorExample Error-Response:
-  	 *     HTTP/1.1 409 Conflict
-  	 *     {
-  	 *  		"status": 409,
-  	 *  		"code": 8003,
-  	 *  		"message": "IllegalStateException",
-  	 *  		"link": "",
-  	 *  		"developerMessage": ""
-  	 *		}
-  	 */
-    @GET
-    @Path("/applications")
-    @Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
-    public Response listAll(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
-        log.trace("listAll is called ");
-        try {
-            String applications = applicationsService.listAll(applicationTokenId);
-            log.trace("listAll {}", applications);
-            return Response.ok(applications).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            //return Response.status(Response.Status.CONFLICT).build();
-            throw AppExceptionCode.APP_CONFLICT_8003.setDeveloperMessage(ise.getMessage());
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            //return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        	throw e;
-        }
-    }
+	/**
+	 * @apiIgnore
+	 * @throws AppException 
+	 * @throws Exception 
+	 * @api {get} :applicationtokenid}/applications listAll
+	 * @apiName listAll
+	 * @apiGroup User Admin Service (UAS)
+	 * @apiDescription List all applications
+	 * 
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 * 
+	 *[{"id":"03847c72-6bc3-46e6-94d2-07a4d9c3f35b","name":"ACS_2744","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tilpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":"http://my.application.com","logoUrl":"http://my.application.com/mylogo.png","fullTokenApplication":false,"roles":[{"id":"roleId-133","name":"superuser"}],"defaultRoleName":"Employee","orgs":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[],"organizationNames":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}]},{"id":"100","name":"ACS","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tillpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":null,"logoUrl":null,"fullTokenApplication":false,"roles":[{"id":"acs101","name":"Employee"},{"id":"acs102","name":"Manager"},{"id":"acs103","name":"Administrator"}],"defaultRoleName":"Employee","orgs":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[{"applicationId":"11","applicationACLPath":"/user","accessRights":null}],"organizationNames":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}]}]
+	 *
+	 * 
+	 * @apiError 500/9996 AuthenticationFailedException
+	 * @apiError 400/9997 BadRequestException
+	 * @apiError 500/9999 A generic exception or an unexpected error 
+	 *
+	 * @apiErrorExample Error-Response:
+	 * HTTP/1.1 400 Bad Request
+	 * {
+	 * 	"status": 400,
+	 *  "code": 9997,
+	 *  "message": "BadRequestException",
+	 *  "link": "",
+	 *  "developerMessage": ""
+	 *	}
+	 */
+	@GET
+	@Path("/applications")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
+	public Response listAll(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
+		log.trace("listAll is called ");
 
-    /**
-     * @throws AppException 
-     * @api {get} :userTokenId/find/applications/:applicationName findByName
-  	 * @apiName findByName
-  	 * @apiGroup User Admin Service (UAS)
-  	 * @apiDescription List all applications
-  	 * 
-  	 *
-  	 * @apiSuccessExample Success-Response:
-  	 *	HTTP/1.1 200 OK
-  	 * 
-  	 *[{"id":"03847c72-6bc3-46e6-94d2-07a4d9c3f35b","name":"ACS_2744","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tilpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":"http://my.application.com","logoUrl":"http://my.application.com/mylogo.png","fullTokenApplication":false,"roles":[{"id":"roleId-133","name":"superuser"}],"defaultRoleName":"Employee","orgs":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[],"organizationNames":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}]},{"id":"100","name":"ACS","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tillpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":null,"logoUrl":null,"fullTokenApplication":false,"roles":[{"id":"acs101","name":"Employee"},{"id":"acs102","name":"Manager"},{"id":"acs103","name":"Administrator"}],"defaultRoleName":"Employee","orgs":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[{"applicationId":"11","applicationACLPath":"/user","accessRights":null}],"organizationNames":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}]}]
-  	 *
-  	 * @apiError 409/8003 IllegalStateException
-  	 * @apiError 500/9999 A generic exception or an unexpected error 
-  	 *
-  	 * @apiErrorExample Error-Response:
-  	 *     HTTP/1.1 409 Conflict
-  	 *     {
-  	 *  		"status": 409,
-  	 *  		"code": 8003,
-  	 *  		"message": "IllegalStateException",
-  	 *  		"link": "",
-  	 *  		"developerMessage": ""
-  	 *		}
-  	 */
-    @GET
-    @Path("{userTokenId}/find/applications/{applicationName}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
-                               @PathParam("userTokenId") String userTokenId,
-                               @PathParam("applicationName") String applicationName) throws AppException {
-        log.trace("findByName - listAll is called, query {}", applicationName);
-        try {
-            String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
-//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
-            return Response.ok(applications).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            //return Response.status(Response.Status.CONFLICT).build();
-            throw AppExceptionCode.APP_CONFLICT_8003.setDeveloperMessage(ise.getMessage());
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            //return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        	throw e;
-        }
-    }
+		String applications = applicationsService.listAll(applicationTokenId);
+		log.trace("listAll {}", applications);
+		return Response.ok(applications).build();
+	}
 
-    @GET
-    @Path("{userTokenId}/applications")
-    @Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
-    public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) {
-        log.trace("listAll is called ");
-        try {
-            String applications = applicationsService.listAll(applicationTokenId);
-            log.trace("listAll {}", applications);
-            return Response.ok(applications).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+	/**
+	 * @throws AppException 
+	 * @api {get} :userTokenId/find/applications/:applicationName findByName
+	 * @apiName findByName
+	 * @apiGroup User Admin Service (UAS)
+	 * @apiDescription List all applications
+	 * 
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 * 
+	 *[{"id":"03847c72-6bc3-46e6-94d2-07a4d9c3f35b","name":"ACS_2744","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tilpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":"http://my.application.com","logoUrl":"http://my.application.com/mylogo.png","fullTokenApplication":false,"roles":[{"id":"roleId-133","name":"superuser"}],"defaultRoleName":"Employee","orgs":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[],"organizationNames":[{"id":"orgid-12345","name":"ACSOrganization"},{"id":"my.application.com","name":"application.com"}]},{"id":"100","name":"ACS","description":"Finn den kompetansen du trenger, når du trenger det. Lag eksklusive CV'er tillpasset leseren.","company":"Norway AS","tags":"HIDDEN, JURISDICTION_NORWAY","applicationUrl":null,"logoUrl":null,"fullTokenApplication":false,"roles":[{"id":"acs101","name":"Employee"},{"id":"acs102","name":"Manager"},{"id":"acs103","name":"Administrator"}],"defaultRoleName":"Employee","orgs":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}],"defaultOrganizationName":"ACSOrganization","security":{"minSecurityLevel":"0","minDEFCON":"DEFCON5","maxSessionTimeoutSeconds":"86400","allowedIpAddresses":null,"userTokenFilter":"true","secret":"*************"},"acl":[{"applicationId":"11","applicationACLPath":"/user","accessRights":null}],"organizationNames":[{"id":"100","name":"Whydah"},{"id":"101","name":"Cantara"},{"id":"102","name":"Getwhydah"}]}]
+	 *
+	 * @apiError 500/9996 AuthenticationFailedException
+	 * @apiError 400/9997 BadRequestException
+	 * @apiError 500/9999 A generic exception or an unexpected error 
+	 *
+	 * @apiErrorExample Error-Response:
+	 * HTTP/1.1 400 Bad Request
+	 * {
+	 * 	"status": 400,
+	 *  "code": 9997,
+	 *  "message": "BadRequestException",
+	 *  "link": "",
+	 *  "developerMessage": ""
+	 * }
+	 */
+	@GET
+	@Path("{userTokenId}/find/applications/{applicationName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
+			@PathParam("userTokenId") String userTokenId,
+			@PathParam("applicationName") String applicationName) throws AppException {
+		log.trace("findByName - listAll is called, query {}", applicationName);
 
-    @GET
-    @Path("{userTokenId}/applications/find/{applicationName}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
-                                  @PathParam("userTokenId") String userTokenId,
-                                  @PathParam("applicationName") String applicationName) {
-        log.trace("findByName - listAll is called, query {}", applicationName);
-        try {
-            String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
-//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
-            return Response.ok(applications).build();
-        } catch (IllegalStateException ise) {
-            log.error(ise.getMessage());
-            return Response.status(Response.Status.CONFLICT).build();
-        } catch (RuntimeException e) {
-            log.error("Failed to list all.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+		String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
+		return Response.ok(applications).build();
 
-    @GET
-    @Path("/ping/pong")
-    @Produces(MediaType.TEXT_HTML)
-    @Deprecated //Not used by ansible scrips anymore as of 2015-07-06
-    public Response ping() {
-        return Response.ok("pong").build();
-    }
+	}
+
+	
+	
+	
+	
+	
+	//OLD
+	
+	@GET
+	@Path("{userTokenId}/applications")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
+	public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
+		log.trace("listAll is called ");
+
+		String applications = applicationsService.listAll(applicationTokenId);
+		log.trace("listAll {}", applications);
+		return Response.ok(applications).build();
+		
+	}
+
+	@GET
+	@Path("{userTokenId}/applications/find/{applicationName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
+			@PathParam("userTokenId") String userTokenId,
+			@PathParam("applicationName") String applicationName) throws AppException {
+		log.trace("findByName - listAll is called, query {}", applicationName);
+
+		String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
+		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+		return Response.ok(applications).build();
+
+	}
+
+	@GET
+	@Path("/ping/pong")
+	@Produces(MediaType.TEXT_HTML)
+	@Deprecated //Not used by ansible scrips anymore as of 2015-07-06
+	public Response ping() {
+		return Response.ok("pong").build();
+	}
 }

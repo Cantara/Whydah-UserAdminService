@@ -1,19 +1,24 @@
 package net.whydah.admin.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.user.uib.UibUserConnection;
+import net.whydah.errorhandling.AppException;
+import net.whydah.errorhandling.AppExceptionCode;
 import net.whydah.sso.user.helpers.UserRoleXpathHelper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.NotAuthorizedException;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,12 +42,12 @@ public class UserService {
     }
 
 
-    public UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) {
+    public UserIdentity createUser(String applicationTokenId, String adminUserTokenId, String userJson) throws AppException {
         UserIdentity userIdentity;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             userIdentity = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userJson);
         } else {
-            throw new NotAuthorizedException("Not Authorized to create user");
+            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
         return userIdentity;
     }
@@ -52,12 +57,12 @@ public class UserService {
         return createdUser;
     }
 
-    public UserIdentity getUserIdentity(String applicationTokenId, String userTokenId, String uid) {
+    public UserIdentity getUserIdentity(String applicationTokenId, String userTokenId, String uid) throws AppException {
         UserIdentity userIdentity;
         if (hasAccess(applicationTokenId, userTokenId)) {
             userIdentity = uibUserConnection.getUserIdentity(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
-            throw new NotAuthorizedException("Not Authorized to getUserIdentity()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
         /*
         UserIdentityDeprecated userIdentity = new UserIdentityDeprecated("uid","username","first", "last", "", "first.last@example.com", "12234", "");
@@ -74,12 +79,12 @@ public class UserService {
     }
 
 
-    public boolean changePassword(String applicationTokenId, String adminUserTokenId, String userName, String password) {
+    public boolean changePassword(String applicationTokenId, String adminUserTokenId, String userName, String password) throws AppException {
         boolean isUpdated;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             isUpdated = uibUserConnection.changePassword(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, userName, password);
         } else {
-            throw new NotAuthorizedException("Not Authorized to change password");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
         return isUpdated;
     }
@@ -90,30 +95,30 @@ public class UserService {
         return hasSetPW;
     }
 
-    public UserApplicationRoleEntry addUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
+    public UserApplicationRoleEntry addUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) throws AppException {
         UserApplicationRoleEntry role;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             role = uibUserConnection.addRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, uid, roleRequest);
         } else {
-            throw new NotAuthorizedException("Not Authorized to add user role()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
         return role;
     }
 
-    public void deleteUserRole(String applicationTokenId, String adminUserTokenId, String uid, String userRoleId) {
+    public void deleteUserRole(String applicationTokenId, String adminUserTokenId, String uid, String userRoleId) throws AppException {
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
            uibUserConnection.deleteUserRole(credentialStore.getUserAdminServiceTokenId(),adminUserTokenId, uid, userRoleId);
         } else {
-            throw new NotAuthorizedException("Not Authorized to delete user role()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
     }
 
-    public UserApplicationRoleEntry updateUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
+    public UserApplicationRoleEntry updateUserRole(String applicationTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) throws AppException {
         UserApplicationRoleEntry role;
         if (hasAccess(applicationTokenId, adminUserTokenId)) {
             role = uibUserConnection.updateRole(credentialStore.getUserAdminServiceTokenId(), adminUserTokenId, uid, roleRequest);
         } else {
-            throw new NotAuthorizedException("Not Authorized to update user role()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
         return role;
 
@@ -121,10 +126,10 @@ public class UserService {
 
 
 
-    public UserAggregate getUserAggregateByUid(String applicationTokenId, String userTokenId, String uid) {
+    public UserAggregate getUserAggregateByUid(String applicationTokenId, String userTokenId, String uid) throws AppException {
         UserAggregate userAggregate;
         if (!hasAccess(applicationTokenId, userTokenId)) {
-            throw new NotAuthorizedException("Not Authorized to getUserAggregateByUid()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
 
         userAggregate = uibUserConnection.getUserAggregateByUid(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
@@ -132,9 +137,9 @@ public class UserService {
         return userAggregate;
     }
 
-    public String getUserAggregateByUidAsJson(String applicationTokenId, String userTokenId, String uid) {
+    public String getUserAggregateByUidAsJson(String applicationTokenId, String userTokenId, String uid) throws AppException {
         if (!hasAccess(applicationTokenId, userTokenId)) {
-            throw new NotAuthorizedException("Not Authorized to getUserAggregateByUid()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
 
         String userAggregate = uibUserConnection.getUserAggregateByUidAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
@@ -150,11 +155,11 @@ public class UserService {
 
 
 
-    public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) {
+    public String getRolesAsJson(String applicationTokenId, String userTokenId, String uid) throws AppException {
         if (hasAccess(applicationTokenId, userTokenId)) {
             return uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
-            throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
 
         /*
@@ -176,7 +181,7 @@ public class UserService {
         */
 
     }
-    public String getRolesAsXml(String applicationTokenId, String userTokenId, String uid) {
+    public String getRolesAsXml(String applicationTokenId, String userTokenId, String uid) throws AppException {
         List<UserApplicationRoleEntry> roles = getRoles(applicationTokenId, userTokenId, uid);
         String result = "<applications>";
         for (UserApplicationRoleEntry role : roles) {
@@ -185,14 +190,14 @@ public class UserService {
         result += "</applications>";
         return result;
     }
-    private List<UserApplicationRoleEntry> getRoles(String applicationTokenId, String userTokenId, String uid) {
+    private List<UserApplicationRoleEntry> getRoles(String applicationTokenId, String userTokenId, String uid) throws AppException {
         List<UserApplicationRoleEntry> roles;
         if (hasAccess(applicationTokenId, userTokenId)) {
             String rolesJson = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
             log.debug("rolesJson {}", rolesJson);
             roles = mapRolesFromString(rolesJson);
         } else {
-            throw new NotAuthorizedException("Not Authorized to getRolesAsJson()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
         return roles;
     }
@@ -204,11 +209,11 @@ public class UserService {
     }
 
 
-    public void deleteUser(String applicationTokenId, String userTokenId, String uid) {
+    public void deleteUser(String applicationTokenId, String userTokenId, String uid) throws AppException {
         if (hasAccess(applicationTokenId, userTokenId)) {
             uibUserConnection.deleteUser(credentialStore.getUserAdminServiceTokenId(), userTokenId, uid);
         } else {
-            throw new NotAuthorizedException("Not Authorized to deleteUser()");
+        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
     }
 }

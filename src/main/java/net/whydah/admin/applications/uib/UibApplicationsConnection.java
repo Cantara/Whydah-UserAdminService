@@ -2,6 +2,9 @@ package net.whydah.admin.applications.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
+import net.whydah.errorhandling.AppException;
+import net.whydah.errorhandling.AppExceptionCode;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -40,7 +43,7 @@ public class UibApplicationsConnection {
     }
 
 
-    public String listAll(String userAdminServiceTokenId) {
+    public String listAll(String userAdminServiceTokenId) throws AppException {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
@@ -57,18 +60,21 @@ public class UibApplicationsConnection {
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
-                throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                //throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
             case NOT_AUTHERIZED:
                 log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
-                throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                //throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
             default:
                 log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
-                throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
+                //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
+                throw AppExceptionCode.MISC_AuthenticationFailedException_9996.setDeveloperMessage("listAll-Response from UIB: {}: {}", response.getStatus(), output);
         }
         return output;
     }
 
-    public String findApplications(String userAdminServiceTokenId,  String query) {
+    public String findApplications(String userAdminServiceTokenId,  String query) throws AppException {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
@@ -87,13 +93,16 @@ public class UibApplicationsConnection {
                 break;
             case STATUS_BAD_REQUEST:
                 log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
-                throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                //throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
             case NOT_AUTHERIZED:
                 log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
-                throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                //throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
+                throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
             default:
                 log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
-                throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
+                //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
+                throw AppExceptionCode.MISC_AuthenticationFailedException_9996.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
         }
         return output;
     }
