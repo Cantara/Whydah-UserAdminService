@@ -1,7 +1,7 @@
 package net.whydah.admin.applications;
 
-import net.whydah.errorhandling.AppException;
-import net.whydah.errorhandling.AppExceptionCode;
+import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppExceptionCode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

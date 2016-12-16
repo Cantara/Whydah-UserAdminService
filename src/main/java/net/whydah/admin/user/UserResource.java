@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.user.uib.*;
-import net.whydah.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;

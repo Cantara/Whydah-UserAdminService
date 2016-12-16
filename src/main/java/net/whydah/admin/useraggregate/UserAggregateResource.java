@@ -1,8 +1,8 @@
 package net.whydah.admin.useraggregate;
 
+import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.user.UserService;
 import net.whydah.admin.user.uib.*;
-import net.whydah.errorhandling.AppException;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;

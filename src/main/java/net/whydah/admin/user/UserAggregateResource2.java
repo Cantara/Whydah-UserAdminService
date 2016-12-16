@@ -3,7 +3,7 @@ package net.whydah.admin.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.whydah.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

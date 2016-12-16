@@ -1,4 +1,4 @@
-package net.whydah.errorhandling;
+package net.whydah.admin.errorhandling;
 
 import org.constretto.ConstrettoBuilder;
 import org.constretto.ConstrettoConfiguration;
@@ -16,19 +16,19 @@ public class Configuration {
 	private Configuration() {}
 	
 	public static String getString(String key) {
-		return configuration.evaluateToString(key);
+		return configuration.hasValue(key)?configuration.evaluateToString(key):null;
 	}
 	
 	public static Integer getInt(String key) {
-		return configuration.evaluateToInt(key);
+		return configuration.hasValue(key)?configuration.evaluateToInt(key):-1;
 	}
 
 	public static Integer getInt(String key, int defaultValue) {
-		return configuration.evaluateTo(key, defaultValue);
+		return configuration.hasValue(key)?configuration.evaluateToInt(key):defaultValue;
 	}
 
 	public static boolean getBoolean(String key) {
-		return configuration.evaluateToBoolean(key);
+		return configuration.hasValue(key)?configuration.evaluateToBoolean(key):false;
 	}
 	
 	

@@ -1,10 +1,10 @@
 package net.whydah.admin.user.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.admin.user.ConflictExeption;
-import net.whydah.errorhandling.AppException;
-import net.whydah.errorhandling.AppExceptionCode;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.mappers.UserRoleMapper;

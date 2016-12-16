@@ -1,8 +1,8 @@
 package net.whydah.admin.application;
 
+import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.errorhandling.AppException;
-import net.whydah.errorhandling.AppExceptionCode;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.application.types.Application;
 

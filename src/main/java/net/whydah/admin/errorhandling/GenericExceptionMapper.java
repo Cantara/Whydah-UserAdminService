@@ -1,4 +1,4 @@
-package net.whydah.errorhandling;
+package net.whydah.admin.errorhandling;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,7 +26,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
 		errorMessage.setLink("");
 				
 		return Response.status(errorMessage.getStatus())
-				.entity(ExceptionConfig.handleSecurity(errorMessage))
+				.entity(ExceptionConfig.handleSecurity(errorMessage).toString())
 				.type(MediaType.APPLICATION_JSON)
 				.build();	
 	}

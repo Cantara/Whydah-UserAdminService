@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
-import net.whydah.errorhandling.AppException;
-import net.whydah.errorhandling.AppExceptionCode;
+import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
 
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package net.whydah.errorhandling;
+package net.whydah.admin.errorhandling;
 
 import javax.ws.rs.core.Response.Status;
 

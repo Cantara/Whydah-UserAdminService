@@ -2,7 +2,7 @@ package net.whydah.admin.applications;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
-import net.whydah.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 

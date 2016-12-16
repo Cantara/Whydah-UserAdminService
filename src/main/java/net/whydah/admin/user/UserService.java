@@ -3,9 +3,9 @@ package net.whydah.admin.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.whydah.admin.CredentialStore;
+import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.user.uib.UibUserConnection;
-import net.whydah.errorhandling.AppException;
-import net.whydah.errorhandling.AppExceptionCode;
 import net.whydah.sso.user.helpers.UserRoleXpathHelper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;

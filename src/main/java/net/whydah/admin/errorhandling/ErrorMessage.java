@@ -1,4 +1,4 @@
-package net.whydah.errorhandling;
+package net.whydah.admin.errorhandling;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -78,6 +78,7 @@ public class ErrorMessage {
 	
 	public ErrorMessage(AppException ex){
 		BeanUtils.copyProperties(ex,this);
+		this.status = ex.getStatus().getStatusCode();
 	}
 	
 	public ErrorMessage(NotFoundException ex){

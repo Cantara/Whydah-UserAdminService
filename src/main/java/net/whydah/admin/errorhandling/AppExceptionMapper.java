@@ -1,4 +1,4 @@
-package net.whydah.errorhandling;
+package net.whydah.admin.errorhandling;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -11,7 +11,7 @@ public class AppExceptionMapper implements ExceptionMapper<AppException> {
 	public Response toResponse(AppException ex) {
 		
 		return Response.status(ex.getStatus())
-				.entity(ExceptionConfig.handleSecurity(new ErrorMessage(ex)))
+				.entity(ExceptionConfig.handleSecurity(new ErrorMessage(ex)).toString())
 				.type(MediaType.APPLICATION_JSON).
 				build();
 	}

@@ -1,9 +1,9 @@
 package net.whydah.admin.applications.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.errorhandling.AppException;
-import net.whydah.errorhandling.AppExceptionCode;
 
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
