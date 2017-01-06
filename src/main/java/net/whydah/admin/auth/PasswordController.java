@@ -187,8 +187,8 @@ public class PasswordController {
         try {
             Map<String, String> newPasswordMap = objectMapper.readValue(newPasswordJson, Map.class);
             password = newPasswordMap.get("newpassword");
-            String userToken = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken, password);
-            return Response.ok(username).build();
+            String userIdentity = uibAuthConnection.setPasswordByToken(applicationTokenId, username, passwordChangeToken, password);
+            return Response.ok(userIdentity).build();
         } catch (IOException e) {
             log.trace("Failed to parse inncomming newPasswordJson {}", newPasswordJson);
         }
