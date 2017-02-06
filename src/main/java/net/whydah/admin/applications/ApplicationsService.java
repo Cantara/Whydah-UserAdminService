@@ -1,10 +1,16 @@
 package net.whydah.admin.applications;
 
+import java.net.URI;
+
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
+import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
+import net.whydah.sso.commands.appauth.CommandVerifyUASAccessByApplicationTokenId;
+import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
+import net.whydah.sso.commands.userauth.CommandValidateWhydahAdminByUserTokenId;
 
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -70,13 +76,36 @@ public class ApplicationsService {
         return applications;
     }
 
-    boolean hasAccess(String applicationTokenId, String userTokenId) {
-        //FIXME validate user and applciation trying to create a new application.
-        return true;
+    public boolean hasAccess(String applicationTokenId, String userTokenId) {
+    	Boolean userTokenIsValid = new CommandValidateUsertokenId(URI.create(stsUrl), applicationTokenId, userTokenId).execute();
+    	if(!userTokenIsValid){
+    		log.warn("CommandValidateUsertokenId failed, user token " + userTokenId + " is invalid");
+    		return false;
+    	}
+    	Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
+    	if(!applicationTokenIsValid){
+    		log.warn("CommandValidateApplicationTokenId failed, app token " + applicationTokenId + " is invalid");
+    		return false;
+    	}
+    	Boolean userTokenIsAdmin = new CommandValidateWhydahAdminByUserTokenId(URI.create(stsUrl), applicationTokenId, userTokenId).execute();
+    	if(!userTokenIsAdmin){
+    		log.warn("CommandValidateWhydahAdminByUserTokenId failed, user token " + userTokenId + " does not have admin role");
+    		return false;
+    	}
+    	Boolean isUASAccessOpen = new CommandVerifyUASAccessByApplicationTokenId(stsUrl, applicationTokenId).execute();
+    	if(!isUASAccessOpen){
+    		log.warn("CommandVerifyUASAccessByApplicationTokenId failed, app token " + applicationTokenId + " does not have UAS access");
+    		return false;
+    	}
+    	return true;
     }
 
-    boolean hasAccess(String applicationTokenId) {
-        //FIXME validate user and applciation trying to create a new application.
+    public boolean hasAccess(String applicationTokenId) {
+    	Boolean isUASAccessOpen = new CommandVerifyUASAccessByApplicationTokenId(stsUrl, applicationTokenId).execute();
+    	if(!isUASAccessOpen){
+    		log.warn("CommandVerifyUASAccessByApplicationTokenId failed, app token " + applicationTokenId + " does not have UAS access");
+    		return false;
+    	}
         return true;
     }
 
@@ -85,6 +114,5 @@ public class ApplicationsService {
         String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
         log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationID);
         return (UAWA_ID.equals(applicationID));
-        //return true;
     }
 }

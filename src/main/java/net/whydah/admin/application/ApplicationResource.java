@@ -1,8 +1,13 @@
 package net.whydah.admin.application;
 
+import net.whydah.admin.applications.ApplicationsService;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
+import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
+import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
+import net.whydah.sso.commands.userauth.CommandValidateWhydahAdminByUserTokenId;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -33,13 +38,14 @@ public class ApplicationResource {
     private WebTarget uib;
     private final UASCredentials uasCredentials;
     private final String myUibUrl;
-
+    ApplicationsService applicationsService;
 
     @Autowired
     @Configure
-    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials, ApplicationsService applicationsService) {
         this.uasCredentials = uasCredentials;
         this.myUibUrl = uibUrl;
+        this.applicationsService = applicationsService; 
     }
 
     /**
@@ -344,11 +350,15 @@ public class ApplicationResource {
     }
 
     private boolean hasUserAndApplicationAccess(String userTokenId, String applicationTokenId) {
+    	
+    	//Totto added pseudo code for vefifying access
 //        Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
 //        Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(tokenServiceUri, applicationTokenId).execute();
 //        Boolean userTokenIsAdmin = new CommandValidateWhydahAdminByUserTokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
 //        Boolean userTokenIsAdmin = new CommandValidateWhydahAdminApplicationByApplicationTokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
-        return true;
+    	//see implementation here
+    	return applicationsService.hasAccess(applicationTokenId, userTokenId);
+        
     }
 
     @GET
