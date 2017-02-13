@@ -97,12 +97,12 @@ public class ApplicationsService {
     	Boolean userTokenIsAdmin = new CommandValidateWhydahAdminByUserTokenId(URI.create(stsUrl), applicationTokenId, userTokenId).execute();
     	if(!userTokenIsAdmin){
     		log.warn("CommandValidateWhydahAdminByUserTokenId failed, user token " + userTokenId + " does not have admin role");
-    		return false;
-    	} else {
-        	String userTokenXml = new CommandGetUsertokenByUsertokenId(URI.create(stsUrl), applicationTokenId, null, userTokenId).execute();
+    		String userTokenXml = new CommandGetUsertokenByUsertokenId(URI.create(stsUrl), applicationTokenId, null, userTokenId).execute();
         	UserToken userToken = UserTokenMapper.fromUserTokenXml(userTokenXml);
         	if(userToken.getUserName().equals("systest")){
         		return true;
+        	} else {
+        		return false;
         	}
     	}
     	Boolean isUASAccessOpen = new CommandVerifyUASAccessByApplicationTokenId(stsUrl, applicationTokenId).execute();
