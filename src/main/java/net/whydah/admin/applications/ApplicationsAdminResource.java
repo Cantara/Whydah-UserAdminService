@@ -54,7 +54,7 @@ public class ApplicationsAdminResource {
                             @PathParam("applicationName") String applicationName) throws AppException {
     	log.trace("findByName(Admin) is called ");
 
-    	String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
+    	String application = applicationsService.findApplication(applicationTokenId,userTokenId, applicationName);
     	return Response.ok(application).build();
 
     }
@@ -77,7 +77,7 @@ public class ApplicationsAdminResource {
                                @PathParam("applicationName") String applicationName) throws AppException {
         log.trace("findByName(Admin) is called ");
 
-        String application = applicationsService.findApplication(applicationTokenId,applicationName,userTokenId);
+        String application = applicationsService.findApplication(applicationTokenId,userTokenId, applicationName);
         return Response.ok(application).build();
 
     }

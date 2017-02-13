@@ -1,12 +1,26 @@
 package net.whydah.admin.application;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import net.whydah.admin.applications.ApplicationsService;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
-import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
-import net.whydah.sso.commands.userauth.CommandValidateWhydahAdminByUserTokenId;
 
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -14,15 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Proxy in front of UIB application CRUD endpoint.
@@ -349,15 +354,8 @@ public class ApplicationResource {
         }
     }
 
-    private boolean hasUserAndApplicationAccess(String userTokenId, String applicationTokenId) {
-    	
-    	//Totto added pseudo code for vefifying access
-//        Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
-//        Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(tokenServiceUri, applicationTokenId).execute();
-//        Boolean userTokenIsAdmin = new CommandValidateWhydahAdminByUserTokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
-//        Boolean userTokenIsAdmin = new CommandValidateWhydahAdminApplicationByApplicationTokenId(tokenServiceUri, applicationTokenId, userTokenId).execute();
-    	//see implementation here
-    	return applicationsService.hasAccess(applicationTokenId, userTokenId);
+    private boolean hasUserAndApplicationAccess(String userTokenId, String applicationTokenId) throws AppException {
+    	return applicationsService.getAdminChecker().hasAccess(applicationTokenId, userTokenId);
         
     }
 

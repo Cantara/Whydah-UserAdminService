@@ -112,7 +112,7 @@ public class ApplicationsResource {
 			@PathParam("applicationName") String applicationName) throws AppException {
 		log.trace("findByName - listAll is called, query {}", applicationName);
 
-		String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
+		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
 		return Response.ok(applications).build();
 
 	}
@@ -153,7 +153,7 @@ public class ApplicationsResource {
 			@PathParam("applicationName") String applicationName) throws AppException {
 		log.trace("findByName - listAll is called, query {}", applicationName);
 
-		String applications = applicationsService.findApplication(applicationTokenId, applicationName, userTokenId);
+		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
 		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
 		return Response.ok(applications).build();
 

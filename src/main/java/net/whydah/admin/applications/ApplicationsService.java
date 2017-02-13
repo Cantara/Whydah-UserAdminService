@@ -1,19 +1,11 @@
 package net.whydah.admin.applications;
 
-import java.net.URI;
-
 import net.whydah.admin.CredentialStore;
+import net.whydah.admin.WhyDahRoleCheckUtil;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.errorhandling.AppException;
+import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.mappers.ApplicationMapper;
-import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
-import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
-import net.whydah.sso.commands.appauth.CommandVerifyUASAccessByApplicationTokenId;
-import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
-import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
-import net.whydah.sso.commands.userauth.CommandValidateWhydahAdminByUserTokenId;
-import net.whydah.sso.user.mappers.UserTokenMapper;
-import net.whydah.sso.user.types.UserToken;
 
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -22,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.core.UriBuilder;
-
 /**
  * Created by baardl on 29.03.14.
  */
@@ -31,22 +21,24 @@ import javax.ws.rs.core.UriBuilder;
 public class ApplicationsService {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
     private final UibApplicationsConnection uibApplicationsConnection;
+    private final UibUserConnection uibUserConnection;
     private final CredentialStore credentialStore;
     private final String stsUrl;
-    private static final String UAWA_ID = "2219";
-
+    private WhyDahRoleCheckUtil adminChecker;
 
     @Autowired
     @Configure
-    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore, @Configuration("securitytokenservice") String stsUri) {
+    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, UibUserConnection uibUserConnection, CredentialStore credentialStore, @Configuration("securitytokenservice") String stsUri) {
         this.uibApplicationsConnection = uibApplicationsConnection;
+        this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
         this.stsUrl = stsUri;
+        setAdminChecker(new WhyDahRoleCheckUtil(stsUri, uibUserConnection, credentialStore));
     }
 
     public String listAll(String applicationTokenId) throws AppException {
         String applications = null;
-        if (hasAccess(applicationTokenId)) {
+        if (getAdminChecker().hasAccess(applicationTokenId)) {
             applications = uibApplicationsConnection.listAll(applicationTokenId);
             applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
@@ -55,7 +47,7 @@ public class ApplicationsService {
 
     public String findApplication(String applicationTokenId, String userTokenId, String applicationName) throws AppException {
         String applications = null;
-        if (hasAccess(applicationTokenId, userTokenId)) {
+        if (getAdminChecker().hasAccess(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
         } else {
             //FIXME handle no access to this method.
@@ -66,12 +58,12 @@ public class ApplicationsService {
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
         String applications = null;
-        if (hasAccess(applicationTokenId, userTokenId)) {
+        if (getAdminChecker().hasAccess(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, query);
         } else {
             //FIXME handle no access to this method.
         }
-        if (isUAWA(applicationTokenId, userTokenId)) {
+        if (getAdminChecker().isUAWA(applicationTokenId, userTokenId)) {
             applications = ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
         } else {
             applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
@@ -79,54 +71,13 @@ public class ApplicationsService {
         return applications;
     }
 
-    public boolean hasAccess(String applicationTokenId, String userTokenId) {
-    	
-    	
-    	Boolean userTokenIsValid = new CommandValidateUsertokenId(URI.create(stsUrl), applicationTokenId, userTokenId).execute();
-    	if(!userTokenIsValid){
-    		log.warn("CommandValidateUsertokenId failed, user token " + userTokenId + " is invalid");
-    		return false;
-    	}
-    	Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
-    	if(!applicationTokenIsValid){
-    		log.warn("CommandValidateApplicationTokenId failed, app token " + applicationTokenId + " is invalid");
-    		return false;
-    	}
-    	
-    	
-    	Boolean userTokenIsAdmin = new CommandValidateWhydahAdminByUserTokenId(URI.create(stsUrl), applicationTokenId, userTokenId).execute();
-    	if(!userTokenIsAdmin){
-    		log.warn("CommandValidateWhydahAdminByUserTokenId failed, user token " + userTokenId + " does not have admin role");
-    		String userTokenXml = new CommandGetUsertokenByUsertokenId(URI.create(stsUrl), applicationTokenId, null, userTokenId).execute();
-        	UserToken userToken = UserTokenMapper.fromUserTokenXml(userTokenXml);
-        	if(userToken.getUserName().equals("systest")){
-        		return true;
-        	} else {
-        		return false;
-        	}
-    	}
-    	Boolean isUASAccessOpen = new CommandVerifyUASAccessByApplicationTokenId(stsUrl, applicationTokenId).execute();
-    	if(!isUASAccessOpen){
-    		log.warn("CommandVerifyUASAccessByApplicationTokenId failed, app token " + applicationTokenId + " does not have UAS access");
-    		return false;
-    	}
-    	
-    	return true;
-    }
+	public WhyDahRoleCheckUtil getAdminChecker() {
+		return adminChecker;
+	}
 
-    public boolean hasAccess(String applicationTokenId) {
-    	Boolean isUASAccessOpen = new CommandVerifyUASAccessByApplicationTokenId(stsUrl, applicationTokenId).execute();
-    	if(!isUASAccessOpen){
-    		log.warn("CommandVerifyUASAccessByApplicationTokenId failed, app token " + applicationTokenId + " does not have UAS access");
-    		return false;
-    	}
-        return true;
-    }
+	public void setAdminChecker(WhyDahRoleCheckUtil adminChecker) {
+		this.adminChecker = adminChecker;
+	}
 
-    boolean isUAWA(String applicationTokenId, String userTokenId) {
-        log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ", UAWA_ID, applicationTokenId, userTokenId);
-        String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
-        log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationID);
-        return (UAWA_ID.equals(applicationID));
-    }
+   
 }
