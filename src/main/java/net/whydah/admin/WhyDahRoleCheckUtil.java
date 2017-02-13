@@ -32,6 +32,8 @@ public class WhyDahRoleCheckUtil {
 	
 	public WhyDahRoleCheckUtil(String stsUrl, UibUserConnection uibUserConnection, CredentialStore credentialStore){
 		this.stsUrl = stsUrl;
+		this.uibUserConnection = uibUserConnection;
+		this.credentialStore = credentialStore;
 	}
 	
 	public boolean hasAccess(String applicationTokenId, String userTokenId) throws AppException {
