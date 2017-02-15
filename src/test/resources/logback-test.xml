@@ -1,15 +1,39 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
+<configuration scan="true" scanPeriod="60 seconds">
+    <property name="LOG_DIR" value="logs/"/>
+    <property name="env" value="prod"/>
+    <property name="appName" value="UserAdminService"/>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR}${appName}.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}${appName}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="org.apache.directory" level="WARN" />
-    <logger name="net.whydah" level="TRACE" />
 
-    <root level="INFO">
+    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="org.glassfish.jersey" level="WARN"/>
+    <logger name="net.whydah.sso.application.helpers" level="INFO"/>
+    <logger name="net.whydah" level="DEBUG"/>
+
+    <root>
+        <level value="DEBUG"/>
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>
+
+

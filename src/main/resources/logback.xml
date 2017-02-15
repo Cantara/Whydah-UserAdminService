@@ -1,24 +1,26 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
+<configuration scan="true" scanPeriod="60 seconds">
+    <property name="LOG_DIR" value="logs/"/>
+    <property name="env" value="prod"/>
+    <property name="appName" value="UserAdminService"/>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{35} - %msg%n</pattern>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
         </layout>
     </appender>
 
-    <!--Daily rolling file appender -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>logs/UserAdminService.log</File>
+        <File>${LOG_DIR}${appName}.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/UserAdminService-%d{yyyy-MM-dd}.log</FileNamePattern>
+            <fileNamePattern>${LOG_DIR}${appName}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>5MB</maxFileSize>
-        </triggeringPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SSS} %-5level %logger{35} - %msg%n</Pattern>
-        </layout>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
     </appender>
 
 
@@ -33,3 +35,5 @@
         <appender-ref ref="FILE" />
     </root>
 </configuration>
+
+
