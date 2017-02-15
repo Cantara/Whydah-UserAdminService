@@ -57,7 +57,7 @@ public class UASCredentials {
     public String getApplicationCredentialsXml() {
         String applicationCredentialsXml =  ApplicationCredentialMapper.toXML(getApplicationCredential());
         return applicationCredentialsXml;
-    }
+    } 
 
     public String getApplicationCredentialsXmlEncoded() {
         String encoded = "";

@@ -116,20 +116,6 @@ public class ApplicationsResource {
 		return Response.ok(applications).build();
 
 	}
-
-	@GET
-	@Path("/hasUASAccess")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
-	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
-		log.trace("listAll is called ");
-
-		String applications = applicationsService.listAll(applicationTokenId);
-		log.trace("listAll {}", applications);
-		return Response.ok(applications).build();
-	}
-	
-	
-	
 	
 	//OLD
 	

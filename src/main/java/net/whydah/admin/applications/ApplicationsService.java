@@ -33,7 +33,7 @@ public class ApplicationsService {
         this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
         this.stsUrl = stsUri;
-        setAdminChecker(new WhyDahRoleCheckUtil(stsUri, uibUserConnection, credentialStore));
+        setAdminChecker(new WhyDahRoleCheckUtil(stsUri, uibUserConnection, uibApplicationsConnection, credentialStore));
     }
 
     public String listAll(String applicationTokenId) throws AppException {
