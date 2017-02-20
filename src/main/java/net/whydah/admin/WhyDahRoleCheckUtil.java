@@ -11,7 +11,6 @@ import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.types.Application;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
-import net.whydah.sso.commands.appauth.CommandVerifyUASAccessByApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
 import net.whydah.sso.user.mappers.UserRoleMapper;

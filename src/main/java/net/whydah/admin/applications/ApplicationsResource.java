@@ -117,6 +117,33 @@ public class ApplicationsResource {
 
 	}
 	
+	@GET
+	@Path("{userTokenId}/hasUASAccess")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId,
+			@PathParam("userTokenId") String userTokenId) throws AppException {
+		
+		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId, userTokenId);;
+		log.trace("check access result: {}", result);
+		return Response.ok("{\"result\":" + String.valueOf(result) + "}").header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
+		
+
+	}
+	
+	@GET
+	@Path("hasUASAccess")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
+		
+		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId);
+		log.trace("check access result: {}", result);
+		return Response.ok("{\"result\":" + String.valueOf(result) + "}").header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
+		
+
+	}
+	
+
+	
 	//OLD
 	
 	@GET
@@ -144,7 +171,7 @@ public class ApplicationsResource {
 		return Response.ok(applications).build();
 
 	}
-
+	
 	@GET
 	@Path("/ping/pong")
 	@Produces(MediaType.TEXT_HTML)
