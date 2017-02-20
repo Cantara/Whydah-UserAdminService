@@ -123,9 +123,9 @@ public class ApplicationsResource {
 	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId) throws AppException {
 		
-		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId, userTokenId);;
-		log.trace("check access result: {}", result);
-		return Response.ok("{\"result\":" + String.valueOf(result) + "}").header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
+		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId, userTokenId);
+		log.trace("check access for apptokenid={}/usertokenid={} - result: {}", applicationTokenId, userTokenId, result);
+		return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
 		
 
 	}
@@ -136,8 +136,8 @@ public class ApplicationsResource {
 	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
 		
 		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId);
-		log.trace("check access result: {}", result);
-		return Response.ok("{\"result\":" + String.valueOf(result) + "}").header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
+		log.trace("check access for apptokenid={} result: {}", applicationTokenId, result);
+		return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
 		
 
 	}
