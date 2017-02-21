@@ -108,6 +108,8 @@ public class UibAuthConnection {
 
     public String resetPassword_new(String userAdminServiceTokenId, String uid) {
         // /user/{uid}/reset_password
+    	Client client = ClientBuilder.newClient();
+    	uib = client.target(myuibUrl);
         WebTarget resetPasswordResource = uib.path(userAdminServiceTokenId).path("user").path(uid).path("reset_password");
         Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("",MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
@@ -127,8 +129,9 @@ public class UibAuthConnection {
     }
 
     public String setPasswordByToken(String userAdminServiceTokenId, String username,String passwordToken,String password) {
+    	Client client = ClientBuilder.newClient();
+        uib = client.target(myuibUrl);
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username).path("newpassword").path(passwordToken);
-
         Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.APPLICATION_JSON));
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
@@ -147,7 +150,7 @@ public class UibAuthConnection {
     }
 
     public  String getUIBUri(){
-        return "";// myuibUrl;
+        return myuibUrl;
     }
 
 }
