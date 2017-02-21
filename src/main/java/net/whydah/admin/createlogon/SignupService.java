@@ -1,14 +1,17 @@
 package net.whydah.admin.createlogon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.uib.UibCreateLogonConnection;
 import net.whydah.admin.email.PasswordSender;
+import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.constretto.ConstrettoConfiguration;
 import org.slf4j.Logger;
@@ -77,7 +80,7 @@ public class SignupService {
         this.fbRoleName = configuration.evaluateToString("adduser.facebook.defaultrole.name");
     }
 
-    public String signupUser(String applicationtokenId, UserIdentity signupUser, UserAction userAction) {
+    public String signupUser(String applicationtokenId, UserIdentity signupUser, UserAction userAction) throws AppException {
         String passwordResetToken = null;
         //Add default roles
         UserAggregate createUserRepresentation = buildUserWithDefaultRoles(signupUser);

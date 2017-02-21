@@ -174,13 +174,14 @@ public class PasswordController {
     }
 
     /**
+     * @throws AppException 
      * @apiIgnore Internal
   	 */
     @POST
     @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("passwordChangeToken") String passwordChangeToken, String newPasswordJson) {
+    public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("passwordChangeToken") String passwordChangeToken, String newPasswordJson) throws AppException {
 
         log.trace("resetNewPW - username={}", username);
         String password = null;

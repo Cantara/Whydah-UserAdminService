@@ -24,5 +24,5 @@ public class AppExceptionCode {
 	public static AppException MISC_RuntimeException_9994 = new AppException(Status.INTERNAL_SERVER_ERROR, 9994, "RuntimeException","","");
 	public static AppException MISC_FORBIDDEN_9993 = new AppException(Status.FORBIDDEN, 9993, "Forbidden", "", "");
 	public static AppException MISC_NotAuthorizedException_9992 = new AppException(Status.UNAUTHORIZED, 9992, "NotAuthorizedException", "", "");
-	
+	public static AppException MISC_NOT_ACCEPTABLE_9991 = new AppException(Status.NOT_ACCEPTABLE, 9991, "Not Acceptable", "", "");
 }

@@ -1,11 +1,14 @@
 package net.whydah.admin.createlogon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.createlogon.uib.UibCreateLogonConnection;
+import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.extras.ScheduledSendEMailTask;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserIdentity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +90,7 @@ public class CreateLogonUserController {
     @Path("/signup")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response signup(@PathParam("applicationtokenid") String applicationtokenid, String userJson) {
+    public Response signup(@PathParam("applicationtokenid") String applicationtokenid, String userJson) throws AppException {
         log.trace("Try to create user from json {}", userJson);
         UserAction userAction = UserAction.EMAIL;
 
@@ -115,7 +118,7 @@ public class CreateLogonUserController {
     @Path("/signup/{userAction}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response signupUserAction(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("userAction") String userActionInput, String userJson) {
+    public Response signupUserAction(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("userAction") String userActionInput, String userJson) throws AppException {
         log.trace("Try to create user from json {}", userJson);
         UserAction userAction = UserAction.EMAIL;
         if (userActionInput != null && userActionInput.trim().toUpperCase().equals(UserAction.PIN.name())) {

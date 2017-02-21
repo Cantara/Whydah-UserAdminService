@@ -1,9 +1,12 @@
 package net.whydah.admin.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
 import net.whydah.admin.email.PasswordSender;
+import net.whydah.admin.errorhandling.AppException;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ public class AuthenticationService {
         this.objectMapper = objectMapper;
     }
 
-    public boolean resetPassword(String applicationtokenId, String username, UserAction userAction, String resetPasswordTemplateName) {
+    public boolean resetPassword(String applicationtokenId, String username, UserAction userAction, String resetPasswordTemplateName) throws AppException {
         boolean passwordResetOk = false;
         String passwordResetJson = uibAuthConnection.resetPassword(applicationtokenId, username);
         log.trace("resetPassword from UIB returned: {}",passwordResetJson);
