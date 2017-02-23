@@ -107,12 +107,25 @@ public class ApplicationsResource {
 	@GET
 	@Path("{userTokenId}/find/applications/{applicationName}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Deprecated
 	public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
 		log.trace("findByName - listAll is called, query {}", applicationName);
 
 		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
+		return Response.ok(applications).build();
+
+	}
+	
+	@GET
+	@Path("find/applications/{applicationName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByName2(@PathParam("applicationtokenid") String applicationTokenId,
+			@PathParam("applicationName") String applicationName) throws AppException {
+		log.trace("findByName - listAll is called, query {}", applicationName);
+
+		String applications = applicationsService.findApplication(applicationTokenId, applicationName);
 		return Response.ok(applications).build();
 
 	}

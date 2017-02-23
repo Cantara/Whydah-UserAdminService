@@ -55,6 +55,17 @@ public class ApplicationsService {
         applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         return applications;
     }
+    
+    public String findApplication(String applicationTokenId, String applicationName) throws AppException {
+        String applications = null;
+        if (getAdminChecker().hasAccess(applicationTokenId)) {
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
+        } else {
+            //FIXME handle no access to this method.
+        }
+        applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        return applications;
+    }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
         String applications = null;
