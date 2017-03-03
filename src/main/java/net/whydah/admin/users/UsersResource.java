@@ -1,6 +1,8 @@
 package net.whydah.admin.users;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.errorhandling.AppException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +33,13 @@ public class UsersResource {
 
     /**
      * UserAdmin Find, return UserAggregateDeprecated
+     * @throws AppException 
      */
     @GET
     @Path("/find/{q}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response findUsers(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                              @PathParam("q") String query) {
+                              @PathParam("q") String query) throws AppException {
 
         String usersJson = null;
         try {
@@ -58,12 +61,13 @@ public class UsersResource {
 
     /**
      * Directory search, return only UserIdentityDeprecated
+     * @throws AppException 
      */
     @GET
     @Path("/search/{q}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response searchUsers(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                @PathParam("q") String query) {
+                                @PathParam("q") String query) throws AppException {
 
         String usersJson = null;
         try {

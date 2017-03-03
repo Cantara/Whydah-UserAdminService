@@ -17,7 +17,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.whydah.admin.applications.ApplicationsService;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
@@ -40,17 +39,13 @@ public class ApplicationResource {
     private static final Logger log = LoggerFactory.getLogger(ApplicationResource.class);
 
     private static final String APPLICATION_PATH = "application";
-    private WebTarget uib;
-    private final UASCredentials uasCredentials;
-    private final String myUibUrl;
-    ApplicationsService applicationsService;
+    
+    ApplicationService applicationService;
 
     @Autowired
     @Configure
-    public ApplicationResource(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials, ApplicationsService applicationsService) {
-        this.uasCredentials = uasCredentials;
-        this.myUibUrl = uibUrl;
-        this.applicationsService = applicationsService; 
+    public ApplicationResource(ApplicationService applicationsService) {
+        this.applicationService = applicationsService; 
     }
 
     /**
@@ -110,24 +105,7 @@ public class ApplicationResource {
     public Response createApplication(@PathParam("applicationtokenid") String applicationTokenId,
                                       @PathParam("userTokenId") String userTokenId,
                                       String applicationJson) throws Exception {
-        log.trace("create is called with applicationJson={}", applicationJson);
-
-        if (hasUserAndApplicationAccess(userTokenId, applicationTokenId)) {
-            Client client = ClientBuilder.newClient();
-            log.info("Connection to UserIdentityBackend on {}", myUibUrl);
-            uib = client.target(myUibUrl);
-            WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH);
-            Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-            Response response = copyResponse(responseFromUib);
-            if (responseFromUib.getStatus() == 400) {
-                throw AppExceptionCode.APP_INVALID_JSON_FORMAT_8001;
-            } else if (responseFromUib.getStatus() == 500) {
-                throw new WebApplicationException("Unexpected error from UIB", 500);
-            }
-            return response;
-        } else {
-            throw new WebApplicationException("No access", HttpServletResponse.SC_UNAUTHORIZED);
-        }
+        return applicationService.createApplication(applicationTokenId, userTokenId, applicationJson);
     }
 
     private Response copyResponse(Response responseFromUib) {
@@ -182,32 +160,7 @@ public class ApplicationResource {
     public Response getApplication(@PathParam("applicationtokenid") String applicationTokenId,
                                    @PathParam("userTokenId") String userTokenId,
                                    @PathParam("applicationId") String applicationId) throws AppException {
-        log.trace("getApplication is called with applicationId={}", applicationId);
-        if (hasUserAndApplicationAccess(userTokenId, applicationTokenId)) {
-            Client client = ClientBuilder.newClient();
-            log.info("Connection to UserIdentityBackend on {}", myUibUrl);
-            uib = client.target(myUibUrl);
-            WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
-            Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
-
-            if (responseFromUib.getStatus() == 200) {
-
-                String jsonResult = responseFromUib.readEntity(String.class);
-                log.trace("Received jsonResult {}", jsonResult);
-                return Response.ok(jsonResult).build();
-
-            } else {
-                if (responseFromUib.getStatus() == 404) {
-                    //application not found
-                    throw AppExceptionCode.APP_NOTFOUND_8002;
-                } else {
-                    //server error
-                    throw new WebApplicationException("Unexpected error from UIB", 500);
-                }
-            }
-        } else {
-            throw new WebApplicationException("No access", HttpServletResponse.SC_UNAUTHORIZED);
-        }
+        return applicationService.getApplication(applicationTokenId, userTokenId, applicationId);
 
     }
 
@@ -272,33 +225,7 @@ public class ApplicationResource {
                                       @PathParam("userTokenId") String userTokenId,
                                       @PathParam("applicationId") String applicationId,
                                       String applicationJson) throws AppException {
-        log.trace("updateApplication applicationId={}, applicationJson={}", applicationId, applicationJson);
-        if (hasUserAndApplicationAccess(userTokenId, applicationTokenId)) {
-            Client client = ClientBuilder.newClient();
-            log.info("Connection to UserIdentityBackend on {}", myUibUrl);
-            uib = client.target(myUibUrl);
-            WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
-            Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-
-            if (responseFromUib.getStatus() == 204) {
-                return copyResponse(responseFromUib);
-            } else {
-                if (responseFromUib.getStatus() == 404) {
-                    //application not found
-                    throw AppExceptionCode.APP_NOTFOUND_8002;
-                } else if (responseFromUib.getStatus() == 400) {
-                    //application not found
-                    throw AppExceptionCode.APP_INVALID_JSON_FORMAT_8001;
-                } else {
-                    //server error
-                    throw new WebApplicationException("Unexpected error from UIB", 500);
-
-                }
-            }
-
-        } else {
-            throw new WebApplicationException("No access", HttpServletResponse.SC_UNAUTHORIZED);
-        }
+       return applicationService.updateApplication(applicationTokenId, userTokenId, applicationId, applicationJson);
 
     }
 
@@ -329,34 +256,7 @@ public class ApplicationResource {
     public Response deleteApplication(@PathParam("applicationtokenid") String applicationTokenId,
                                       @PathParam("userTokenId") String userTokenId,
                                       @PathParam("applicationId") String applicationId) throws AppException {
-        log.trace("deleteApplication is called with applicationId={}", applicationId);
-        if (hasUserAndApplicationAccess(userTokenId, applicationTokenId)) {
-            Client client = ClientBuilder.newClient();
-            log.info("Connection to UserIdentityBackend on {}", myUibUrl);
-            uib = client.target(myUibUrl);
-            WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path(APPLICATION_PATH).path(applicationId);
-            Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
-            if (responseFromUib.getStatus() == 204) {
-
-                return copyResponse(responseFromUib);
-
-            } else {
-                if (responseFromUib.getStatus() == 404) {
-                    //application not found
-                    throw AppExceptionCode.APP_NOTFOUND_8002;
-                } else {
-                    //server error
-                    throw new WebApplicationException("Unexpected error from UIB", 500);
-                }
-            }
-        } else {
-            throw new WebApplicationException("No access", HttpServletResponse.SC_UNAUTHORIZED);
-        }
-    }
-
-    private boolean hasUserAndApplicationAccess(String userTokenId, String applicationTokenId) throws AppException {
-    	return applicationsService.getAdminChecker().hasAccess(applicationTokenId, userTokenId);
-        
+        return applicationService.deleteApplication(applicationTokenId, userTokenId, applicationId);
     }
 
     @GET

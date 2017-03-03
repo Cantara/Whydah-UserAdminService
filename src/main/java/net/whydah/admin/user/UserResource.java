@@ -112,7 +112,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUserIdentity(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
-                                       @PathParam("uid") String uid, String userIdentityJson) {
+                                       @PathParam("uid") String uid, String userIdentityJson) throws AppException {
         log.trace("updateUserIdentity: uid={}, userIdentityJson={}", uid, userIdentityJson);
         return userService.updateUserIdentity(applicationTokenId, userTokenId, uid, userIdentityJson);
     }

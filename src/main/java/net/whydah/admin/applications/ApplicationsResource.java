@@ -70,10 +70,7 @@ public class ApplicationsResource {
 	@Path("/applications")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
 	public Response listAll(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
-		log.trace("listAll is called ");
-
 		String applications = applicationsService.listAll(applicationTokenId);
-		log.trace("listAll {}", applications);
 		return Response.ok(applications).build();
 	}
 
@@ -111,8 +108,6 @@ public class ApplicationsResource {
 	public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		log.trace("findByName - listAll is called, query {}", applicationName);
-
 		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
 		return Response.ok(applications).build();
 
@@ -123,8 +118,7 @@ public class ApplicationsResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findByName2(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		log.trace("findByName - listAll is called, query {}", applicationName);
-
+		
 		String applications = applicationsService.findApplication(applicationTokenId, applicationName);
 		return Response.ok(applications).build();
 
@@ -136,7 +130,7 @@ public class ApplicationsResource {
 	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId) throws AppException {
 		
-		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId, userTokenId);
+		boolean result = applicationsService.getAdminChecker().authorise(applicationTokenId, userTokenId);
 		log.trace("check access for apptokenid={}/usertokenid={} - result: {}", applicationTokenId, userTokenId, result);
 		return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
 		
@@ -148,7 +142,7 @@ public class ApplicationsResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
 		
-		boolean result = applicationsService.getAdminChecker().hasAccess(applicationTokenId);
+		boolean result = applicationsService.getAdminChecker().authorise(applicationTokenId);
 		log.trace("check access for apptokenid={} result: {}", applicationTokenId, result);
 		return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
 		
@@ -159,31 +153,31 @@ public class ApplicationsResource {
 	
 	//OLD
 	
-	@GET
-	@Path("{userTokenId}/applications")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
-	public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
-		log.trace("listAll is called ");
-
-		String applications = applicationsService.listAll(applicationTokenId);
-		log.trace("listAll {}", applications);
-		return Response.ok(applications).build();
-		
-	}
-
-	@GET
-	@Path("{userTokenId}/applications/find/{applicationName}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
-			@PathParam("userTokenId") String userTokenId,
-			@PathParam("applicationName") String applicationName) throws AppException {
-		log.trace("findByName - listAll is called, query {}", applicationName);
-
-		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
-		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
-		return Response.ok(applications).build();
-
-	}
+//	@GET
+//	@Path("{userTokenId}/applications")
+//	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
+//	public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
+//		log.trace("listAll is called ");
+//
+//		String applications = applicationsService.listAll(applicationTokenId);
+//		log.trace("listAll {}", applications);
+//		return Response.ok(applications).build();
+//		
+//	}
+//
+//	@GET
+//	@Path("{userTokenId}/applications/find/{applicationName}")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
+//			@PathParam("userTokenId") String userTokenId,
+//			@PathParam("applicationName") String applicationName) throws AppException {
+//		log.trace("findByName - listAll is called, query {}", applicationName);
+//
+//		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
+//		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+//		return Response.ok(applications).build();
+//
+//	}
 	
 	@GET
 	@Path("/ping/pong")

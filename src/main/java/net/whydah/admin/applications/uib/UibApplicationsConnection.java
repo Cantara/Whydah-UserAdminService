@@ -69,7 +69,7 @@ public class UibApplicationsConnection {
             default:
                 log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
-                throw AppExceptionCode.MISC_AuthenticationFailedException_9996.setDeveloperMessage("listAll-Response from UIB: {}: {}", response.getStatus(), output);
+                throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("listAll-Response from UIB: {}: {}", response.getStatus(), output);
         }
         return output;
     }
@@ -102,7 +102,7 @@ public class UibApplicationsConnection {
             default:
                 log.error("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
-                throw AppExceptionCode.MISC_AuthenticationFailedException_9996.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
+                throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
         }
         return output;
     }

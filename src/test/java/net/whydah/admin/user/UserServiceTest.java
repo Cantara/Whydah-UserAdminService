@@ -1,7 +1,9 @@
 package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
+import net.whydah.admin.WhyDahRoleCheckUtil;
 import net.whydah.admin.user.uib.UibUserConnection;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -19,12 +21,14 @@ public class UserServiceTest {
     private UibUserConnection uibUserConnection;
     private CredentialStore credentialStore;
     private UserService userService;
+    private WhyDahRoleCheckUtil adminChecker;
 
     @BeforeMethod
     public void setUp() throws Exception {
         uibUserConnection = mock(UibUserConnection.class);
         credentialStore = mock(CredentialStore.class);
-        userService = new UserService(uibUserConnection, credentialStore);
+        adminChecker = mock(WhyDahRoleCheckUtil.class);
+        userService = new UserService(uibUserConnection, credentialStore, adminChecker);
     }
 
 

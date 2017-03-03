@@ -19,7 +19,7 @@ public class AppExceptionCode {
 	//MISC
 	public static AppException MISC_MISSING_PARAMS_9998 = new AppException(Status.BAD_REQUEST, 9998, "Missing required parameters","Missing required parameters",""); 
 	public static AppException MISC_BadRequestException_9997 = new AppException(Status.BAD_REQUEST, 9997, "BadRequestException","","");
-	public static AppException MISC_AuthenticationFailedException_9996 = new AppException(Status.INTERNAL_SERVER_ERROR, 9996, "AuthenticationFailedException","","");
+	public static AppException MISC_OperationFailedException_9996 = new AppException(Status.INTERNAL_SERVER_ERROR, 9996, "AuthenticationFailedException","","");
 	public static AppException MISC_ConflictException_9995 = new AppException(Status.INTERNAL_SERVER_ERROR, 9995, "ConflictException","","");
 	public static AppException MISC_RuntimeException_9994 = new AppException(Status.INTERNAL_SERVER_ERROR, 9994, "RuntimeException","","");
 	public static AppException MISC_FORBIDDEN_9993 = new AppException(Status.FORBIDDEN, 9993, "Forbidden", "", "");

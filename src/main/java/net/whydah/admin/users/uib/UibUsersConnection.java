@@ -23,12 +23,6 @@ import javax.ws.rs.core.Response;
 public class UibUsersConnection {
 
     private static final Logger log = LoggerFactory.getLogger(UibUsersConnection.class);
-    private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
-    private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
-    private static final int STATUS_FORBIDDEN = 403;
-    private static final int STATUS_CREATED = 201;
-    private static final int STATUS_CONFLICT = 409;
-    private static final int STATUS_NO_CONTENT = 204;
 
 
     private  WebTarget uib;
@@ -44,29 +38,22 @@ public class UibUsersConnection {
         // uib = client.target(userIdentityBackendUri);
     }
 
-    public String findUsers(String userAdminServiceTokenId, String userTokenId, String query) {
-        String resultJson = null;
+    public Response findUsers(String userAdminServiceTokenId, String userTokenId, String query) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uib = client.target(myUibUrl);
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
-        int statusCode = response.getStatus();
-        String output = response.readEntity(String.class);
-        switch (statusCode) {
-            case STATUS_OK:
-                log.trace("Response from UIB {}", output);
-                resultJson = output;
-                break;
-            case STATUS_BAD_REQUEST:
-                log.error("Response from UIB: {}: {}", response.getStatus(), output);
-                throw new BadRequestException("BadRequest for query " + query + ",  Status code " + response.getStatus());
-            default:
-                log.error("Response from UIB: {}: {}", response.getStatus(), output);
-                throw new AuthenticationFailedException("Request failed. Status code " + response.getStatus());
-        }
-        return resultJson;
+        return copyResponse(response);
     }
+    
+    private Response copyResponse(Response responseFromUib) {
+		Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
+		if (responseFromUib.hasEntity()) {
+			rb.entity(responseFromUib.getEntity());
+		}
+		return rb.build();
+	}
 
 
 }
