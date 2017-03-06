@@ -153,31 +153,31 @@ public class ApplicationsResource {
 	
 	//OLD
 	
-//	@GET
-//	@Path("{userTokenId}/applications")
-//	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
-//	public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
-//		log.trace("listAll is called ");
-//
-//		String applications = applicationsService.listAll(applicationTokenId);
-//		log.trace("listAll {}", applications);
-//		return Response.ok(applications).build();
-//		
-//	}
-//
-//	@GET
-//	@Path("{userTokenId}/applications/find/{applicationName}")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
-//			@PathParam("userTokenId") String userTokenId,
-//			@PathParam("applicationName") String applicationName) throws AppException {
-//		log.trace("findByName - listAll is called, query {}", applicationName);
-//
-//		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
-//		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
-//		return Response.ok(applications).build();
-//
-//	}
+	@GET
+	@Path("{userTokenId}/applications")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
+	public Response listAllOld(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
+		log.trace("listAll is called ");
+
+		String applications = applicationsService.listAll(applicationTokenId);
+		log.trace("listAll {}", applications);
+		return Response.ok(applications).build();
+		
+	}
+
+	@GET
+	@Path("{userTokenId}/applications/find/{applicationName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
+			@PathParam("userTokenId") String userTokenId,
+			@PathParam("applicationName") String applicationName) throws AppException {
+		log.trace("findByName - listAll is called, query {}", applicationName);
+
+		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
+		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
+		return Response.ok(applications).build();
+
+	}
 	
 	@GET
 	@Path("/ping/pong")
