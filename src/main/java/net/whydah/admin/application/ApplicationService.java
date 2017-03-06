@@ -61,7 +61,7 @@ public class ApplicationService {
 			} else if (responseFromUib.getStatus() == 500) {
 				throw new WebApplicationException("Unexpected error from UIB", 500);
 			}
-			return responseFromUib;
+			return copyResponse(responseFromUib);
 		} else {
 			throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
@@ -99,7 +99,7 @@ public class ApplicationService {
 			String validatedAppJson = validateApplicationJson(applicationTokenId, applicationJson);
 			Response responseFromUib = uibApplicationConnection.updateApplication(applicationTokenId, userTokenId, applicationId, validatedAppJson);
 			if (responseFromUib.getStatus() == 204) {
-				return responseFromUib;
+				return copyResponse(responseFromUib);
 			} else {
 				if (responseFromUib.getStatus() == 404) {
 					//application not found
@@ -126,7 +126,7 @@ public class ApplicationService {
 			
 			Response responseFromUib = uibApplicationConnection.deleteApplication(applicationTokenId, userTokenId, applicationId);
 			if (responseFromUib.getStatus() == 204) {
-				return responseFromUib;
+				return copyResponse(responseFromUib);
 			} else {
 				if (responseFromUib.getStatus() == 404) {
 					//application not found
@@ -154,7 +154,13 @@ public class ApplicationService {
 		return ApplicationMapper.toJson(app);
 	}
 
-
+	private Response copyResponse(Response responseFromUib) {
+		Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
+		if (responseFromUib.hasEntity()) {
+			rb.entity(responseFromUib.getEntity());
+		}
+		return rb.build();
+	}
 
 
 }

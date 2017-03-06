@@ -51,11 +51,12 @@ public class UibUserConnection {
     }
 
     private Response copyResponse(Response responseFromUib) {
-		Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
-		if (responseFromUib.hasEntity()) {
-			rb.entity(responseFromUib.getEntity());
-		}
-		return rb.build();
+//		Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
+//		if (responseFromUib.hasEntity()) {
+//			rb.entity(responseFromUib.getEntity());
+//		}
+//		return rb.build();
+    	return responseFromUib;
 	}
     
     public Response createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson){
