@@ -58,7 +58,7 @@ public class UibUserConnection {
 		return rb.build();
 	}
     
-    public Response createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson) throws AppException {
+    public Response createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson){
         uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
@@ -94,7 +94,7 @@ public class UibUserConnection {
         return responseBuilder.build();
     }
 
-    public Response changePassword(String userAdminServiceTokenId, String userTokenId, String userName, String password) throws AppException {
+    public Response changePassword(String userAdminServiceTokenId, String userTokenId, String userName, String password) {
     	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/user").path(userName).path("changepassword");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(password, MediaType.APPLICATION_JSON));
@@ -108,28 +108,28 @@ public class UibUserConnection {
         return copyResponse(responseFromUib);
     }
 
-    public Response addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) throws AppException {
+    public Response addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
     	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         return copyResponse(response);
     }
     
-    public Response updateRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) throws AppException {
+    public Response updateRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest)  {
     	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid).path("role").path(roleRequest.getId());
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         return copyResponse(response);
     }
 
-    public Response deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) throws AppException {
+    public Response deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) {
     	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid).path("role").path(userRoleId);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
         return copyResponse(response);
     }
 
-    public Response getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) throws AppException {
+    public Response getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
     	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
@@ -143,21 +143,21 @@ public class UibUserConnection {
         return copyResponse(response);
     }
 
-    public Response getUserAggregateByUidAsJson(String userAdminServiceTokenId, String adminUserTokenId, String uid) throws AppException {
+    public Response getUserAggregateByUidAsJson(String userAdminServiceTokenId, String adminUserTokenId, String uid){
     	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return response;
     }
 
-    public Response getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) throws AppException {
+    public Response getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) {
     	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("/user").path(uid).path("roles");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }
 
-    public Response deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String uid) throws AppException {
+    public Response deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String uid)  {
     	uib = getWebTarget();
         WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + adminUserTokenId + "/user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();

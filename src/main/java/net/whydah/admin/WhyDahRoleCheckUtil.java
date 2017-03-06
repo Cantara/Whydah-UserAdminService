@@ -3,16 +3,14 @@ package net.whydah.admin;
 import java.net.URI;
 import java.util.List;
 
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response;
 
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
-import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.types.Application;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
-import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
 import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.mappers.UserTokenMapper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
@@ -34,13 +32,15 @@ public class WhyDahRoleCheckUtil {
 	String stsUrl;
 	CredentialStore credentialStore;
 	UibApplicationsConnection uibApplicationsConnection;
+	UibUserConnection uibUserConnection;
 	ApplicationModelFacade appStore;
 
 	@Autowired
 	@Configure
-	public WhyDahRoleCheckUtil(@Configuration("securitytokenservice") String stsUrl, UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore){
+	public WhyDahRoleCheckUtil(@Configuration("securitytokenservice") String stsUrl, UibApplicationsConnection uibApplicationsConnection, UibUserConnection uibUserConnection, CredentialStore credentialStore){
 		this.stsUrl = stsUrl;
 		this.uibApplicationsConnection = uibApplicationsConnection;
+		this.uibUserConnection = uibUserConnection;
 		this.credentialStore = credentialStore;
 		this.appStore = new ApplicationModelFacade(credentialStore, uibApplicationsConnection);
 	}
@@ -134,27 +134,33 @@ public class WhyDahRoleCheckUtil {
 		UserToken userToken = UserTokenMapper.fromUserTokenXml(userTokenXml);
 		
 		//get all roles from uib to check whether this user has admin right
-//		String userRolesJson = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, userToken.getUid());
-//		System.out.println("Roles returned:" + userRolesJson);
-//		List<UserApplicationRoleEntry> roles = UserRoleMapper.fromJsonAsList(userRolesJson);
-		List<UserApplicationRoleEntry> roles = userToken.getRoleList();
-		UserApplicationRoleEntry adminRole = WhydahUtil.getWhydahUserAdminRole();
-		for (UserApplicationRoleEntry role : roles) {
-			log.debug("Checking for adminrole user UID:{} roleName: {} ", userToken.getUid(), role.getRoleName());
-			if (role.getApplicationId().equalsIgnoreCase(adminRole.getApplicationId())) {
-				if (role.getApplicationName().equalsIgnoreCase(adminRole.getApplicationName())) {
-					if (role.getOrgName().equalsIgnoreCase(adminRole.getOrgName())) {
-						if (role.getRoleName().equalsIgnoreCase(adminRole.getRoleName())) {
-							if (role.getRoleValue().equalsIgnoreCase(adminRole.getRoleValue())) {
-								log.info("Whydah Admin user is true for name={}, uid={}", userToken.getUserName(), userToken.getUid());
-								return true;
-							}
-						}
-					}
-				}
-			}
-		}
-		log.info("Whydah Admin user is false for name={}, uid={}", userToken.getUserName(), userToken.getUid());
+		Response response = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, userToken.getUid());
+		int statusCode = response.getStatus();
+	    String userRolesJson = response.readEntity(String.class);
+	    if(statusCode==200){
+	    	System.out.println("Roles returned:" + userRolesJson);
+	    	List<UserApplicationRoleEntry> roles = UserRoleMapper.fromJsonAsList(userRolesJson);
+	    	UserApplicationRoleEntry adminRole = WhydahUtil.getWhydahUserAdminRole();
+	    	for (UserApplicationRoleEntry role : roles) {
+	    		log.debug("Checking for adminrole user UID:{} roleName: {} ", userToken.getUid(), role.getRoleName());
+	    		if (role.getApplicationId().equalsIgnoreCase(adminRole.getApplicationId())) {
+	    			if (role.getApplicationName().equalsIgnoreCase(adminRole.getApplicationName())) {
+	    				if (role.getOrgName().equalsIgnoreCase(adminRole.getOrgName())) {
+	    					if (role.getRoleName().equalsIgnoreCase(adminRole.getRoleName())) {
+	    						if (role.getRoleValue().equalsIgnoreCase(adminRole.getRoleValue())) {
+	    							log.info("Whydah Admin user is true for name={}, uid={}", userToken.getUserName(), userToken.getUid());
+	    							return true;
+	    						}
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
+	    	log.info("Whydah Admin user is false for name={}, uid={}", userToken.getUserName(), userToken.getUid());
+	    } else {
+	    	log.error("Error when getting role list - status code from UIB: " + statusCode);
+	    }
+		
 		return false;
 	}
 
