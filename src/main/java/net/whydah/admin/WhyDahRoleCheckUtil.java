@@ -55,9 +55,16 @@ public class WhyDahRoleCheckUtil {
 		} else {
 			if(isInternalWhyDahAdminApp(applicationTokenId)){
 				//trump all if not a third party app
+				log.info("AppTokenId {} logged in UAS successfully", applicationTokenId);
 				return true;
 			} else {
-				return isUASAccessGranted(applicationTokenId);
+				boolean ok = isUASAccessGranted(applicationTokenId);
+				if(ok){
+					log.debug("AppTokenId {} logged in UAS successfully", applicationTokenId);
+				} else {
+					log.debug("AppTokenId {} failed to log in", applicationTokenId);
+				}
+				return ok;
 			}
 		}
 	}
@@ -68,9 +75,16 @@ public class WhyDahRoleCheckUtil {
 		} else {
 			if(isInternalWhyDahAdminApp(applicationTokenId)){
 				//trump all if not a third party app
+				log.info("AppTokenId {} logged in UAS successfully", applicationTokenId);
 				return true;
 			} else {
-				return isUASAccessGranted(applicationTokenId);
+				boolean ok = isUASAccessGranted(applicationTokenId);
+				if(ok){
+					log.debug("AppTokenId {} logged in UAS successfully", applicationTokenId);
+				} else {
+					log.debug("AppTokenId {} failed to log in", applicationTokenId);
+				}
+				return ok;
 			}
 		}
 	}
@@ -156,7 +170,7 @@ public class WhyDahRoleCheckUtil {
 	    			}
 	    		}
 	    	}
-	    	log.info("Whydah Admin user is false for name={}, uid={}", userToken.getUserName(), userToken.getUid());
+	    	log.info("Whydah Admin user is false for name={}, uid={}. Cannot log in", userToken.getUserName(), userToken.getUid());
 	    } else {
 	    	log.error("Error when getting role list - status code from UIB: " + statusCode);
 	    }
@@ -172,8 +186,8 @@ public class WhyDahRoleCheckUtil {
 		if(app!=null && app.getSecurity()!=null){
 
 			boolean isWhyDahAdmin = app.getSecurity().isWhydahAdmin();
-			if(!isWhyDahAdmin){
-				log.warn("Application " + app.getName() +  " with apptokenid=" + applicationTokenId + " does not have isWhyDahAdmin right");
+			if(isWhyDahAdmin){
+				log.info("Application " + app.getName() +  " with apptokenid=" + applicationTokenId + " has isWhyDahAdmin right");
 			}
 			return isWhyDahAdmin;
 		} else {
