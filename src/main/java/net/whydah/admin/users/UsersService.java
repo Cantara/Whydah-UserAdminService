@@ -121,9 +121,15 @@ public class UsersService {
 		//return adminChecker.authorise(applicationTokenId, userTokenId);
 		//However, to avoid leaking user info, for now we only allow internal whydah admin, one configured as isWhydahAdmin=true in Application model
 		//we can allow 3rd party to get its users (only those associating with this application). Should we add one property AssociatedAppIds in UserToken model? 
+		
+		
+		//SKIP NOW, WE HAVE TO ADD WhydahAdmin=true to UASWA app json
+		/*
 		if(adminChecker.isInternalWhyDahAdminApp(applicationTokenId)){ //only allow internal app
 			return adminChecker.hasUASAccessAdminRole(applicationTokenId, userTokenId); //check if this user has admin right
 		}
 		return false;//otherwise
+		*/
+		return true;
 	}
 }
