@@ -46,49 +46,40 @@ public class WhyDahRoleCheckUtil {
 	}
 
 	public boolean authorise(String applicationTokenId, String userTokenId){
-		//return true;
-		if(!isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
-			return false;
-		} else if(!hasUASAccessAdminRole(applicationTokenId, userTokenId)){
-			//admin user must have this role configured
-			//2212, Whydah-UserAdminService, Whydah, WhydahUserAdmin, 1
-			return false;
-		} else {
+		if(isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
 			if(isInternalWhyDahAdminApp(applicationTokenId)){
 				//trump all if not a third party app
-				log.info("AppTokenId {} logged in UAS successfully", applicationTokenId);
+				log.info("AppTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
 				return true;
 			} else {
-				boolean ok = isUASAccessGranted(applicationTokenId);
-				if(ok){
-					log.debug("AppTokenId {} logged in UAS successfully", applicationTokenId);
-				} else {
-					log.debug("AppTokenId {} failed to log in", applicationTokenId);
+				if(isUASAccessGranted(applicationTokenId)){
+					if(hasUASAccessAdminRole(applicationTokenId, userTokenId)){
+						//2212, Whydah-UserAdminService, Whydah, WhydahUserAdmin, 1
+						log.info("AppTokenId {} having UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
+						return true;
+					}
 				}
-				return ok;
 			}
 		}
+		log.debug("AppTokenId {} failed to log in", applicationTokenId);
+		return false;
 	}
 	
 	public boolean authorise(String applicationTokenId){
-		//return true;
-		if(!isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
-			return false;
-		} else {
+		if(isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
 			if(isInternalWhyDahAdminApp(applicationTokenId)){
 				//trump all if not a third party app
-				log.info("AppTokenId {} logged in UAS successfully", applicationTokenId);
+				log.info("AppTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
 				return true;
 			} else {
-				boolean ok = isUASAccessGranted(applicationTokenId);
-				if(ok){
-					log.debug("AppTokenId {} logged in UAS successfully", applicationTokenId);
-				} else {
-					log.debug("AppTokenId {} failed to log in", applicationTokenId);
+				if(isUASAccessGranted(applicationTokenId)){
+					log.info("AppTokenId {} having UASAccess=true logged in UAS successfully", applicationTokenId);
+					return true;
 				}
-				return ok;
 			}
 		}
+		log.debug("AppTokenId {} failed to log in", applicationTokenId);
+		return false;
 	}
 	
 
