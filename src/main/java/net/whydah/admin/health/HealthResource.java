@@ -29,7 +29,6 @@ public class HealthResource {
     @Autowired
     public HealthResource(CredentialStore credentialStore) {
         this.credentialStore = credentialStore;
-
     }
 
     @GET
@@ -47,11 +46,16 @@ public class HealthResource {
         }
     }
 
-    public static String getHealthTextJson() {
+    public String getHealthTextJson() {
         return "{\n" +
                 "  \"Status\": \"OK\",\n" +
                 "  \"Version\": \"" + getVersion() + "\",\n" +
                 "  \"DEFCON\": \"" + "DEFCON5" + "\"\n" +
+                "  \"hasApplicationToken\": \"" + Boolean.toString((credentialStore.getWas().getActiveApplicationTokenId() != null)) + "\"\n" +
+                "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\"\n" +
+                "  \"hasApplicationsMetadata\": \"" + Boolean.toString(credentialStore.getWas().getApplicationList().size() > 2) + "\"\n" +
+
+
                 "}\n";
     }
 
