@@ -22,7 +22,7 @@ public class ApplicationModelFacade {
 	public List<Application> apps = new ArrayList<Application>();
 	UibApplicationsConnection uibApplicationsConnection;
 	CredentialStore credentialStore;
-	private static final int SESSION_CHECK_INTERVAL = 60; 
+	private static final int SESSION_CHECK_INTERVAL = 120; 
 
 	public ApplicationModelFacade(CredentialStore credentialStore, UibApplicationsConnection uibApplicationsConnection){
 		this.uibApplicationsConnection = uibApplicationsConnection;
@@ -43,6 +43,9 @@ public class ApplicationModelFacade {
 	}
 
 	public Application getApplication(String applicationID) {
+		if(apps.size()==0){
+			updateApplicationList();
+		}
 		for(Application app : apps){
 			if(app.getId().equals(applicationID)){
 				return app;

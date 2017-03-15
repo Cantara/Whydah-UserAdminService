@@ -82,6 +82,8 @@ public class SecurityFilter implements Filter {
         	if (!applicationTokenIsValid) {
         		return HttpServletResponse.SC_UNAUTHORIZED;
         	}
+        } else {
+        	return null; //do not check further if STS is requesting
         }
 
 

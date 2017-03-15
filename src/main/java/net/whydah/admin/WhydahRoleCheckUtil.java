@@ -82,11 +82,11 @@ public class WhydahRoleCheckUtil {
 	
 
 	public boolean isValidSession(String applicationTokenId){
-		Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
-		if(!applicationTokenIsValid){
-			log.warn("CommandValidateApplicationTokenId failed, app token " + applicationTokenId + " is invalid");
-			return false;
-		}
+//		Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
+//		if(!applicationTokenIsValid){
+//			log.warn("CommandValidateApplicationTokenId failed, app token " + applicationTokenId + " is invalid");
+//			return false;
+//		}
 		return true;
 	}
 
