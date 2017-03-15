@@ -1,17 +1,10 @@
 package net.whydah.admin.applications;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
-
-import net.whydah.admin.CredentialStore;
-import net.whydah.admin.WhyDahRoleCheckUtil;
+import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
-import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.mappers.ApplicationMapper;
-
-import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +18,15 @@ import org.springframework.stereotype.Service;
 public class ApplicationsService {
     private static final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
     private final UibApplicationsConnection uibApplicationsConnection;
-    private WhyDahRoleCheckUtil adminChecker;
-    public WhyDahRoleCheckUtil getAdminChecker(){
-		return adminChecker;
+    private WhydahRoleCheckUtil adminChecker;
+
+    public WhydahRoleCheckUtil getAdminChecker() {
+        return adminChecker;
 	}
     
     @Autowired
     @Configure
-    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, WhyDahRoleCheckUtil adminChecker) {
+    public ApplicationsService(UibApplicationsConnection uibApplicationsConnection, WhydahRoleCheckUtil adminChecker) {
         this.uibApplicationsConnection = uibApplicationsConnection;
         this.adminChecker = adminChecker;
     }
@@ -83,7 +77,7 @@ public class ApplicationsService {
         } else {
         	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
-        if (adminChecker.isInternalWhyDahAdminApp(applicationTokenId)) {
+        if (adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
             applications = ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
         } else {
             applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));

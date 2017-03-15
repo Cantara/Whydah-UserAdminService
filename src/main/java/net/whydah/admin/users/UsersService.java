@@ -1,19 +1,15 @@
 package net.whydah.admin.users;
 
-import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.WhyDahRoleCheckUtil;
+import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.users.uib.UibUsersConnection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
 
 /**
@@ -31,13 +27,14 @@ public class UsersService {
 
 	private final UibUsersConnection uibUsersConnection;
 	private final CredentialStore credentialStore;
-	private WhyDahRoleCheckUtil adminChecker;
-	public WhyDahRoleCheckUtil getAdminChecker(){
+	private WhydahRoleCheckUtil adminChecker;
+
+	public WhydahRoleCheckUtil getAdminChecker() {
 		return adminChecker;
 	}
 
 	@Autowired
-	public UsersService(UibUsersConnection uibUsersConnection, CredentialStore credentialStore, WhyDahRoleCheckUtil adminChecker) {
+	public UsersService(UibUsersConnection uibUsersConnection, CredentialStore credentialStore, WhydahRoleCheckUtil adminChecker) {
 		this.uibUsersConnection = uibUsersConnection;
 		this.credentialStore = credentialStore;
 		this.adminChecker = adminChecker;
@@ -125,7 +122,7 @@ public class UsersService {
 		
 		//SKIP NOW, WE HAVE TO ADD WhydahAdmin=true to UASWA app json
 		/*
-		if(adminChecker.isInternalWhyDahAdminApp(applicationTokenId)){ //only allow internal app
+		if(adminChecker.isInternalWhydahAdminApp(applicationTokenId)){ //only allow internal app
 			return adminChecker.hasUASAccessAdminRole(applicationTokenId, userTokenId); //check if this user has admin right
 		}
 		return false;//otherwise

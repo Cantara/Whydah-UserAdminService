@@ -1,17 +1,11 @@
 package net.whydah.admin.user;
 
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.WhyDahRoleCheckUtil;
+import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.user.uib.UibUserConnection;
-
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Created by baardl on 26.06.15.
@@ -21,13 +15,13 @@ public class UserServiceTest {
     private UibUserConnection uibUserConnection;
     private CredentialStore credentialStore;
     private UserService userService;
-    private WhyDahRoleCheckUtil adminChecker;
+    private WhydahRoleCheckUtil adminChecker;
 
     @BeforeMethod
     public void setUp() throws Exception {
         uibUserConnection = mock(UibUserConnection.class);
         credentialStore = mock(CredentialStore.class);
-        adminChecker = mock(WhyDahRoleCheckUtil.class);
+        adminChecker = mock(WhydahRoleCheckUtil.class);
         userService = new UserService(uibUserConnection, credentialStore, adminChecker);
     }
 

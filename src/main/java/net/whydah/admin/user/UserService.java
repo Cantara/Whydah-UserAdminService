@@ -1,10 +1,9 @@
 package net.whydah.admin.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.WhyDahRoleCheckUtil;
+import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.user.uib.UibUserConnection;
@@ -15,16 +14,13 @@ import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,14 +41,15 @@ public class UserService {
 	private final UibUserConnection uibUserConnection;
 	private final CredentialStore credentialStore;
 	private final ObjectMapper mapper;
-	private WhyDahRoleCheckUtil adminChecker;
-	public WhyDahRoleCheckUtil getAdminChecker(){
+	private WhydahRoleCheckUtil adminChecker;
+
+	public WhydahRoleCheckUtil getAdminChecker() {
 		return adminChecker;
 	}
 
 	@Autowired
 	@Configure
-	public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore, WhyDahRoleCheckUtil adminChecker) {
+	public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore, WhydahRoleCheckUtil adminChecker) {
 		this.uibUserConnection = uibUserConnection;
 		this.credentialStore = credentialStore;
 		this.adminChecker = adminChecker;

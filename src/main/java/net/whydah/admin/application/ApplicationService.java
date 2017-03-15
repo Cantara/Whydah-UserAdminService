@@ -1,33 +1,19 @@
 package net.whydah.admin.application;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import net.whydah.admin.CredentialStore;
-import net.whydah.admin.WhyDahRoleCheckUtil;
+import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.application.uib.UibApplicationConnection;
-import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
-import net.whydah.admin.security.UASCredentials;
-import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.application.types.Application;
-import net.whydah.sso.application.types.ApplicationSecurity;
-
-import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 /**
  * Created by HUY
@@ -36,15 +22,16 @@ import org.springframework.stereotype.Service;
 public class ApplicationService {
 	private static final Logger log = LoggerFactory.getLogger(ApplicationService.class);
 	private final UibApplicationConnection uibApplicationConnection;
-	private WhyDahRoleCheckUtil adminChecker;
-	public WhyDahRoleCheckUtil getAdminChecker(){
-		return adminChecker;
+    private WhydahRoleCheckUtil adminChecker;
+
+    public WhydahRoleCheckUtil getAdminChecker() {
+        return adminChecker;
 	}
 
 	@Autowired
 	@Configure
-	public ApplicationService(UibApplicationConnection uibApplicationConnection, WhyDahRoleCheckUtil adminChecker) {
-		this.uibApplicationConnection = uibApplicationConnection;
+    public ApplicationService(UibApplicationConnection uibApplicationConnection, WhydahRoleCheckUtil adminChecker) {
+        this.uibApplicationConnection = uibApplicationConnection;
 		this.adminChecker = adminChecker;
 	}
 
@@ -142,8 +129,8 @@ public class ApplicationService {
 	}
 
 	public String validateApplicationJson(String applicationTokenId, String appJson){
-		if(adminChecker.isInternalWhyDahAdminApp(applicationTokenId)){
-			return appJson;
+        if (adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
+            return appJson;
 		}
 		Application app = ApplicationMapper.fromJson(appJson);
 		if(app.getSecurity().isWhydahAdmin()){
