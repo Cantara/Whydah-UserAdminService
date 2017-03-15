@@ -1,7 +1,10 @@
 package net.whydah.admin.security;
 
+import net.whydah.sso.application.types.Application;
+import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.regex.Pattern;
@@ -27,12 +31,17 @@ public class SecurityFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
 
     private final String stsUri;
+    private String stsAppId;
     URI tokenServiceUri;
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri) {
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId) {
         this.stsUri = stsUri;
+        this.stsAppId = stsAppId;
+        if(this.stsAppId==null || this.stsAppId.equals("")){
+        	this.stsAppId = "2211";
+        }
         tokenServiceUri = URI.create(stsUri);
     }
 
@@ -64,9 +73,15 @@ public class SecurityFilter implements Filter {
 
 
         String applicationTokenId = findPathElement(pathInfo, 1).substring(1);
-        Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
-        if (!applicationTokenIsValid) {
-            return HttpServletResponse.SC_UNAUTHORIZED;
+        //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
+        String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUri), applicationTokenId).execute();
+        if(appId==null){
+        	return HttpServletResponse.SC_UNAUTHORIZED;
+        } else if(!appId.equals(stsAppId)){
+        	Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
+        	if (!applicationTokenIsValid) {
+        		return HttpServletResponse.SC_UNAUTHORIZED;
+        	}
         }
 
 

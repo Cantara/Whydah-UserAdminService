@@ -25,6 +25,7 @@ public class CredentialStore {
                            @Configuration("applicationsecret") String applicationsecret) {
         this.stsUri = stsUri;
         this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationname, applicationsecret);
+        
     }
 
 
