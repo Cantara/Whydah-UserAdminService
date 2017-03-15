@@ -86,12 +86,12 @@ public class ApplicationAuthenticationEndpoint {
         log.info("authenticateApplication - trying to authenticate applicationcredential: {}  callingApplicationtokenId: {}  stsUri: {} ",appCredentialXml, callingApplicationtokenId,stsUri);
 
         // verify stsApplicationtokenId
-        Boolean stsAuthenticationOK =   new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
-        if (!stsAuthenticationOK) {
-            log.warn("Invalid securitytokenservice session. callingApplicationtokenId={}. Returning Forbidden.", callingApplicationtokenId);
-            //return Response.status(Response.Status.FORBIDDEN).build();
-            throw AppExceptionCode.STSAPP_ILLEGAL_8000;
-        }
+//        Boolean stsAuthenticationOK =   new CommandValidateApplicationTokenId(stsUri, callingApplicationtokenId).execute();
+//        if (!stsAuthenticationOK) {
+//            log.warn("Invalid securitytokenservice session. callingApplicationtokenId={}. Returning Forbidden.", callingApplicationtokenId);
+//            //return Response.status(Response.Status.FORBIDDEN).build();
+//            throw AppExceptionCode.STSAPP_ILLEGAL_8000;
+//        }
 
         String uasAppCredentialXml = ApplicationCredentialMapper.toXML(uasApplicationCredential);
         Response responseFromUib =
