@@ -48,7 +48,7 @@ public class UibCreateLogonConnection {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uibService = client.target(myUibUrl);
-        WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH).path(CREATE_AND_LOGON_OPERATION);
+        WebTarget webResource = uibService.path(applicationTokenId).path(SIGNUP_USER_PATH).path(CREATE_AND_LOGON_OPERATION);
         log.debug("URI to use {}",webResource.getUri());
         Response response = webResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
         int statusCode = response.getStatus();
@@ -70,7 +70,7 @@ public class UibCreateLogonConnection {
 //                minimalUser.getEmail(),minimalUser.getCellPhone(),null);
         if ( minimalUser != null) {
 
-            WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
+            WebTarget webResource = uibService.path(applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
             Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(UserIdentityMapper.toJson(minimalUser), MediaType.APPLICATION_JSON));
             int statusCode = response.getStatus();
@@ -91,7 +91,7 @@ public class UibCreateLogonConnection {
         uibService = client.target(myUibUrl);
         UserAggregate createdUser = null;
         if (userAggregate != null) {
-            WebTarget webResource = uibService.path("/" + applicationTokenId).path(SIGNUP_USER_PATH);
+            WebTarget webResource = uibService.path(applicationTokenId).path(SIGNUP_USER_PATH);
             log.debug("URI to use {}", webResource.getUri());
             Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(UserAggregateMapper.toJson(userAggregate), MediaType.APPLICATION_JSON));
             int statusCode = response.getStatus();

@@ -42,7 +42,7 @@ public class UibUsersConnection {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uib = client.target(myUibUrl);
-        WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/" + userTokenId + "/users/find").path(query);
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/find").path(query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }

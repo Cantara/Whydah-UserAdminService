@@ -56,7 +56,7 @@ public class UibAuthConnection {
         long startTime = System.currentTimeMillis();
         Client client = ClientBuilder.newClient();
         uib = client.target(myuibUrl);
-        WebTarget logonUserResource = uib.path("/" + userAdminServiceTokenId).path("authenticate/user");
+        WebTarget logonUserResource = uib.path(userAdminServiceTokenId).path("authenticate/user");
         Response response = logonUserResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
         String userXml = null;

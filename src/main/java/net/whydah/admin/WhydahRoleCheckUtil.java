@@ -44,6 +44,7 @@ public class WhydahRoleCheckUtil {
 	}
 
 	public boolean authorise(String applicationTokenId, String userTokenId){
+		log.info("authorising apptokenid {} and usertokenid {}", applicationTokenId, userTokenId);
 		if(isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
@@ -64,6 +65,7 @@ public class WhydahRoleCheckUtil {
 	}
 	
 	public boolean authorise(String applicationTokenId){
+		log.info("authorising apptokenid {}", applicationTokenId);
 		if(isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
@@ -174,8 +176,8 @@ public class WhydahRoleCheckUtil {
 		String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
 		//get application data
 		Application app = appStore.getApplication(appId);
+		
 		if(app!=null && app.getSecurity()!=null){
-
 			boolean isWhyDahAdmin = app.getSecurity().isWhydahAdmin();
 			if(isWhyDahAdmin){
 				log.info("Application " + app.getName() + " with apptokenid=" + applicationTokenId + " has isWhydahAdmin right");
