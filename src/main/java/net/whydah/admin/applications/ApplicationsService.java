@@ -36,7 +36,9 @@ public class ApplicationsService {
         String applications = null;
         if (adminChecker.authorise(applicationTokenId)) {
             applications = uibApplicationsConnection.listAll(applicationTokenId);
-            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+            if (!adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
+            	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+            }
         } else {
         	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
@@ -52,7 +54,9 @@ public class ApplicationsService {
         } else {
         	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
-        applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
+        	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        }
         log.trace("findByName {}", applications);
         return applications;
     }
@@ -65,25 +69,27 @@ public class ApplicationsService {
         } else {
         	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
-        applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
+        	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        }
         log.trace("findByName {}", applications);
         return applications;
     }
 
-    public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
-        String applications = null;
-        if (adminChecker.authorise(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, query);
-        } else {
-        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
-		}
-        if (adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
-            applications = ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
-        } else {
-            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
-        }
-        return applications;
-    }
+//    public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
+//        String applications = null;
+//        if (adminChecker.authorise(applicationTokenId, userTokenId)) {
+//            applications = uibApplicationsConnection.findApplications(applicationTokenId, query);
+//        } else {
+//        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+//		}
+//        if (adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
+//            applications = ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
+//        } else {
+//            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+//        }
+//        return applications;
+//    }
     
    
 

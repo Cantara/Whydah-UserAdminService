@@ -32,15 +32,19 @@ public class WhydahRoleCheckUtil {
 	UibApplicationsConnection uibApplicationsConnection;
 	UibUserConnection uibUserConnection;
 	ApplicationModelFacade appStore;
+	String uaswa="2219";
 
 	@Autowired
 	@Configure
-	public WhydahRoleCheckUtil(@Configuration("securitytokenservice") String stsUrl, UibApplicationsConnection uibApplicationsConnection, UibUserConnection uibUserConnection, CredentialStore credentialStore) {
+	public WhydahRoleCheckUtil(@Configuration("securitytokenservice") String stsUrl, UibApplicationsConnection uibApplicationsConnection, UibUserConnection uibUserConnection, CredentialStore credentialStore, @Configuration("uaswa") String uaswaId) {
 		this.stsUrl = stsUrl;
 		this.uibApplicationsConnection = uibApplicationsConnection;
 		this.uibUserConnection = uibUserConnection;
 		this.credentialStore = credentialStore;
 		this.appStore = new ApplicationModelFacade(credentialStore, uibApplicationsConnection);
+		if(uaswaId!=null&!uaswaId.equals("")){
+			this.uaswa = uaswaId;
+		}
 	}
 
 	public boolean authorise(String applicationTokenId, String userTokenId){
@@ -63,7 +67,7 @@ public class WhydahRoleCheckUtil {
 		log.debug("AppTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
-	
+
 	public boolean authorise(String applicationTokenId){
 		log.info("authorising apptokenid {}", applicationTokenId);
 		if(isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
@@ -81,19 +85,19 @@ public class WhydahRoleCheckUtil {
 		log.debug("AppTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
-	
+
 
 	public boolean isValidSession(String applicationTokenId){
-//		Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
-//		if(!applicationTokenIsValid){
-//			log.warn("CommandValidateApplicationTokenId failed, app token " + applicationTokenId + " is invalid");
-//			return false;
-//		}
+		//		Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
+		//		if(!applicationTokenIsValid){
+		//			log.warn("CommandValidateApplicationTokenId failed, app token " + applicationTokenId + " is invalid");
+		//			return false;
+		//		}
 		return true;
 	}
 
 	public boolean isValidSession(String applicationTokenId, String userTokenId){
-		
+
 		//this can be checked at security filter, no need to recheck here
 		return true;
 		/*
@@ -139,35 +143,35 @@ public class WhydahRoleCheckUtil {
 	public boolean hasUASAccessAdminRole(String applicationTokenId, String userTokenId) {
 		String userTokenXml = new CommandGetUsertokenByUsertokenId(URI.create(stsUrl), applicationTokenId, "", userTokenId).execute();
 		UserToken userToken = UserTokenMapper.fromUserTokenXml(userTokenXml);
-		
+
 		//get all roles from uib to check whether this user has admin right
 		Response response = uibUserConnection.getRolesAsJson(credentialStore.getUserAdminServiceTokenId(), userTokenId, userToken.getUid());
 		int statusCode = response.getStatus();
-	    String userRolesJson = response.readEntity(String.class);
-	    if(statusCode==200){
-	    	System.out.println("Roles returned:" + userRolesJson);
-	    	List<UserApplicationRoleEntry> roles = UserRoleMapper.fromJsonAsList(userRolesJson);
-	    	UserApplicationRoleEntry adminRole = WhydahUtil.getWhydahUserAdminRole();
-	    	for (UserApplicationRoleEntry role : roles) {
-	    		log.debug("Checking for adminrole user UID:{} roleName: {} ", userToken.getUid(), role.getRoleName());
-	    		if (role.getApplicationId().equalsIgnoreCase(adminRole.getApplicationId())) {
-	    			if (role.getApplicationName().equalsIgnoreCase(adminRole.getApplicationName())) {
-	    				if (role.getOrgName().equalsIgnoreCase(adminRole.getOrgName())) {
-	    					if (role.getRoleName().equalsIgnoreCase(adminRole.getRoleName())) {
-	    						if (role.getRoleValue().equalsIgnoreCase(adminRole.getRoleValue())) {
-	    							log.info("Whydah Admin user is true for name={}, uid={}", userToken.getUserName(), userToken.getUid());
-	    							return true;
-	    						}
-	    					}
-	    				}
-	    			}
-	    		}
-	    	}
-	    	log.info("Whydah Admin user is false for name={}, uid={}. Cannot log in", userToken.getUserName(), userToken.getUid());
-	    } else {
-	    	log.error("Error when getting role list - status code from UIB: " + statusCode);
-	    }
-		
+		String userRolesJson = response.readEntity(String.class);
+		if(statusCode==200){
+			System.out.println("Roles returned:" + userRolesJson);
+			List<UserApplicationRoleEntry> roles = UserRoleMapper.fromJsonAsList(userRolesJson);
+			UserApplicationRoleEntry adminRole = WhydahUtil.getWhydahUserAdminRole();
+			for (UserApplicationRoleEntry role : roles) {
+				log.debug("Checking for adminrole user UID:{} roleName: {} ", userToken.getUid(), role.getRoleName());
+				if (role.getApplicationId().equalsIgnoreCase(adminRole.getApplicationId())) {
+					if (role.getApplicationName().equalsIgnoreCase(adminRole.getApplicationName())) {
+						if (role.getOrgName().equalsIgnoreCase(adminRole.getOrgName())) {
+							if (role.getRoleName().equalsIgnoreCase(adminRole.getRoleName())) {
+								if (role.getRoleValue().equalsIgnoreCase(adminRole.getRoleValue())) {
+									log.info("Whydah Admin user is true for name={}, uid={}", userToken.getUserName(), userToken.getUid());
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+			log.info("Whydah Admin user is false for name={}, uid={}. Cannot log in", userToken.getUserName(), userToken.getUid());
+		} else {
+			log.error("Error when getting role list - status code from UIB: " + statusCode);
+		}
+
 		return false;
 	}
 
@@ -176,29 +180,34 @@ public class WhydahRoleCheckUtil {
 		String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
 		//get application data
 		Application app = appStore.getApplication(appId);
-		
-		if(app!=null && app.getSecurity()!=null){
-			boolean isWhyDahAdmin = app.getSecurity().isWhydahAdmin();
-			if(isWhyDahAdmin){
-				log.info("Application " + app.getName() + " with apptokenid=" + applicationTokenId + " has isWhydahAdmin right");
+		if(app!=null){
+			if(app.getId().equals(uaswa)){
+				return true;
 			}
-			return isWhyDahAdmin;
+			if(app.getSecurity()!=null){
+				boolean isWhyDahAdmin = app.getSecurity().isWhydahAdmin();
+				if(isWhyDahAdmin){
+					log.info("Application " + app.getName() + " with apptokenid=" + applicationTokenId + " has isWhydahAdmin right");
+				}
+				return isWhyDahAdmin;
+			} else {
+				log.error("app.getSecurity() is null. This error should not happen");
+				return false;
+			}
 		} else {
 			if(app==null){
 				log.warn(appStore.apps.size()>0? "App not found" : "Application list is empty");
-			} else {
-				log.error("app.getSecurity() is null. This error should not happen");
 			}
 			return false;
 		}
 	}
 
 	//THIS MAY BE NOT USED ANYMORE, SO WE COMMENT OFF
-//	private static final String UAWA_ID = "2219";
-//	public boolean isUAWA(String applicationTokenId, String userTokenId) {
-//		log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ", UAWA_ID, applicationTokenId, userTokenId);
-//		String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
-//		log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationID);
-//		return (UAWA_ID.equals(applicationID));
-//	}
+	//	private static final String UAWA_ID = "2219";
+	//	public boolean isUAWA(String applicationTokenId, String userTokenId) {
+	//		log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ", UAWA_ID, applicationTokenId, userTokenId);
+	//		String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
+	//		log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationID);
+	//		return (UAWA_ID.equals(applicationID));
+	//	}
 }

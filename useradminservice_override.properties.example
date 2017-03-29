@@ -13,6 +13,9 @@ applicationname=Whydah-UserAdminService
 applicationid=2212
 applicationsecret=9ju592A4t8dzz8mz7a5QQJ7Px
 
+#ALWAYS ALLOW UASWA TO ACCESS EVEN IT HAS NOT BEEN CONFIGURED
+uaswa=2219
+
 
 # Mail sending
 gmail.username=whydahuib@gmail.com
