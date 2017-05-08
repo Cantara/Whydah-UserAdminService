@@ -40,7 +40,8 @@ public class PasswordSender {
         log.info("Sending resetPassword email for user {} to {}, token={}", username, userEmail, token);
         String body = bodyGenerator.resetPassword(resetUrl, username);
         try {
-            mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+        	String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+            mailSender.send(userEmail, reset_subject!=null?reset_subject:RESET_PASSWORD_SUBJECT, body);
             messageSent = true;
         } catch (Exception e) {
             log.info("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
@@ -56,11 +57,12 @@ public class PasswordSender {
         String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
         try {
             if (templateName == null || templateName.length() < 10) {
-                mailSender.send(userEmail, RESET_PASSWORD_SUBJECT, body);
+            	String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+                mailSender.send(userEmail, reset_subject!=null? reset_subject : RESET_PASSWORD_SUBJECT, body);
 
             } else {
-                String templateRESET_PASSWORD_SUBJECT = configuration.evaluateToString("email.subject." + templateName);
-                mailSender.send(userEmail, templateRESET_PASSWORD_SUBJECT, body);
+                String template_subject = configuration.evaluateToString("email.subject." + templateName);
+                mailSender.send(userEmail, template_subject, body);
             }
             messageSent = true;
         } catch (Exception e) {
