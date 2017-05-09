@@ -92,6 +92,7 @@ public class UibUserConnection {
     private void refreshSTSCommand(String userAdminServiceTokenId, String userIdentityJson) {
         try {
             UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(userIdentityJson);
+            log.warn("resolved userName: " + userIdentity.getUsername());
             new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).queue();
         } catch (Exception e) {
             log.error("Unable to refresh UserToken in STS", e);
@@ -182,7 +183,11 @@ public class UibUserConnection {
     }
 
     public Response deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String uid)  {
-        refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, null);
+        try {
+            refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, null);
+        } catch (Exception e) {
+            log.error("Exception in refreshSTS - ignoring");
+        }
         uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
