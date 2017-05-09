@@ -104,8 +104,8 @@ public class UserService {
 			switch (response.getStatus()) {
 			case STATUS_OK:
 				log.info("getUserIdentity-Response from Uib {}", responseBody);
-				UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(responseBody);
-				return userIdentity;
+                UserIdentity userIdentity = UserIdentityMapper.fromJson(responseBody);
+                return userIdentity;
 			case STATUS_FORBIDDEN:
 				log.error("getUserIdentity-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
 				//return null;
