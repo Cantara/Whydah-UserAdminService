@@ -1,23 +1,10 @@
 package net.whydah.admin.user.uib;
 
-import java.net.URI;
-
-import net.whydah.admin.AuthenticationFailedException;
-import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.admin.user.ConflictExeption;
-import net.whydah.sso.commands.adminapi.user.CommandGetUserAggregate;
 import net.whydah.sso.commands.userauth.CommandRefreshUserTokenByUserName;
-import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
-import net.whydah.sso.user.mappers.UserRoleMapper;
-import net.whydah.sso.user.mappers.UserTokenMapper;
-import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-import net.whydah.sso.user.types.UserToken;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -25,15 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 
 /**
  * Created by baardl on 17.04.14.
@@ -96,7 +81,7 @@ public class UibUserConnection {
         switch (responseFromUib.getStatusInfo().getFamily()) {
             case SUCCESSFUL:
             	//we should call STS to sync user info here
-            	refreshSTS(userAdminServiceTokenId, userIdentityJson);
+                refreshSTSCommand(userAdminServiceTokenId, userIdentityJson);
                 break;
             default:
                 log.warn("updateUserIdentity was unsuccessful. Response from UIB: {} {}, body={}", statusCode, reasonPhrase, responseBody);
@@ -104,14 +89,10 @@ public class UibUserConnection {
         return responseBuilder.build();
     }
 
-	private void refreshSTS(String userAdminServiceTokenId, String userIdentityJson) {
-		UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(userIdentityJson);
-		String refreshCmdExec = new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).execute();
-		if(refreshCmdExec==null){
-			log.trace("Failed to send refresh command to STS");
-		} else {
-			log.trace("Refresh STS successfully");
-		}
+    private void refreshSTSCommand(String userAdminServiceTokenId, String userIdentityJson) {
+        UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(userIdentityJson);
+        new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).queue();
+
 	}
 
     public Response changePassword(String userAdminServiceTokenId, String userTokenId, String userName, String password) {
@@ -150,8 +131,8 @@ public class UibUserConnection {
         	Response response2 = getUserIdentity(userAdminServiceTokenId, adminUserTokenId, uid);
         	if(response2.getStatus()==200){
         		String userIdentityJson = response.readEntity(String.class);
-        		refreshSTS(userAdminServiceTokenId, userIdentityJson);        		
-        	} else {
+                refreshSTSCommand(userAdminServiceTokenId, userIdentityJson);
+            } else {
         		log.error("Failed to get UserIdentity to sync with STS");
         	}
         }
@@ -197,6 +178,7 @@ public class UibUserConnection {
     	uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
+        refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, response);
         return copyResponse(response);
     }
 }
