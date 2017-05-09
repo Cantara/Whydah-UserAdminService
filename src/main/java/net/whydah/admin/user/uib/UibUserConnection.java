@@ -19,6 +19,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by baardl on 17.04.14.
@@ -34,6 +36,7 @@ public class UibUserConnection {
     private final UASCredentials uasCredentials;
     private final String myUibUrl;
     private final String myStsUrl;
+    final ScheduledThreadPoolExecutor stscommandexecutor = new ScheduledThreadPoolExecutor(1);
 
     @Autowired
     @Configure
@@ -93,12 +96,17 @@ public class UibUserConnection {
         try {
             UserIdentity userIdentity = UserIdentityMapper.fromJson(userIdentityJson);
             log.warn("resolved userName: " + userIdentity.getUsername());
-            new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).queue();
+            stscommandexecutor.schedule(() -> runCommand(userAdminServiceTokenId, userIdentity.getUsername()), 5, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("Unable to refresh UserToken in STS", e);
         }
 
 	}
+
+    private void runCommand(String userAdminServiceTokenId, String userName) {
+        new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userName).queue();
+
+    }
 
     public Response changePassword(String userAdminServiceTokenId, String userTokenId, String userName, String password) {
     	uib = getWebTarget();
