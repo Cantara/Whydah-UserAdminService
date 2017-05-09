@@ -90,8 +90,12 @@ public class UibUserConnection {
     }
 
     private void refreshSTSCommand(String userAdminServiceTokenId, String userIdentityJson) {
-        UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(userIdentityJson);
-        new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).queue();
+        try {
+            UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(userIdentityJson);
+            new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).queue();
+        } catch (Exception e) {
+            log.error("Unable to refresh UserToken in STS", e);
+        }
 
 	}
 
