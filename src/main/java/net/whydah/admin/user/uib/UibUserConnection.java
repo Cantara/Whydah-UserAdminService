@@ -36,7 +36,6 @@ public class UibUserConnection {
     private final UASCredentials uasCredentials;
     private final String myUibUrl;
     private final String myStsUrl;
-    final ScheduledThreadPoolExecutor stscommandexecutor = new ScheduledThreadPoolExecutor(1);
 
     @Autowired
     @Configure
@@ -96,6 +95,7 @@ public class UibUserConnection {
         try {
             UserIdentity userIdentity = UserIdentityMapper.fromJson(userIdentityJson);
             log.warn("resolved userName: " + userIdentity.getUsername());
+            final ScheduledThreadPoolExecutor stscommandexecutor = new ScheduledThreadPoolExecutor(4);
             stscommandexecutor.schedule(() -> runCommand(userAdminServiceTokenId, userIdentity.getUsername()), 5, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("Unable to refresh UserToken in STS", e);
