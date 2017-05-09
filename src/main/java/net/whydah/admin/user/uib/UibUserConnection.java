@@ -19,8 +19,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by baardl on 17.04.14.
@@ -94,19 +92,15 @@ public class UibUserConnection {
     private void refreshSTSCommand(String userAdminServiceTokenId, String userIdentityJson) {
         try {
             UserIdentity userIdentity = UserIdentityMapper.fromJson(userIdentityJson);
-            log.warn("resolved userName: " + userIdentity.getUsername());
-            final ScheduledThreadPoolExecutor stscommandexecutor = new ScheduledThreadPoolExecutor(4);
-            stscommandexecutor.schedule(() -> runCommand(userAdminServiceTokenId, userIdentity.getUsername()), 5, TimeUnit.SECONDS);
+            String userName = userIdentity.getUsername();
+            log.warn("resolved userName: " + userName);
+            new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userName).queue();
         } catch (Exception e) {
             log.error("Unable to refresh UserToken in STS", e);
         }
 
 	}
 
-    private void runCommand(String userAdminServiceTokenId, String userName) {
-        new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userName).queue();
-
-    }
 
     public Response changePassword(String userAdminServiceTokenId, String userTokenId, String userName, String password) {
     	uib = getWebTarget();
@@ -144,9 +138,9 @@ public class UibUserConnection {
             statusCode = response.getStatus();
         }
         if(statusCode==200||statusCode==201){
-        	Response response2 = getUserIdentity(userAdminServiceTokenId, adminUserTokenId, uid);
-        	if(response2.getStatus()==200){
-        		String userIdentityJson = response.readEntity(String.class);
+            Response responseGetUserIdentity = getUserIdentity(userAdminServiceTokenId, adminUserTokenId, uid);
+            if (responseGetUserIdentity.getStatus() == 200) {
+                String userIdentityJson = responseGetUserIdentity.readEntity(String.class);
                 refreshSTSCommand(userAdminServiceTokenId, userIdentityJson);
             } else {
         		log.error("Failed to get UserIdentity to sync with STS");
