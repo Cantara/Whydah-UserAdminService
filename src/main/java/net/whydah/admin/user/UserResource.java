@@ -1,19 +1,12 @@
 package net.whydah.admin.user;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.user.uib.*;
-import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +14,6 @@ import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -122,7 +112,7 @@ public class UserResource {
     @Path("/{uid}")
     public Response deleteUser(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                                @PathParam("uid") String uid) throws AppException {
-        log.trace("deleteUser, uid={}, roleid={}", uid);
+        log.info("deleteUser, uid={}, ", uid);
 
 
         userService.deleteUser(applicationTokenId, userTokenId, uid);
