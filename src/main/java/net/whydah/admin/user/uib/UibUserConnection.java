@@ -126,7 +126,10 @@ public class UibUserConnection {
     }
 
 	private void refreshSTS(String userAdminServiceTokenId, String adminUserTokenId, String uid, Response response) {
-		int statusCode = response.getStatus();
+        int statusCode = 200;  // Accept null as statiusCode as we have to refresh before we delete the user to get the userName
+        if (response != null) {
+            statusCode = response.getStatus();
+        }
         if(statusCode==200||statusCode==201){
         	Response response2 = getUserIdentity(userAdminServiceTokenId, adminUserTokenId, uid);
         	if(response2.getStatus()==200){
@@ -175,10 +178,10 @@ public class UibUserConnection {
     }
 
     public Response deleteUser(String userAdminServiceTokenId, String adminUserTokenId, String uid)  {
-    	uib = getWebTarget();
+        refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, null);
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
-        refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, response);
         return copyResponse(response);
     }
 }
