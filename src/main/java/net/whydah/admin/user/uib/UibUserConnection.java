@@ -91,7 +91,7 @@ public class UibUserConnection {
 
     private void refreshSTSCommand(String userAdminServiceTokenId, String userIdentityJson) {
         try {
-            UserIdentity userIdentity = UserIdentityMapper.fromUserIdentityJson(userIdentityJson);
+            UserIdentity userIdentity = UserIdentityMapper.fromJson(userIdentityJson);
             log.warn("resolved userName: " + userIdentity.getUsername());
             new CommandRefreshUserTokenByUserName(URI.create(myStsUrl), userAdminServiceTokenId, "", userIdentity.getUsername()).queue();
         } catch (Exception e) {
