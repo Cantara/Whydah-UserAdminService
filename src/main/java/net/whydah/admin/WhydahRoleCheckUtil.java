@@ -180,10 +180,7 @@ public class WhydahRoleCheckUtil {
 		String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
 		//get application data
 		Application app = appStore.getApplication(appId);
-		if(app!=null){
-			if(app.getId().equals(uaswa)){
-				return true;
-			}
+		if(app!=null){			
 			if(app.getSecurity()!=null){
 				boolean isWhyDahAdmin = app.getSecurity().isWhydahAdmin();
 				if(isWhyDahAdmin){
@@ -202,12 +199,16 @@ public class WhydahRoleCheckUtil {
 		}
 	}
 
-	//THIS MAY BE NOT USED ANYMORE, SO WE COMMENT OFF
-	//	private static final String UAWA_ID = "2219";
-	//	public boolean isUAWA(String applicationTokenId, String userTokenId) {
-	//		log.trace("Checking isUAWA. UAWA_ID:{}applicationTokenId:{} userTokenId:{} ", UAWA_ID, applicationTokenId, userTokenId);
-	//		String applicationID = new CommandGetApplicationIdFromApplicationTokenId(UriBuilder.fromUri(stsUrl).build(), applicationTokenId).execute();
-	//		log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationID);
-	//		return (UAWA_ID.equals(applicationID));
-	//	}
+	public boolean isUAWA(String applicationTokenId) {
+		//2 conditions: - has whydahadmin=true and has a correct appid
+		String applicationId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
+		//get application data
+		Application app = appStore.getApplication(applicationId);
+		log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", applicationId);
+		if(app.getSecurity().isWhydahAdmin() && app.getId().equals(uaswa)){
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

@@ -129,15 +129,11 @@ public class ApplicationService {
 	}
 
 	public String validateApplicationJson(String applicationTokenId, String appJson){
-        if (adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
+        if (adminChecker.isUAWA(applicationTokenId)) {
             return appJson;
 		}
 		Application app = ApplicationMapper.fromJson(appJson);
-		if(app.getSecurity().isWhydahAdmin()){
-			log.warn("Attempt to set whydahAdmin flag to true from 3rd party app. Set back to false");
-			//TODO: uncomment this line below after we edit the json file in UASWA
-			//app.getSecurity().setWhydahAdmin(false);//Do not allow 3rd party having this flag
-		}
+		app.getSecurity().setWhydahAdmin(false);
 		return ApplicationMapper.toJson(app);
 	}
 
