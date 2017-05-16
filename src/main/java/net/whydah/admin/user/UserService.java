@@ -133,7 +133,6 @@ public class UserService {
 		}
 	}
 
-
 	public boolean changePassword(String applicationTokenId, String userTokenId, String userName, String password) throws AppException {
 		boolean isUpdated=false;
 		if (adminChecker.authorise(applicationTokenId)) {

@@ -192,7 +192,7 @@ public class UserResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response updateRole(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
                             @PathParam("uid") String uid, @PathParam("roleid") String roleid, String roleJson) throws AppException {
-        log.trace("addRole is called with uid={}, roleid={},roleJson={}", uid, roleid,roleJson);
+        log.trace("updateRole is called with uid={}, roleid={},roleJson={}", uid, roleid,roleJson);
 
         UserApplicationRoleEntry roleRequest = UserRoleMapper.fromJson(roleJson);
         UserApplicationRoleEntry updatedRole = userService.updateUserRole(applicationTokenId, userTokenId, uid, roleRequest);
