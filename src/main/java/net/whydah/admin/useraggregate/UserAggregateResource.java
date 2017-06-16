@@ -1,6 +1,7 @@
 package net.whydah.admin.useraggregate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.user.UserService;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
@@ -9,6 +10,7 @@ import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/{applicationtokenid}/{userTokenId}/useraggregate")
@@ -60,9 +64,14 @@ public class UserAggregateResource {
 		if (createdUser != null) {
 			UserAggregate createdUserAggregate = UserAggregateMapper.fromJson(UserIdentityMapper.toJson(createdUser));
 			List<UserApplicationRoleEntry> roleList = userAggregate.getRoleList();
-			for (UserApplicationRoleEntry role : roleList) {
-				userService.addUserRole(applicationTokenId, userTokenId, createdUser.getUid(), role);
+			if(roleList!=null){
+				for (UserApplicationRoleEntry role : roleList) {
+					userService.addUserRole(applicationTokenId, userTokenId, createdUser.getUid(), role);
+				}
+			} else {
+				roleList = new ArrayList<UserApplicationRoleEntry>();
 			}
+			
 			createdUserAggregate.setRoleList(roleList);
 
 			return Response.ok(UserAggregateMapper.toJson(createdUserAggregate)).build();
