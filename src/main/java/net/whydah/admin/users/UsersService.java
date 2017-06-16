@@ -208,8 +208,9 @@ public class UsersService {
 		
 		//WE HAVE TO ADD WhydahAdmin=true to UASWA app json
 		
-		if(adminChecker.isInternalWhydahAdminApp(applicationTokenId)){ //only allow internal app
-			return adminChecker.hasUASAccessAdminRole(applicationTokenId, userTokenId); //check if this user has admin right
+		if(adminChecker.isUASAccessGranted(applicationTokenId)){ //only allow internal app
+			//return adminChecker.hasUASAccessAdminRole(applicationTokenId, userTokenId); //check if this user has admin right
+			return true;
 		}
 		return false;//otherwise
 	}
