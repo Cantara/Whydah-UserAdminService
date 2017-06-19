@@ -1,7 +1,9 @@
 package net.whydah.admin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -23,6 +25,7 @@ public class ApplicationModelFacade {
 	UibApplicationsConnection uibApplicationsConnection;
 	CredentialStore credentialStore;
 	private static final int SESSION_CHECK_INTERVAL = 120; 
+	Map<String, String> apptopkenId_appId_Map = new HashMap<>(); //TODO: find a way to validate this map later
 
 	public ApplicationModelFacade(CredentialStore credentialStore, UibApplicationsConnection uibApplicationsConnection){
 		this.uibApplicationsConnection = uibApplicationsConnection;
