@@ -1,24 +1,28 @@
 package net.whydah.admin.createlogon;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.createlogon.uib.UibCreateLogonConnection;
 import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.extras.ScheduledSendEMailTask;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserIdentity;
 
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import static javax.ws.rs.core.Response.Status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
@@ -31,12 +35,15 @@ public class CreateLogonUserController {
     private final UibCreateLogonConnection uibConnection;
     private final SignupService signupService;
     private final ObjectMapper objectMapper;
+    private final MailService mailService;
 
     @Autowired
-    public CreateLogonUserController(UibCreateLogonConnection uibConnection, SignupService signupService, ObjectMapper objectMapper) {
+    @Configure
+    public CreateLogonUserController(UibCreateLogonConnection uibConnection, SignupService signupService, ObjectMapper objectMapper, MailService mailService) {
         this.uibConnection = uibConnection;
         this.signupService = signupService;
         this.objectMapper = objectMapper;
+        this.mailService = mailService;
     }
 
 
@@ -154,7 +161,9 @@ public class CreateLogonUserController {
                                          @FormParam("subject") String subject,
                                          @FormParam("emailMessage") String emailMessage) {
         log.info("send_scheduled_email - Try to schedule mail user with emailaddress {}", emailaddress);
-        new ScheduledSendEMailTask(Long.parseLong(timestamp),emailaddress,subject,emailMessage);
+       
+        //new ScheduledSendEMailTask(Long.parseLong(timestamp),emailaddress,subject,emailMessage);
+        mailService.send(Long.parseLong(timestamp),emailaddress,subject,emailMessage);
         return Response.ok("email scheduled").build();
 
     }
