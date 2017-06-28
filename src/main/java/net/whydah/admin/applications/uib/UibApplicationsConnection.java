@@ -48,7 +48,7 @@ public class UibApplicationsConnection {
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
         WebTarget webResource = uib.path(userAdminServiceTokenId).path("applications");
-        Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
@@ -81,7 +81,7 @@ public class UibApplicationsConnection {
         //WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/applications/find/"+query);
         WebTarget webResource = uib.path(userAdminServiceTokenId).path("applications");
         //WebTarget webResource = uib.path("/applications/find/"+query);
-        Response response = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
