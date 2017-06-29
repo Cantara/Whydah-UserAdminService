@@ -19,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class UASCredentials {
     private static final Logger log = getLogger(UASCredentials.class);
 
-    public static final String APPLICATION_CREDENTIALS_HEADER_XML = "uas-app-credentials/xml";
+    public static final String APPLICATION_CREDENTIALS_HEADER_XML = "uas-app-credentials";
     private final String applicationId;
     private final String applicationName;
     private String applicationSecret;
