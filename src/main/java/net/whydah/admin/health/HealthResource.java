@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Properties;
 
 /**
@@ -46,18 +47,24 @@ public class HealthResource {
         }
     }
 
+
     public String getHealthTextJson() {
         return "{\n" +
                 "  \"Status\": \"OK\",\n" +
                 "  \"Version\": \"" + getVersion() + "\",\n" +
-                "  \"DEFCON\": \"" + "DEFCON5" + "\"\n" +
+                "  \"DEFCON\": \"" + credentialStore.getWas().getDefcon() + "\",\n" +
+                "  \"STS\": \"" + credentialStore.getWas().getSTS() + "\",\n" +
+                "  \"UAS\": \"" + credentialStore.getWas().getUAS() + "\",\n" +
                 "  \"hasApplicationToken\": \"" + Boolean.toString((credentialStore.getWas().getActiveApplicationTokenId() != null)) + "\"\n" +
                 "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\"\n" +
                 "  \"hasApplicationsMetadata\": \"" + Boolean.toString(credentialStore.getWas().getApplicationList().size() > 2) + "\"\n" +
 
+                "  \"now\": \"" + Instant.now() + "\",\n" +
+                "  \"running since\": \"" + WhydahUtil.getRunningSince() + "\"\n\n" +
 
                 "}\n";
     }
+
 
     private static String getVersion() {
         Properties mavenProperties = new Properties();
