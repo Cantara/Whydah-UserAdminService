@@ -1,8 +1,6 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.errorhandling.AppExceptionCode;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -114,12 +111,12 @@ public class ApplicationsResource {
 	}
 	
 	@GET
-	@Path("find/applications/{applicationName}")
+	@Path("xx_find/applications/{applicationName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findByName2(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		
-		String applications = applicationsService.findApplication(applicationTokenId, applicationName);
+
+		String applications = applicationsService.findApplication(applicationTokenId, "xxx", applicationName);
 		return Response.ok(applications).build();
 
 	}

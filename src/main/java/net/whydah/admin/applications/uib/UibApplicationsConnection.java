@@ -43,7 +43,7 @@ public class UibApplicationsConnection {
     }
 
 
-    public String listAll(String userAdminServiceTokenId) throws AppException {
+    public String listAll(String applicationTokenId) throws AppException {
         if (cachedApplicationsStringInstant != null) {
             if (Instant.now().isAfter(cachedApplicationsStringInstant.plusSeconds(30))) {
                 // 30 second cache to avoid too much UIB noise
@@ -53,7 +53,7 @@ public class UibApplicationsConnection {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path("applications");
+        WebTarget webResource = uib.path(applicationTokenId).path("applications");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
        // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
@@ -82,12 +82,12 @@ public class UibApplicationsConnection {
         return output;
     }
 
-    public String findApplications(String userAdminServiceTokenId,  String query) throws AppException {
+    public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
         //WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/applications/find/"+query);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userAdminServiceTokenId).path("applications").path("find").path(query);
+        WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("applications").path("find").path(query);
         //WebTarget webResource = uib.path("/applications/find/"+query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         // String output = response.readEntity(String.class);

@@ -50,7 +50,7 @@ public class ApplicationsService {
         String applications = null;
     	log.trace("findByName - listAll is called, query {}", applicationName);
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, applicationName);
         } else {
         	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
@@ -65,7 +65,7 @@ public class ApplicationsService {
         String applications = null;
         log.trace("findByName - listAll is called, query {}", applicationName);
         if (adminChecker.authorise(applicationTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, "", applicationName);
         } else {
         	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
