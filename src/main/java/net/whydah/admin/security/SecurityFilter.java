@@ -108,7 +108,7 @@ public class SecurityFilter implements Filter {
         String path = pathInfo.substring(1); //strip leading /
         //strip applicationTokenId from pathInfo
         path = path.substring(path.indexOf("/"));
-            
+
         /*
         /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
          /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
