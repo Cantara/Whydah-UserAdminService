@@ -58,7 +58,7 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
-        Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
+        Integer statusCode = null;  // todo: resetting filter as we do the check motstly in code as well  // authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
         if (statusCode == null) {
             chain.doFilter(request, response);
         } else {
@@ -73,6 +73,7 @@ public class SecurityFilter implements Filter {
      */
     Integer authenticateAndAuthorizeRequest(String pathInfo) {
         log.info("filter path {}", pathInfo);
+        return null;  // todo: resetting filter as we do the check motstly in code as well
 
         //match /
         if (pathInfo == null || pathInfo.equals("/")) {
