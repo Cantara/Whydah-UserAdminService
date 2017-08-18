@@ -73,7 +73,6 @@ public class SecurityFilter implements Filter {
      */
     Integer authenticateAndAuthorizeRequest(String pathInfo) {
         log.info("filter path {}", pathInfo);
-        return null;  // todo: resetting filter as we do the check motstly in code as well
 
         //match /
         if (pathInfo == null || pathInfo.equals("/")) {
