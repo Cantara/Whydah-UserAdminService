@@ -121,7 +121,7 @@ public class SecurityFilter implements Filter {
         String pwPattern = "/user/.+/(reset|change)_password";
         String userSignupPattern = "/signup/user";
         String listApplicationsPattern ="/applications";
-        String hasUASAccess = "/.+/hasUASAccess";
+        String hasUASAccess = "/hasUASAccess";
         String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess};
         for (String pattern : patternsWithoutUserTokenId) {
             if (Pattern.compile(pattern).matcher(path).matches()) {
