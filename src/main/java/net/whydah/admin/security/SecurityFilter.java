@@ -49,8 +49,9 @@ public class SecurityFilter implements Filter {
         if(this.stsAppId==null || this.stsAppId.equals("")){
         	this.stsAppId = "2211";
         }
-        tokenServiceUri = URI.create(stsUri);
+        this.tokenServiceUri = URI.create(stsUri);
         this.uasCredentials = uasCredentials;
+        this.uibApplicationsConnection = uibApplicationsConnection;
     }
 
     @Override
