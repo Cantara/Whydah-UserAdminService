@@ -1,9 +1,9 @@
 package net.whydah.admin.security;
 
+import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.application.types.Application;
-import net.whydah.sso.commands.adminapi.application.CommandGetApplicationById;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
@@ -37,12 +37,13 @@ public class SecurityFilter implements Filter {
 
     private final String stsUri;
     private String stsAppId;
-    URI tokenServiceUri;
-    UASCredentials uasCredentials;
+    private URI tokenServiceUri;
+    private UASCredentials uasCredentials;
+    private UibApplicationsConnection uibApplicationsConnection;
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials) {
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationsConnection uibApplicationsConnection) {
         this.stsUri = stsUri;
         this.stsAppId = stsAppId;
         if(this.stsAppId==null || this.stsAppId.equals("")){
@@ -141,25 +142,29 @@ public class SecurityFilter implements Filter {
          */
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
         log.warn("CommandGetApplicationById({}, {}, {}, {})", tokenServiceUri, applicationTokenId, usertokenId, appId);
-        String applicationJson = new CommandGetApplicationById(tokenServiceUri, applicationTokenId, usertokenId, appId).execute();
-        log.warn("SecurityFilter - got appication:" + applicationJson);
-        Application application = ApplicationMapper.fromJson(applicationJson);
+        //String applicationJson = new CommandGetApplicationById(tokenServiceUri, applicationTokenId, usertokenId, appId).execute();
+        try {
+            String applicationJson = uibApplicationsConnection.findApplications(applicationTokenId, usertokenId, appId);
+            log.warn("SecurityFilter - got appication:" + applicationJson);
+            Application application = ApplicationMapper.fromJson(applicationJson);
 
-        // Does the calling application has UAS access
-        if (!application.getSecurity().isWhydahUASAccess()) {
-            return HttpServletResponse.SC_UNAUTHORIZED;
-        }
+            // Does the calling application has UAS access
+            if (!application.getSecurity().isWhydahUASAccess()) {
+                return HttpServletResponse.SC_UNAUTHORIZED;
+            }
 
-        Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
-        if (!userTokenIsValid) {
-            return HttpServletResponse.SC_UNAUTHORIZED;
+            Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
+            if (!userTokenIsValid) {
+                return HttpServletResponse.SC_UNAUTHORIZED;
+            }
+            UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
+            String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, applicationTokenId, ApplicationCredentialMapper.toXML(uasCredentials.getApplicationCredential()), usertokenId).execute();
+            if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Unable to lookup application in UIB", e);
         }
-        UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
-        String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, applicationTokenId, ApplicationCredentialMapper.toXML(uasCredentials.getApplicationCredential()), usertokenId).execute();
-        if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
-            return null;
-        }
-
         return HttpServletResponse.SC_UNAUTHORIZED;
 
     }
