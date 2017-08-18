@@ -3,7 +3,7 @@ package net.whydah.admin.security;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.application.types.Application;
-import net.whydah.sso.commands.adminapi.application.CommandGetApplication;
+import net.whydah.sso.commands.adminapi.application.CommandGetApplicationById;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
@@ -140,7 +140,9 @@ public class SecurityFilter implements Filter {
         /{applicationtokenid}/{usertokenid}/users           //UsersResource
          */
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
-        String applicationJson = new CommandGetApplication(tokenServiceUri, applicationTokenId, usertokenId, appId).execute();
+        log.warn("CommandGetApplicationById({}, {}, {}, {})", tokenServiceUri, applicationTokenId, usertokenId, appId);
+        String applicationJson = new CommandGetApplicationById(tokenServiceUri, applicationTokenId, usertokenId, appId).execute();
+        log.warn("SecurityFilter - got appication:" + applicationJson);
         Application application = ApplicationMapper.fromJson(applicationJson);
 
         // Does the calling application has UAS access
