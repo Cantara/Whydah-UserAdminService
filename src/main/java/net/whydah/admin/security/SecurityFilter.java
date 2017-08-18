@@ -46,8 +46,8 @@ public class SecurityFilter implements Filter {
     public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationsConnection uibApplicationsConnection) {
         this.stsUri = stsUri;
         this.stsAppId = stsAppId;
-        if(this.stsAppId==null || this.stsAppId.equals("")){
-        	this.stsAppId = "2211";
+        if (this.stsAppId == null || this.stsAppId.equals("")) {
+            this.stsAppId = "2211";
         }
         this.tokenServiceUri = URI.create(stsUri);
         this.uasCredentials = uasCredentials;
@@ -68,8 +68,7 @@ public class SecurityFilter implements Filter {
 
 
     /**
-     *
-     * @param pathInfo  the path to apply the filter to
+     * @param pathInfo the path to apply the filter to
      * @return HttpServletResponse.SC_UNAUTHORIZED if authentication fails, otherwise null
      */
     Integer authenticateAndAuthorizeRequest(String pathInfo) {
@@ -85,7 +84,7 @@ public class SecurityFilter implements Filter {
         String applicationTokenId = findPathElement(pathInfo, 1).substring(1);
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
         String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUri), applicationTokenId).execute();
-        if(appId==null){
+        if (appId == null) {
             log.warn("SecurityFilter - unable to lookup application from applicationtokenid, returning unauthorized");
             return HttpServletResponse.SC_UNAUTHORIZED;
 
@@ -97,47 +96,57 @@ public class SecurityFilter implements Filter {
             // And sts gets special treatement too
         } else if (appId.equals(stsAppId)) {
             Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
-        	if (!applicationTokenIsValid) {
+            if (!applicationTokenIsValid) {
                 log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
                 return HttpServletResponse.SC_UNAUTHORIZED;
-        	}
-        }
-
-
-        //paths without userTokenId
-        String path = pathInfo.substring(1); //strip leading /
-        //strip applicationTokenId from pathInfo
-        path = path.substring(path.indexOf("/"));
-        /*
-        /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
-        /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
-        /{applicationTokenId}/user/{uid}/change_password    //PasswordResource
-        /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
-        /{applicationTokenId}/signup/user                   //UserSignupEndpoint
-        */
-        String applicationAuthPattern = "/application/auth";
-        String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
-        String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
-        String pwResetAuthPattern = "/auth/password/reset/username";
-        String pwPattern = "/user/.+/(reset|change)_password";
-        String userSignupPattern = "/signup/user";
-        String listApplicationsPattern ="/applications";
-        String hasUASAccess = "/hasUASAccess";
-        String send_scheduled_email = "/send_scheduled_email";
-        String userCheck = "/users/find";
-        ;
-        String userPWEnabeled = "/user/.+/password_login_enabled";
-        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userCheck, userPWEnabeled};
-        for (String pattern : patternsWithoutUserTokenId) {
-            if (Pattern.compile(pattern).matcher(path).matches()) {
-                log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
-                return null;
             }
         }
 
+        String usertokenId = findPathElement(pathInfo, 2).substring(1);
+        try {
+            String applicationJson = uibApplicationsConnection.findApplications(applicationTokenId, usertokenId, appId);
+            log.warn("SecurityFilter - got application:" + applicationJson);
+            Application application = ApplicationMapper.fromJson(applicationJson);
+
+            // Does the calling application has UAS access
+            if (!application.getSecurity().isWhydahUASAccess()) {
+                return HttpServletResponse.SC_UNAUTHORIZED;
+            }
+
+            //paths without userTokenId
+            String path = pathInfo.substring(1); //strip leading /
+            //strip applicationTokenId from pathInfo
+            path = path.substring(path.indexOf("/"));
+
+            /*
+            /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
+            /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
+            /{applicationTokenId}/user/{uid}/change_password    //PasswordResource
+            /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
+            /{applicationTokenId}/signup/user                   //UserSignupEndpoint
+            */
+            String applicationAuthPattern = "/application/auth";
+            String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
+            String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
+            String pwResetAuthPattern = "/auth/password/reset/username";
+            String pwPattern = "/user/.+/(reset|change)_password";
+            String userSignupPattern = "/signup/user";
+            String listApplicationsPattern = "/applications";
+            String hasUASAccess = "/hasUASAccess";
+            String send_scheduled_email = "/send_scheduled_email";
+            String userCheck = "/users/find";
+            ;
+            String userPWEnabeled = "/user/.+/password_login_enabled";
+            String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userCheck, userPWEnabeled};
+            for (String pattern : patternsWithoutUserTokenId) {
+                if (Pattern.compile(pattern).matcher(path).matches()) {
+                    log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
+                    return null;
+                }
+            }
 
 
-        //paths WITH userTokenId verification
+            //paths WITH userTokenId verification
         /*
         /{applicationtokenid}/{userTokenId}/application     //ApplicationResource
         /{applicationtokenid}/{userTokenId}/applications    //ApplicationsResource
@@ -145,18 +154,6 @@ public class SecurityFilter implements Filter {
         /{applicationtokenid}/{usertokenid}/useraggregate   //UserAggregateResource
         /{applicationtokenid}/{usertokenid}/users           //UsersResource
          */
-        String usertokenId = findPathElement(pathInfo, 2).substring(1);
-        log.warn("CommandGetApplicationById({}, {}, {}, {})", tokenServiceUri, applicationTokenId, usertokenId, appId);
-        //String applicationJson = new CommandGetApplicationById(tokenServiceUri, applicationTokenId, usertokenId, appId).execute();
-        try {
-            String applicationJson = uibApplicationsConnection.findApplications(applicationTokenId, usertokenId, appId);
-            log.warn("SecurityFilter - got appication:" + applicationJson);
-            Application application = ApplicationMapper.fromJson(applicationJson);
-
-            // Does the calling application has UAS access
-            if (!application.getSecurity().isWhydahUASAccess()) {
-                return HttpServletResponse.SC_UNAUTHORIZED;
-            }
 
             Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
             if (!userTokenIsValid) {
@@ -188,6 +185,7 @@ public class SecurityFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
+
     @Override
     public void destroy() {
     }
