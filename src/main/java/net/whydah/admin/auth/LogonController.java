@@ -26,16 +26,6 @@ public class LogonController {
         this.uibAuthConnection = uibAuthConnection;
     }
 
-    @POST
-    @Deprecated // this should not be here or?
-    @Path("logon_deprecated")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response logon(@PathParam("applicationtokenid") String applicationTokenId, String usercredentialsXml) {
-        log.trace("logon is called with usercredentialsXml={}", usercredentialsXml);
-            return Response.ok("<xml><usertoken><params><name>admin</name></params></usertoken></xml>").build();
-        //FIXME real implementation to UIB.
-        }
 
     @POST
     @Path("/logon/user")

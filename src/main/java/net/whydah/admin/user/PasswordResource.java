@@ -20,8 +20,8 @@ import javax.ws.rs.core.Response;
  */
 @Component
 @Path("/{applicationtokenid}")
-public class PasswordResource2 {
-    private static final Logger log = LoggerFactory.getLogger(PasswordResource2.class);
+public class PasswordResource {
+    private static final Logger log = LoggerFactory.getLogger(PasswordResource.class);
     private final String uibUri;
 
     private final UsersService usersService;
@@ -30,7 +30,7 @@ public class PasswordResource2 {
 
     @Autowired
     @Configure
-    public PasswordResource2(@Configuration("useridentitybackend") String uibUri, UsersService usersService, UserService userService) {
+    public PasswordResource(@Configuration("useridentitybackend") String uibUri, UsersService usersService, UserService userService) {
         this.uibUri = uibUri;
         this.usersService = usersService;
         this.userService = userService;

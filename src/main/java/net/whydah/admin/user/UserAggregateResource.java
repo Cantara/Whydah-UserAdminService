@@ -2,9 +2,7 @@ package net.whydah.admin.user;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.whydah.admin.errorhandling.AppException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +22,8 @@ import javax.ws.rs.core.UriInfo;
  */
 @Component
 @Path("/{applicationtokenid}/{usertokenid}/useraggregate2")
-public class UserAggregateResource2 {
-    private static final Logger log = LoggerFactory.getLogger(UserAggregateResource2.class);
+public class UserAggregateResource {
+    private static final Logger log = LoggerFactory.getLogger(UserAggregateResource.class);
 
     private final UserService userAggregateService;
     private final ObjectMapper mapper;
@@ -35,7 +33,7 @@ public class UserAggregateResource2 {
     private UriInfo uriInfo;
 
     @Autowired
-    public UserAggregateResource2(UserService userAggregateService) {
+    public UserAggregateResource(UserService userAggregateService) {
         this.userAggregateService = userAggregateService;
         this.mapper = new ObjectMapper();
     }

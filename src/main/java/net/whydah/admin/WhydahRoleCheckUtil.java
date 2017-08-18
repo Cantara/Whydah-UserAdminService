@@ -4,7 +4,6 @@ import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.types.Application;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
-import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
 import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.mappers.UserTokenMapper;
@@ -48,41 +47,41 @@ public class WhydahRoleCheckUtil {
 	}
 
 	public boolean authorise(String applicationTokenId, String userTokenId){
-		log.info("authorising apptokenid {} and usertokenid {}", applicationTokenId, userTokenId);
+		log.info("authorising applicationTokenId {} and usertokenid {}", applicationTokenId, userTokenId);
 		if(isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
-				log.info("AppTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
+				log.info("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
 				return true;
 			} else {
 				if(isUASAccessGranted(applicationTokenId)){
 					if(hasUASAccessAdminRole(applicationTokenId, userTokenId)){
 						//2212, Whydah-UserAdminService, Whydah, WhydahUserAdmin, 1
-						log.info("AppTokenId {} having UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
+						log.info("ApplicationTokenId {} having UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
 						return true;
 					}
 				}
 			}
 		}
-		log.debug("AppTokenId {} failed to log in", applicationTokenId);
+		log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
 
 	public boolean authorise(String applicationTokenId){
-		log.info("authorising apptokenid {}", applicationTokenId);
+		log.info("authorising applicationTokenId {}", applicationTokenId);
 		if(isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
-				log.info("AppTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
+				log.info("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
 				return true;
 			} else {
 				if(isUASAccessGranted(applicationTokenId)){
-					log.info("AppTokenId {} having UASAccess=true logged in UAS successfully", applicationTokenId);
+					log.info("ApplicationTokenId {} having UASAccess=true logged in UAS successfully", applicationTokenId);
 					return true;
 				}
 			}
 		}
-		log.debug("AppTokenId {} failed to log in", applicationTokenId);
+		log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
 
@@ -163,7 +162,7 @@ public class WhydahRoleCheckUtil {
 		int statusCode = response.getStatus();
 		String userRolesJson = response.readEntity(String.class);
 		if(statusCode==200){
-			System.out.println("Roles returned:" + userRolesJson);
+			log.debug("Roles returned:" + userRolesJson);
 			List<UserApplicationRoleEntry> roles = UserRoleMapper.fromJsonAsList(userRolesJson);
 			UserApplicationRoleEntry adminRole = WhydahUtil.getWhydahUserAdminRole();
 			for (UserApplicationRoleEntry role : roles) {
@@ -181,6 +180,7 @@ public class WhydahRoleCheckUtil {
 					}
 				}
 			}
+			credentialStore.getWas().reportThreatSignal("Whydah Admin user is false for user trying to access Whydah Admin API");
 			log.info("Whydah Admin user is false for name={}, uid={}. Cannot log in", userToken.getUserName(), userToken.getUid());
 		} else {
 			log.error("Error when getting role list - status code from UIB: " + statusCode);

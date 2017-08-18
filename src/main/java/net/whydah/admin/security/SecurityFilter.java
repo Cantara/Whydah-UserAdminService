@@ -1,10 +1,8 @@
 package net.whydah.admin.security;
 
-import net.whydah.sso.application.types.Application;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.regex.Pattern;
@@ -92,9 +89,9 @@ public class SecurityFilter implements Filter {
         //strip applicationTokenId from pathInfo
         path = path.substring(path.indexOf("/"));
         /*
-        /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource2
-        /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource2
-        /{applicationTokenId}/user/{uid}/change_password    //PasswordResource2
+        /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
+        /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
+        /{applicationTokenId}/user/{uid}/change_password    //PasswordResource
         /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
         /{applicationTokenId}/signup/user                   //UserSignupEndpoint
         */

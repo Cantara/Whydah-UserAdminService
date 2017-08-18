@@ -109,19 +109,9 @@ public class ApplicationsResource {
 		return Response.ok(applications).build();
 
 	}
-	
-	@GET
-	@Path("xx_find/applications/{applicationName}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response findByName2(@PathParam("applicationtokenid") String applicationTokenId,
-			@PathParam("applicationName") String applicationName) throws AppException {
 
-		String applications = applicationsService.findApplication(applicationTokenId, "xxx", applicationName);
-		return Response.ok(applications).build();
 
-	}
-	
-	@GET
+    @GET
 	@Path("{userTokenId}/hasUASAccess")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId,

@@ -61,36 +61,7 @@ public class ApplicationsService {
         return applications;
     }
     
-    public String findApplication(String applicationTokenId, String applicationName) throws AppException {
-        String applications = null;
-        log.trace("findByName - listAll is called, query {}", applicationName);
-        if (adminChecker.authorise(applicationTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, "", applicationName);
-        } else {
-        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
-		}
-        if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
-        	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
-        }
-        log.trace("findByName {}", applications);
-        return applications;
-    }
 
-//    public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
-//        String applications = null;
-//        if (adminChecker.authorise(applicationTokenId, userTokenId)) {
-//            applications = uibApplicationsConnection.findApplications(applicationTokenId, query);
-//        } else {
-//        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
-//		}
-//        if (adminChecker.isInternalWhydahAdminApp(applicationTokenId)) {
-//            applications = ApplicationMapper.toJson(ApplicationMapper.fromJsonList(applications));
-//        } else {
-//            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
-//        }
-//        return applications;
-//    }
-    
    
 
 }
