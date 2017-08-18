@@ -103,6 +103,38 @@ public class SecurityFilter implements Filter {
         }
 
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
+
+        //paths without userTokenId
+        String path = pathInfo.substring(1); //strip leading /
+        //strip applicationTokenId from pathInfo
+        path = path.substring(path.indexOf("/"));
+            
+        /*
+        /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
+         /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
+        /{applicationTokenId}/user/{uid}/change_password    //PasswordResource
+        /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
+        /{applicationTokenId}/signup/user                   //UserSignupEndpoint
+        */
+        String applicationAuthPattern = "/application/auth";
+        String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
+        String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
+        String pwResetAuthPattern = "/auth/password/reset/username";
+        String pwPattern = "/user/.+/(reset|change)_password";
+        String userSignupPattern = "/signup/user";
+        String listApplicationsPattern = "/applications";
+        String hasUASAccess = "/hasUASAccess";
+        String send_scheduled_email = "/send_scheduled_email";
+        String userCheck = "/users/find";
+        ;
+        String userPWEnabeled = "/user/.+/password_login_enabled";
+        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userCheck, userPWEnabeled};
+        for (String pattern : patternsWithoutUserTokenId) {
+            if (Pattern.compile(pattern).matcher(path).matches()) {
+                log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
+                return null;
+            }
+        }
         try {
             String applicationJson = uibApplicationsConnection.findApplications(applicationTokenId, usertokenId, appId);
             log.warn("SecurityFilter - got application:" + applicationJson);
@@ -111,38 +143,6 @@ public class SecurityFilter implements Filter {
             // Does the calling application has UAS access
             if (!application.getSecurity().isWhydahUASAccess()) {
                 return HttpServletResponse.SC_UNAUTHORIZED;
-            }
-
-            //paths without userTokenId
-            String path = pathInfo.substring(1); //strip leading /
-            //strip applicationTokenId from pathInfo
-            path = path.substring(path.indexOf("/"));
-
-            /*
-            /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
-            /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
-            /{applicationTokenId}/user/{uid}/change_password    //PasswordResource
-            /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
-            /{applicationTokenId}/signup/user                   //UserSignupEndpoint
-            */
-            String applicationAuthPattern = "/application/auth";
-            String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
-            String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
-            String pwResetAuthPattern = "/auth/password/reset/username";
-            String pwPattern = "/user/.+/(reset|change)_password";
-            String userSignupPattern = "/signup/user";
-            String listApplicationsPattern = "/applications";
-            String hasUASAccess = "/hasUASAccess";
-            String send_scheduled_email = "/send_scheduled_email";
-            String userCheck = "/users/find";
-            ;
-            String userPWEnabeled = "/user/.+/password_login_enabled";
-            String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userCheck, userPWEnabeled};
-            for (String pattern : patternsWithoutUserTokenId) {
-                if (Pattern.compile(pattern).matcher(path).matches()) {
-                    log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
-                    return null;
-                }
             }
 
 
