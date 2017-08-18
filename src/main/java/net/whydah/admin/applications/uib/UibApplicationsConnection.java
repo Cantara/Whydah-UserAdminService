@@ -16,6 +16,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
@@ -34,6 +36,8 @@ public class UibApplicationsConnection {
     private final UASCredentials uasCredentials;
     private static String cachedApplicationsString = "";
     private static Instant cachedApplicationsStringInstant;
+    private static Map<String, String> cachedApplicationMap = new LinkedHashMap();
+    private static Instant cachedApplicationMapInstant;
 
     @Autowired
     @Configure
@@ -84,6 +88,14 @@ public class UibApplicationsConnection {
     }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
+        if (cachedApplicationMap.get(query) != null) {
+            if (Instant.now().isBefore(cachedApplicationMapInstant.plusSeconds(20))) {
+                log.info("Returning application from cache");
+                // 30 second cache to avoid too much UIB noise
+                return cachedApplicationMap.get(query);
+            }
+        }
+
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
@@ -113,6 +125,10 @@ public class UibApplicationsConnection {
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
                 throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
         }
+        cachedApplicationMapInstant = Instant.now();
+        cachedApplicationMap = new LinkedHashMap();
+        ;
+        cachedApplicationMap.put(query, output);
         return output;
     }
 
