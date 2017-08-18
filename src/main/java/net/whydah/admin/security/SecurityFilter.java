@@ -1,8 +1,16 @@
 package net.whydah.admin.security;
 
+import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
+import net.whydah.sso.application.mappers.ApplicationMapper;
+import net.whydah.sso.application.types.Application;
+import net.whydah.sso.commands.adminapi.application.CommandGetApplication;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
+import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
+import net.whydah.sso.user.helpers.UserXpathHelper;
+import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.util.WhydahUtil;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -30,23 +38,25 @@ public class SecurityFilter implements Filter {
     private final String stsUri;
     private String stsAppId;
     URI tokenServiceUri;
+    UASCredentials uasCredentials;
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId) {
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials) {
         this.stsUri = stsUri;
         this.stsAppId = stsAppId;
         if(this.stsAppId==null || this.stsAppId.equals("")){
         	this.stsAppId = "2211";
         }
         tokenServiceUri = URI.create(stsUri);
+        this.uasCredentials = uasCredentials;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
-        Integer statusCode = null; //FIXME BLI original code: authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
+        Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
         if (statusCode == null) {
             chain.doFilter(request, response);
         } else {
@@ -61,10 +71,11 @@ public class SecurityFilter implements Filter {
      * @return HttpServletResponse.SC_UNAUTHORIZED if authentication fails, otherwise null
      */
     Integer authenticateAndAuthorizeRequest(String pathInfo) {
-        log.debug("filter path {}", pathInfo);
+        log.info("filter path {}", pathInfo);
 
         //match /
         if (pathInfo == null || pathInfo.equals("/")) {
+            log.warn("SecurityFilter - path, returning unauthorized");
             return HttpServletResponse.SC_NOT_FOUND;
         }
 
@@ -73,14 +84,21 @@ public class SecurityFilter implements Filter {
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
         String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUri), applicationTokenId).execute();
         if(appId==null){
-        	return HttpServletResponse.SC_UNAUTHORIZED;
-        } else if(!appId.equals(stsAppId)){
-        	Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
+            log.warn("SecurityFilter - unable to lookup application from applicationtokenid, returning unauthorized");
+            return HttpServletResponse.SC_UNAUTHORIZED;
+
+            // Lets get UAS through
+        } else if (appId.equals(uasCredentials.getApplicationId())) {
+            log.info("SecurityFilter - found UAS access, OK");
+            return null;  // OK to call myself
+
+            // And sts gets special treatement too
+        } else if (appId.equals(stsAppId)) {
+            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
         	if (!applicationTokenIsValid) {
-        		return HttpServletResponse.SC_UNAUTHORIZED;
+                log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
+                return HttpServletResponse.SC_UNAUTHORIZED;
         	}
-        } else {
-        	return null; //do not check further if STS is requesting
         }
 
 
@@ -111,6 +129,7 @@ public class SecurityFilter implements Filter {
         }
 
 
+
         //paths WITH userTokenId verification
         /*
         /{applicationtokenid}/{userTokenId}/application     //ApplicationResource
@@ -120,12 +139,26 @@ public class SecurityFilter implements Filter {
         /{applicationtokenid}/{usertokenid}/users           //UsersResource
          */
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
+        String applicationJson = new CommandGetApplication(tokenServiceUri, applicationTokenId, usertokenId, appId).execute();
+        Application application = ApplicationMapper.fromJson(applicationJson);
+
+        // Does the calling application has UAS access
+        if (!application.getSecurity().isWhydahUASAccess()) {
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
 
         Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
         if (!userTokenIsValid) {
             return HttpServletResponse.SC_UNAUTHORIZED;
         }
-        return null;
+        UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
+        String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, applicationTokenId, ApplicationCredentialMapper.toXML(uasCredentials.getApplicationCredential()), usertokenId).execute();
+        if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
+            return null;
+        }
+
+        return HttpServletResponse.SC_UNAUTHORIZED;
+
     }
 
     private String findPathElement(String pathInfo, int elementNumber) {
