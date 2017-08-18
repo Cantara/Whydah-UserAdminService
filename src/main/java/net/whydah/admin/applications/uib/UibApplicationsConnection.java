@@ -45,7 +45,8 @@ public class UibApplicationsConnection {
 
     public String listAll(String applicationTokenId) throws AppException {
         if (cachedApplicationsStringInstant != null) {
-            if (Instant.now().isAfter(cachedApplicationsStringInstant.plusSeconds(30))) {
+            if (Instant.now().isBefore(cachedApplicationsStringInstant.plusSeconds(30))) {
+                log.info("Returning applications from cache");
                 // 30 second cache to avoid too much UIB noise
                 return cachedApplicationsString;
             }
