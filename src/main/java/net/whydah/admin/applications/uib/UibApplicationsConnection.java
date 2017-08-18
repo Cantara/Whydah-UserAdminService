@@ -1,10 +1,8 @@
 package net.whydah.admin.applications.uib;
 
-import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -12,12 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.Instant;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
@@ -34,6 +32,8 @@ public class UibApplicationsConnection {
     private  WebTarget uib;
     private final String userIdentityBackendUri;
     private final UASCredentials uasCredentials;
+    private static String cachedApplicationsString = "";
+    private static Instant cachedApplicationsStringInstant;
 
     @Autowired
     @Configure
@@ -44,6 +44,12 @@ public class UibApplicationsConnection {
 
 
     public String listAll(String userAdminServiceTokenId) throws AppException {
+        if (cachedApplicationsStringInstant != null) {
+            if (Instant.now().isAfter(cachedApplicationsStringInstant.plusSeconds(30))) {
+                // 30 second cache to avoid too much UIB noise
+                return cachedApplicationsString;
+            }
+        }
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
@@ -71,6 +77,8 @@ public class UibApplicationsConnection {
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
                 throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("listAll-Response from UIB: {}: {}", response.getStatus(), output);
         }
+        cachedApplicationsStringInstant = Instant.now();
+        cachedApplicationsString = output;
         return output;
     }
 
@@ -79,7 +87,7 @@ public class UibApplicationsConnection {
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
         uib = client.target(userIdentityBackendUri);
         //WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/applications/find/"+query);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path("applications");
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userAdminServiceTokenId).path("applications").path("find").path(query);
         //WebTarget webResource = uib.path("/applications/find/"+query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         // String output = response.readEntity(String.class);
