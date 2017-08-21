@@ -58,8 +58,8 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
-        Integer statusCode = null;  // todo: resetting filter as we do the check motstly in code as well  // authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
-        authenticateAndAuthorizeRequest(servletRequest.getPathInfo());  // lets run the filter to check it in the mean time
+        //Integer statusCode = null;  // todo: resetting filter as we do the check motstly in code as well  // authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
+        Integer statusCode = authenticateAndAuthorizeRequest(servletRequest.getPathInfo());  // lets run the filter to check it in the mean time
         if (statusCode == null) {
             chain.doFilter(request, response);
         } else {
