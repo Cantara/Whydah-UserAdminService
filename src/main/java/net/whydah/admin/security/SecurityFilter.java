@@ -59,6 +59,7 @@ public class SecurityFilter implements Filter {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
         Integer statusCode = null;  // todo: resetting filter as we do the check motstly in code as well  // authenticateAndAuthorizeRequest(servletRequest.getPathInfo());
+        authenticateAndAuthorizeRequest(servletRequest.getPathInfo());  // lets run the filter to check it in the mean time
         if (statusCode == null) {
             chain.doFilter(request, response);
         } else {
