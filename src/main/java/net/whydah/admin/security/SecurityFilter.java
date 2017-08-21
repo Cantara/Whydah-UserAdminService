@@ -1,5 +1,6 @@
 package net.whydah.admin.security;
 
+import net.whydah.admin.CredentialStore;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.mappers.ApplicationMapper;
@@ -40,10 +41,12 @@ public class SecurityFilter implements Filter {
     private URI tokenServiceUri;
     private UASCredentials uasCredentials;
     private UibApplicationsConnection uibApplicationsConnection;
+    private final CredentialStore credentialStore;
+
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationsConnection uibApplicationsConnection) {
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore) {
         this.stsUri = stsUri;
         this.stsAppId = stsAppId;
         if (this.stsAppId == null || this.stsAppId.equals("")) {
@@ -51,6 +54,7 @@ public class SecurityFilter implements Filter {
         }
         this.tokenServiceUri = URI.create(stsUri);
         this.uasCredentials = uasCredentials;
+        this.credentialStore = credentialStore;
         this.uibApplicationsConnection = uibApplicationsConnection;
     }
 
@@ -155,12 +159,12 @@ public class SecurityFilter implements Filter {
         /{applicationtokenid}/{usertokenid}/users           //UsersResource
          */
 
-            Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, applicationTokenId, usertokenId).execute();
+            Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
             if (!userTokenIsValid) {
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
             UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
-            String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, applicationTokenId, ApplicationCredentialMapper.toXML(uasCredentials.getApplicationCredential()), usertokenId).execute();
+            String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(uasCredentials.getApplicationCredential()), usertokenId).execute();
             if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
                 return null;
             }
