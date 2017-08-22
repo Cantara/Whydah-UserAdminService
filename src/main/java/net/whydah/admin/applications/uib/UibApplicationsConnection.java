@@ -66,6 +66,8 @@ public class UibApplicationsConnection {
         log.trace("listAll {}", output);
         switch (statusCode) {
             case STATUS_OK:
+                cachedApplicationsStringInstant = Instant.now();
+                cachedApplicationsString = output;
                 break;
             case NO_CONTENT:
                 break;
@@ -82,15 +84,13 @@ public class UibApplicationsConnection {
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
                 throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("listAll-Response from UIB: {}: {}", response.getStatus(), output);
         }
-        cachedApplicationsStringInstant = Instant.now();
-        cachedApplicationsString = output;
         return output;
     }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
         if (cachedApplicationMap.get(query) != null) {
             if (Instant.now().isBefore(cachedApplicationMapInstant.plusSeconds(20))) {
-                log.info("Returning application from cache");
+                log.info("Returning application(s) from cache");
                 // 30 second cache to avoid too much UIB noise
                 return cachedApplicationMap.get(query);
             }
@@ -109,6 +109,9 @@ public class UibApplicationsConnection {
         log.info("findApplications {}", output);
         switch (statusCode) {
             case STATUS_OK:
+                cachedApplicationMapInstant = Instant.now();
+                cachedApplicationMap = new LinkedHashMap();
+                cachedApplicationMap.put(query, output);
                 break;
             case NO_CONTENT:
                 break;
@@ -125,10 +128,6 @@ public class UibApplicationsConnection {
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
                 throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("findApplications-Response from UIB: {}: {}", response.getStatus(), output);
         }
-        cachedApplicationMapInstant = Instant.now();
-        cachedApplicationMap = new LinkedHashMap();
-        ;
-        cachedApplicationMap.put(query, output);
         return output;
     }
 
