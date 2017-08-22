@@ -81,6 +81,10 @@ public class SecurityFilter implements Filter {
             return HttpServletResponse.SC_NOT_FOUND;
         }
 
+        // OK, we do not try to resolve stuff if we do not have a whydah session
+        if (credentialStore.getWas() == null || credentialStore.getWas().checkActiveSession() == false) {
+            return HttpServletResponse.SC_SERVICE_UNAVAILABLE;
+        }
 
         String callerApplicationTokenId = findPathElement(pathInfo, 1).substring(1);
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
