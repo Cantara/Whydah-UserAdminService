@@ -86,9 +86,9 @@ public class SecurityFilter implements Filter {
         }
 
 
-        String applicationTokenId = findPathElement(pathInfo, 1).substring(1);
+        String callerApplicationTokenId = findPathElement(pathInfo, 1).substring(1);
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
-        String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUri), applicationTokenId).execute();
+        String appId = new CommandGetApplicationIdFromApplicationTokenId(tokenServiceUri, callerApplicationTokenId).execute();
         if (appId == null) {
             log.warn("SecurityFilter - unable to lookup application from applicationtokenid, returning unauthorized");
             return HttpServletResponse.SC_UNAUTHORIZED;
@@ -100,7 +100,7 @@ public class SecurityFilter implements Filter {
 
             // And sts gets special treatement too
         } else if (appId.equals(stsAppId)) {
-            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, applicationTokenId).execute();
+            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, callerApplicationTokenId).execute();
             if (!applicationTokenIsValid) {
                 log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
                 return HttpServletResponse.SC_UNAUTHORIZED;
@@ -140,7 +140,7 @@ public class SecurityFilter implements Filter {
             }
         }
         try {
-            String applicationJson = uibApplicationsConnection.findApplications(applicationTokenId, usertokenId, appId);
+            String applicationJson = uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
             log.warn("SecurityFilter - got application:" + applicationJson);
             Application application = ApplicationMapper.fromJson(applicationJson);
 
