@@ -36,10 +36,8 @@ import java.util.regex.Pattern;
 public class SecurityFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
 
-    private final String stsUri;
     private String stsAppId;
     private URI tokenServiceUri;
-    private UASCredentials uasCredentials;
     private UibApplicationsConnection uibApplicationsConnection;
     private final CredentialStore credentialStore;
 
@@ -47,13 +45,11 @@ public class SecurityFilter implements Filter {
     @Autowired
     @Configure
     public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore) {
-        this.stsUri = stsUri;
         this.stsAppId = stsAppId;
         if (this.stsAppId == null || this.stsAppId.equals("")) {
             this.stsAppId = "2211";
         }
         this.tokenServiceUri = URI.create(stsUri);
-        this.uasCredentials = uasCredentials;
         this.credentialStore = credentialStore;
         this.uibApplicationsConnection = uibApplicationsConnection;
     }
@@ -94,13 +90,13 @@ public class SecurityFilter implements Filter {
             return HttpServletResponse.SC_UNAUTHORIZED;
 
             // Lets get UAS through
-        } else if (appId.equals(uasCredentials.getApplicationId())) {
+        } else if (appId.equals(credentialStore.getWas().getMyApplicationCredential().getApplicationID())) {
             log.info("SecurityFilter - found UAS access, OK");
             return null;  // OK to call myself
 
             // And sts gets special treatement too
         } else if (appId.equals(stsAppId)) {
-            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUri, callerApplicationTokenId).execute();
+            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(tokenServiceUri, callerApplicationTokenId).execute();
             if (!applicationTokenIsValid) {
                 log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
                 return HttpServletResponse.SC_UNAUTHORIZED;
@@ -164,7 +160,7 @@ public class SecurityFilter implements Filter {
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
             UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
-            String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(uasCredentials.getApplicationCredential()), usertokenId).execute();
+            String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
             if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
                 return null;
             }
