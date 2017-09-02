@@ -14,16 +14,19 @@ import org.springframework.stereotype.Repository;
 public class CredentialStore {
     private static WhydahApplicationSession was = null;
     private final String stsUri;
+    private final String uasUri;
     private final ApplicationCredential uasApplicationCredential;
 
 
     @Autowired
     @Configure
     public CredentialStore(@Configuration("securitytokenservice") String stsUri,
+                           @Configuration("myuri") String uasUri,
                            @Configuration("applicationid") String applicationid,
                            @Configuration("applicationname") String applicationname,
                            @Configuration("applicationsecret") String applicationsecret) {
         this.stsUri = stsUri;
+        this.uasUri = uasUri;
         this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationname, applicationsecret);
         
     }
@@ -31,7 +34,7 @@ public class CredentialStore {
 
     public String getUserAdminServiceTokenId() {
         if (was == null) {
-            was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
+            was = WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential);
         }
         return was.getActiveApplicationTokenId();
 
@@ -40,7 +43,7 @@ public class CredentialStore {
 
     public WhydahApplicationSession getWas() {
         if (was == null) {
-            was = WhydahApplicationSession.getInstance(stsUri, uasApplicationCredential.getApplicationID(), uasApplicationCredential.getApplicationName(), uasApplicationCredential.getApplicationSecret());
+            was = WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential);
         }
         return was;
     }
