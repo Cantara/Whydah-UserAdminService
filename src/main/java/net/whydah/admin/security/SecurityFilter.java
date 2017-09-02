@@ -81,6 +81,12 @@ public class SecurityFilter implements Filter {
             return HttpServletResponse.SC_NOT_FOUND;
         }
 
+        //match /health
+        if (pathInfo.equals("/health")) {
+            log.debug("SecurityFilter - health path, returning authorized");
+            return null;  // OK
+        }
+
         // OK, we do not try to resolve stuff if we do not have a whydah session
         if (credentialStore.getWas() == null || credentialStore.getWas().checkActiveSession() == false) {
             return HttpServletResponse.SC_SERVICE_UNAVAILABLE;
