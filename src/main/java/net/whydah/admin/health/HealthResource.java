@@ -57,7 +57,7 @@ public class HealthResource {
                 "  \"UAS\": \"" + credentialStore.getWas().getUAS() + "\",\n" +
                 "  \"hasApplicationToken\": \"" + Boolean.toString((credentialStore.getWas().getActiveApplicationTokenId() != null)) + "\"\n" +
                 "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\"\n" +
-                "  \"hasApplicationsMetadata\": \"" + Boolean.toString(credentialStore.getWas().getApplicationList().size() > 2) + "\"\n" +
+                "  \"hasApplicationsMetadata\": \"" + Boolean.toString(credentialStore.getWas().hasApplicationMetaData()) + "\"\n" +
 
                 "  \"now\": \"" + Instant.now() + "\",\n" +
                 "  \"running since\": \"" + WhydahUtil.getRunningSince() + "\"\n\n" +
