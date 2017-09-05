@@ -24,7 +24,7 @@
         <service.name>Whydah-UserAdminService</service.name>
         <whydah.admin.sdk.version>2.3.0-rc-11</whydah.admin.sdk.version>
         <jersey.version>2.26-b03</jersey.version>
-        <jetty.version>9.3.0.v20150612</jetty.version>
+        <jetty.version>9.4.7.RC0</jetty.version>
         <spring.version>4.3.10.RELEASE</spring.version>
         <slf4j.version>1.7.21</slf4j.version>
     </properties>
@@ -115,12 +115,12 @@
         <dependency>
             <groupId>org.glassfish.hk2</groupId>
             <artifactId>hk2-api</artifactId>
-            <version>2.4.0</version>
+            <version>2.5.0-b45</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.hk2</groupId>
             <artifactId>hk2-locator</artifactId>
-            <version>2.4.0</version>
+            <version>2.5.0-b45</version>
         </dependency>
 
 
