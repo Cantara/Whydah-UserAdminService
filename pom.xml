@@ -172,16 +172,6 @@
             <version>${spring.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.constretto</groupId>
-            <artifactId>constretto-core</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.constretto</groupId>
-            <artifactId>constretto-spring</artifactId>
-            <version>2.2.2</version>
-        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -204,11 +194,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.5.3</version>
-        </dependency>
         <!-- deprecated! -->
         <dependency>
             <groupId>org.json</groupId>
@@ -245,7 +230,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <version>1.2.3</version>
         </dependency>
         <!-- javax.mail and javax.activation is used by logback SmtpAppender -->
         <dependency>
