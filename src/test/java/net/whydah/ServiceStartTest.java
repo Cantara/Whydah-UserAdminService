@@ -50,6 +50,7 @@ public class ServiceStartTest {
             }
         } catch (Exception ioe) {
             ioe.printStackTrace();
+            fail("Error in initiating server");
             assertTrue("Unable to connect to server", true);
         }
     }
