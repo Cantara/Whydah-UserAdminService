@@ -1,7 +1,9 @@
 UserAdminService
 ====================
 
-![Build Status](http://jenkins.capraconsulting.no/buildStatus/icon?job=Whydah-UserAdminService)
+![Build Status](https://jenkins.capraconsulting.no/buildStatus/icon?job=Whydah-UserAdminService) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)  
+
+[![Known Vulnerabilities](https://snyk.io/test/github/Cantara/Whydah-UserAdminService/badge.svg)](https://snyk.io/test/github/Cantara/Whydah-UserAdminService)
 
 The component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
 
