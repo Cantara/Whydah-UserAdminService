@@ -27,7 +27,12 @@ public class MainWithJetty {
 
     private Server server;
     private String resourceBase;
-    private final int jettyPort;
+    private static int jettyPort;
+
+    public static String getHEALTHURL() {
+        return "http://localhost:" + jettyPort + CONTEXT_PATH + "/health";
+    }
+
 
     public static void main(String[] arguments) throws Exception {
         // http://stackoverflow.com/questions/9117030/jul-to-slf4j-bridge
