@@ -12,6 +12,7 @@ import java.net.URLConnection;
 import java.util.Random;
 import java.util.Scanner;
 
+import static org.testng.Assert.fail;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class ServiceStartTest {
