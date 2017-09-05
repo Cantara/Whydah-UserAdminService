@@ -3,7 +3,6 @@ package net.whydah.admin.applications;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,14 +50,17 @@ public class StubbedApplicationsRepository {
 
     public String readFile(String fileName) {
         String content = "";
-        try  {
-            content = IOUtils.toString(new ClassPathResource(fileName).getInputStream());
-        } catch (IOException x) {
-            log.info("Failed to read file: " + fileName);
-        }
+            InputStream is = StubbedApplicationsRepository.class.getClassLoader().getResourceAsStream(fileName);
+
+            content = convertStreamToString(is);
         return content;
     }
 
+    String convertStreamToString(java.io.InputStream is) {
+        if (is==null) return "";
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
     public String findAll() {
         return applicationListJson;
     }
