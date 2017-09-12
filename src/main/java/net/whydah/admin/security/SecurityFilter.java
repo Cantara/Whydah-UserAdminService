@@ -1,9 +1,8 @@
 package net.whydah.admin.security;
 
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.applications.uib.UibApplicationsConnection;
+import net.whydah.admin.application.uib.UibApplicationConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
-import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.application.types.Application;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -39,20 +37,20 @@ public class SecurityFilter implements Filter {
 
     private String stsAppId;
     private URI tokenServiceUri;
-    private UibApplicationsConnection uibApplicationsConnection;
+    private UibApplicationConnection uibApplicationConnection;
     private final CredentialStore credentialStore;
 
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationsConnection uibApplicationsConnection, CredentialStore credentialStore) {
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationConnection uibApplicationConnection, CredentialStore credentialStore) {
         this.stsAppId = stsAppId;
         if (this.stsAppId == null || this.stsAppId.equals("")) {
             this.stsAppId = "2211";
         }
         this.tokenServiceUri = URI.create(stsUri);
         this.credentialStore = credentialStore;
-        this.uibApplicationsConnection = uibApplicationsConnection;
+        this.uibApplicationConnection = uibApplicationConnection;
     }
 
     @Override
@@ -147,16 +145,10 @@ public class SecurityFilter implements Filter {
             }
         }
         try {
-            String applicationJson = uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
-            log.warn("SecurityFilter - got applications:" + applicationJson);
-            List<Application> applicationList = ApplicationMapper.fromJsonList(applicationJson);
+            Application callingApplication = uibApplicationConnection.getApplication2(callerApplicationTokenId, usertokenId, appId);
+            //uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
 
-            Application callingApplication = null;
-            for (Application application : applicationList) {
-                if (application.getId().equalsIgnoreCase(appId)) {
-                    callingApplication = application;
-                }
-            }
+            log.warn("SecurityFilter - got application:" + callingApplication);
             // Does the calling application has UAS access
             if (callingApplication == null || !callingApplication.getSecurity().isWhydahUASAccess()) {
                 return HttpServletResponse.SC_UNAUTHORIZED;

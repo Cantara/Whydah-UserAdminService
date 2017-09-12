@@ -1,15 +1,11 @@
 package net.whydah.admin.users;
 
-import java.util.List;
-
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.users.uib.UibUsersConnection;
-import net.whydah.sso.user.mappers.UserAggregateMapper;
-import net.whydah.sso.user.types.UserAggregate;
-
+import net.whydah.sso.util.LoggerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +58,7 @@ public class UsersService {
 			String output = response.readEntity(String.class);
 			switch (statusCode) {
 			case STATUS_OK:
-				log.trace("Response from UIB {}", output);
+				log.trace("Response from UIB {}", LoggerUtil.first50(output));
 				usersJson = output;
 				break;
 			case STATUS_BAD_REQUEST:
