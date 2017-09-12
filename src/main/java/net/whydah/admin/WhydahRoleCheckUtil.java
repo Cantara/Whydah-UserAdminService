@@ -47,41 +47,51 @@ public class WhydahRoleCheckUtil {
 	}
 
 	public boolean authorise(String applicationTokenId, String userTokenId){
-		log.info("authorising applicationTokenId {} and usertokenid {}", applicationTokenId, userTokenId);
-		if(isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
+        log.trace("authorising applicationTokenId {} and usertokenid {}", applicationTokenId, userTokenId);
+        if(isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
-				log.info("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
-				return true;
+                log.debug("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
+                return true;
 			} else {
 				if(isUASAccessGranted(applicationTokenId)){
 					if(hasUASAccessAdminRole(applicationTokenId, userTokenId)){
 						//2212, Whydah-UserAdminService, Whydah, WhydahUserAdmin, 1
-						log.info("ApplicationTokenId {} having UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
-						return true;
+                        log.debug("ApplicationTokenId {} having UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
+                        return true;
 					}
 				}
 			}
 		}
-		log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
+        try {
+            credentialStore.getWas().reportThreatSignal("Application authentication failure for ApplicationTokenId:" + applicationTokenId + " userTokenId:" + userTokenId);
+        } catch (Exception e) {
+            // Ignore
+        }
+        log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
 
 	public boolean authorise(String applicationTokenId){
-		log.info("authorising applicationTokenId {}", applicationTokenId);
-		if(isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
+        log.trace("authorising applicationTokenId {}", applicationTokenId);
+        if(isValidSession(applicationTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
-				log.info("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
-				return true;
+                log.debug("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
+                return true;
 			} else {
 				if(isUASAccessGranted(applicationTokenId)){
-					log.info("ApplicationTokenId {} having UASAccess=true logged in UAS successfully", applicationTokenId);
-					return true;
+                    log.debug("ApplicationTokenId {} having UASAccess=true logged in UAS successfully", applicationTokenId);
+                    return true;
 				}
 			}
 		}
-		log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
+        try {
+            credentialStore.getWas().reportThreatSignal("Application authentication failure for ApplicationTokenId:" + applicationTokenId);
+        } catch (Exception e) {
+            // Ignore
+        }
+        log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
 
