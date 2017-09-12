@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -147,11 +148,17 @@ public class SecurityFilter implements Filter {
         }
         try {
             String applicationJson = uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
-            log.warn("SecurityFilter - got application:" + applicationJson);
-            Application application = ApplicationMapper.fromJson(applicationJson);
+            log.warn("SecurityFilter - got applications:" + applicationJson);
+            List<Application> applicationList = ApplicationMapper.fromJsonList(applicationJson);
 
+            Application callingApplication = null;
+            for (Application application : applicationList) {
+                if (application.getId().equalsIgnoreCase(appId)) {
+                    callingApplication = application;
+                }
+            }
             // Does the calling application has UAS access
-            if (!application.getSecurity().isWhydahUASAccess()) {
+            if (callingApplication == null || !callingApplication.getSecurity().isWhydahUASAccess()) {
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
 
