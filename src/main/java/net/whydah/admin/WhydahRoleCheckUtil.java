@@ -64,7 +64,7 @@ public class WhydahRoleCheckUtil {
 			}
 		}
         try {
-            credentialStore.getWas().reportThreatSignal("Application authentication failure for ApplicationTokenId:" + applicationTokenId + " userTokenId:" + userTokenId);
+            credentialStore.getWas().reportThreatSignal("Application authentication failure", new Object[]{ConstantValue.APP_TOKEN_ID, applicationTokenId, ConstantValue.USER_TOKEN_ID, userTokenId});
         } catch (Exception e) {
             // Ignore
         }
@@ -87,7 +87,7 @@ public class WhydahRoleCheckUtil {
 			}
 		}
         try {
-            credentialStore.getWas().reportThreatSignal("Application authentication failure for ApplicationTokenId:" + applicationTokenId);
+        	credentialStore.getWas().reportThreatSignal("Application authentication failure", new Object[]{ConstantValue.APP_TOKEN_ID, applicationTokenId});
         } catch (Exception e) {
             // Ignore
         }

@@ -35,7 +35,8 @@ public class CredentialStore {
     public String getUserAdminServiceTokenId() {
         if (was == null) {
             was = WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential);
-            was.updateApplinks(true);
+            was.setDisableUpdateAppLink(true);
+            
         }
         return was.getActiveApplicationTokenId();
 
@@ -45,7 +46,7 @@ public class CredentialStore {
     public WhydahApplicationSession getWas() {
         if (was == null) {
             was = WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential);
-            was.updateApplinks(true);
+            was.setDisableUpdateAppLink(true);
         }
         return was;
     }
