@@ -135,6 +135,12 @@ public class WhydahRoleCheckUtil {
 			appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
 			appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
 		}
+
+        // If I'm calling myself, that is fine
+        if (appId.equals(credentialStore.getMyApplicationID())) {
+            return true;
+        }
+
 		//get application data
 		Application app = appStore.getApplication(appId);
 		if(app!=null && app.getSecurity()!=null){
