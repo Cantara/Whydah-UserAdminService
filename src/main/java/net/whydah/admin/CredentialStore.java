@@ -31,6 +31,9 @@ public class CredentialStore {
         
     }
 
+    public String getMyApplicationID() {
+        return uasApplicationCredential.getApplicationID();
+    }
 
     public String getUserAdminServiceTokenId() {
         if (was == null) {

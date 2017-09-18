@@ -99,7 +99,7 @@ public class SecurityFilter implements Filter {
             return HttpServletResponse.SC_UNAUTHORIZED;
 
             // Lets get UAS through
-        } else if (appId.equals(credentialStore.getWas().getMyApplicationCredential().getApplicationID())) {
+        } else if (appId.equals(credentialStore.getMyApplicationID())) {
             log.info("SecurityFilter - found UAS access, OK");
             return null;  // OK to call myself
 
