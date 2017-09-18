@@ -1,18 +1,20 @@
 package net.whydah.admin.auth.uib;
 
 import net.whydah.admin.AuthenticationFailedException;
+import net.whydah.admin.auth.UserLogonObservedActivity;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.util.SSLTool;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.valuereporter.agent.MonitorReporter;
+import org.valuereporter.agent.activity.ObservedActivity;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -79,13 +81,10 @@ public class UibAuthConnection {
                         logonUserResource.getUri(), userCredentialsXml, response.getStatus(), response.readEntity(String.class));
                 throw new RuntimeException("LogonUser failed. Status code " + response.getStatus());
         }
-        //Event UserLogon
-        //TODO Will change to concrete method for reporting event later.
-        String userid = "TODO";
-        userid = UserXpathHelper.getUserIdFromUserIdentityXml(userXml);
-  //      ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
-  //      MonitorReporter.reportActivity(observedActivity);
-  //      log.trace("Adding activity to cache {}", observedActivity);
+        String userid = UserXpathHelper.getUserIdFromUserIdentityXml(userXml);
+        ObservedActivity observedActivity = new UserLogonObservedActivity(userid);
+        MonitorReporter.reportActivity(observedActivity);
+        log.trace("Adding activity to cache {}", observedActivity);
         return userXml;
     }
 
