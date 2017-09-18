@@ -4,8 +4,10 @@ import net.whydah.sso.util.SSLTool;
 import org.constretto.ConstrettoBuilder;
 import org.constretto.ConstrettoConfiguration;
 import org.constretto.model.Resource;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,10 @@ public class MainWithJetty {
     private Server server;
     private String resourceBase;
     private static int jettyPort;
+    int maxThreads = 100;
+    int minThreads = 10;
+    int idleTimeout = 120;
+
 
     public static String getHEALTHURL() {
         return "http://localhost:" + jettyPort + CONTEXT_PATH + "/health";
@@ -76,7 +82,14 @@ public class MainWithJetty {
      */
     public MainWithJetty(int jettyPort) {
         this.jettyPort = jettyPort;
-        server = new Server(jettyPort);
+        QueuedThreadPool threadPool = new QueuedThreadPool(maxThreads, minThreads, idleTimeout);
+
+        server = new Server(threadPool);
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(jettyPort);
+        server.setConnectors(new Connector[]{connector});
+
+//        server = new Server(jettyPort);
 
         URL url = ClassLoader.getSystemResource("webapp/WEB-INF/web.xml");
         resourceBase = url.toExternalForm().replace("/WEB-INF/web.xml", "");
