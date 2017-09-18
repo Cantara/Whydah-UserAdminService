@@ -1,12 +1,9 @@
 package net.whydah.admin.application;
 
 import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.types.ApplicationCredential;
-import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.internal.commands.uib.adminapi.application.CommandAuthenticateApplicationUAS;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -102,8 +99,10 @@ public class ApplicationAuthenticationEndpoint {
 
     private Response copyResponse(Response responseFromUib) {
         Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
+        log.info("Status from UIB:" + responseFromUib.getStatusInfo());
         if (responseFromUib.hasEntity()) {
             rb.entity(responseFromUib.getEntity());
+            log.info("Entity from UIB:" + responseFromUib.getEntity());
         }
         return rb.build();
     }
