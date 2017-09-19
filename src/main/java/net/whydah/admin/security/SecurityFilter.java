@@ -88,6 +88,9 @@ public class SecurityFilter implements Filter {
 
         // OK, we do not try to resolve stuff if we do not have a whydah session
         if (credentialStore.getWas() == null || credentialStore.getWas().checkActiveSession() == false) {
+            if (credentialStore.getWas() != null) {
+                credentialStore.getWas().renewWhydahApplicationSession();
+            }
             return HttpServletResponse.SC_SERVICE_UNAVAILABLE;
         }
 
