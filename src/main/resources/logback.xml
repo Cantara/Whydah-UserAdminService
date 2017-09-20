@@ -26,6 +26,7 @@
 
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="org.glassfish.jersey" level="WARN"/>
+    <logger name="com.hazelcast" level="INFO"/>
     <logger name="net.whydah.sso.application.helpers" level="INFO" />
     <logger name="net.whydah" level="INFO"/>
     <logger name="net.whydah.admin" level="DEBUG"/>
