@@ -59,7 +59,7 @@ public class ApplicationService {
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
 			Response responseFromUib = uibApplicationConnection.getApplication(applicationTokenId, userTokenId, applicationId);
             log.debug("responseFromUib.status:{}", responseFromUib.getStatus());
-            log.debug("responseFromUib.entity:{}", responseFromUib.getEntity());
+            log.debug("responseFromUib.entity:{}", responseFromUib.readEntity(String.class));
             if (responseFromUib.getStatus() == 200) {
 
 				String jsonResult = responseFromUib.readEntity(String.class);
