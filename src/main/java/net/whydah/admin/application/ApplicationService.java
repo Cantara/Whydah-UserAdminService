@@ -56,30 +56,34 @@ public class ApplicationService {
 
 	public Response getApplication(String applicationTokenId, String userTokenId, String applicationId) throws AppException {
         log.debug("getApplication is called with applicationId={}", applicationId);
-        if (adminChecker.authorise(applicationTokenId, userTokenId)) {
-			Response responseFromUib = uibApplicationConnection.getApplication(applicationTokenId, userTokenId, applicationId);
-            log.debug("responseFromUib.status:{}", responseFromUib.getStatus());
-            log.debug("responseFromUib.entity:{}", responseFromUib.readEntity(String.class));
-            if (responseFromUib.getStatus() == 200) {
+        try {
+            if (adminChecker.authorise(applicationTokenId, userTokenId)) {
+                Response responseFromUib = uibApplicationConnection.getApplication(applicationTokenId, userTokenId, applicationId);
+                log.debug("responseFromUib.status:{}", responseFromUib.getStatus());
+                log.debug("responseFromUib.entity:{}", responseFromUib.readEntity(String.class));
+                if (responseFromUib.getStatus() == 200) {
 
-				String jsonResult = responseFromUib.readEntity(String.class);
-                log.debug("Received jsonResult {}", jsonResult);
-                return Response.ok(jsonResult).build();
+                    String jsonResult = responseFromUib.readEntity(String.class);
+                    log.debug("Received jsonResult {}", jsonResult);
+                    return Response.ok(jsonResult).build();
 
-			} else {
-                log.debug("Received unexpected statusCode form UIB:{}", responseFromUib.getStatus());
-                if (responseFromUib.getStatus() == 404) {
-					//application not found
-					throw AppExceptionCode.APP_NOTFOUND_8002;
-				} else {
-					//server error
-					throw new WebApplicationException("Unexpected error from UIB", 500);
-				}
-			}
-		} else {
-            log.debug("adminChecker.authorise(applicationTokenId, userTokenId): false");
-            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
-		}
+                } else {
+                    log.debug("Received unexpected statusCode form UIB:{}", responseFromUib.getStatus());
+                    if (responseFromUib.getStatus() == 404) {
+                        //application not found
+                        throw AppExceptionCode.APP_NOTFOUND_8002;
+                    } else {
+                        //server error
+                        throw new WebApplicationException("Unexpected error from UIB", 500);
+                    }
+                }
+            } else {
+                log.debug("adminChecker.authorise(applicationTokenId, userTokenId): false");
+                throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+            }
+        } catch (Exception e) {
+            log.error("unable to handle response from UIB: [}", e);
+        }
 
 	}
 
