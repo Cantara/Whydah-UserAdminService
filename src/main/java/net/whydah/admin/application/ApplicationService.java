@@ -55,17 +55,18 @@ public class ApplicationService {
 	}
 
 	public Response getApplication(String applicationTokenId, String userTokenId, String applicationId) throws AppException {
-		log.trace("getApplication is called with applicationId={}", applicationId);
-		if (adminChecker.authorise(applicationTokenId, userTokenId)) {
+        log.debug("getApplication is called with applicationId={}", applicationId);
+        if (adminChecker.authorise(applicationTokenId, userTokenId)) {
 			Response responseFromUib = uibApplicationConnection.getApplication(applicationTokenId, userTokenId, applicationId);
 			if (responseFromUib.getStatus() == 200) {
 
 				String jsonResult = responseFromUib.readEntity(String.class);
-				log.trace("Received jsonResult {}", jsonResult);
-				return Response.ok(jsonResult).build();
+                log.debug("Received jsonResult {}", jsonResult);
+                return Response.ok(jsonResult).build();
 
 			} else {
-				if (responseFromUib.getStatus() == 404) {
+                log.debug("Received unexpected statusCode form UIB:{}", responseFromUib.getStatus());
+                if (responseFromUib.getStatus() == 404) {
 					//application not found
 					throw AppExceptionCode.APP_NOTFOUND_8002;
 				} else {
