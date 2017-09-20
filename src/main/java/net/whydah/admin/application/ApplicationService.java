@@ -83,6 +83,7 @@ public class ApplicationService {
             }
         } catch (Exception e) {
             log.error("unable to handle response from UIB: [}", e);
+            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
 
 	}
