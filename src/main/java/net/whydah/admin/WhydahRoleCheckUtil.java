@@ -68,8 +68,8 @@ public class WhydahRoleCheckUtil {
         } catch (Exception e) {
             // Ignore
         }
-        log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
-		return false;
+        log.warn("ApplicationTokenId {} and userTokenId{} failed admin authorization", applicationTokenId, userTokenId);
+        return false;
 	}
 
 	public boolean authorise(String applicationTokenId){

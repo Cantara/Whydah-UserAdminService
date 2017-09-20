@@ -75,7 +75,8 @@ public class ApplicationService {
 				}
 			}
 		} else {
-			throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+            log.debug("adminChecker.authorise(applicationTokenId, userTokenId): false");
+            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
 
 	}
