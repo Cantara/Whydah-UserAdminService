@@ -51,13 +51,13 @@ public class WhydahRoleCheckUtil {
         if(isValidSession(applicationTokenId, userTokenId)){ //this can be checked at security filter, no need to recheck here
 			if (isInternalWhydahAdminApp(applicationTokenId)) {
 				//trump all if not a third party app
-                log.debug("ApplicationTokenId {} having whydahadmin=true logged in UAS successfully", applicationTokenId);
+                log.debug("ApplicationTokenId:{} with UserTokenId:{] has whydahadmin=true logged in UAS successfully", applicationTokenId, userTokenId);
                 return true;
 			} else {
 				if(isUASAccessGranted(applicationTokenId)){
 					if(hasUASAccessAdminRole(applicationTokenId, userTokenId)){
 						//2212, Whydah-UserAdminService, Whydah, WhydahUserAdmin, 1
-                        log.debug("ApplicationTokenId {} having UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
+                        log.debug("ApplicationTokenId:{} with UserTokenId:{] has UASAccess=true and WhydahUserAdmin role logged in UAS successfully", applicationTokenId);
                         return true;
 					}
 				}
@@ -68,7 +68,7 @@ public class WhydahRoleCheckUtil {
         } catch (Exception e) {
             // Ignore
         }
-        log.warn("ApplicationTokenId {} and userTokenId{} failed admin authorization", applicationTokenId, userTokenId);
+        log.warn("ApplicationTokenId:{} and UserTokenId:{} failed WhydahUserAdmin authorization", applicationTokenId, userTokenId);
         return false;
 	}
 

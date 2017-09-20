@@ -58,7 +58,9 @@ public class ApplicationService {
         log.debug("getApplication is called with applicationId={}", applicationId);
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
 			Response responseFromUib = uibApplicationConnection.getApplication(applicationTokenId, userTokenId, applicationId);
-			if (responseFromUib.getStatus() == 200) {
+            log.debug("responseFromUib.status:{}", responseFromUib.getStatus());
+            log.debug("responseFromUib.entity:{}", responseFromUib.getEntity());
+            if (responseFromUib.getStatus() == 200) {
 
 				String jsonResult = responseFromUib.readEntity(String.class);
                 log.debug("Received jsonResult {}", jsonResult);
