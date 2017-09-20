@@ -28,9 +28,11 @@
     <logger name="org.glassfish.jersey" level="WARN"/>
     <logger name="net.whydah.sso.application.helpers" level="INFO" />
     <logger name="net.whydah" level="INFO"/>
+    <logger name="net.whydah.admin" level="DEBUG"/>
+
 
     <root>
-        <level value="INFO" />
+        <level value="DEBUG"/>
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>
