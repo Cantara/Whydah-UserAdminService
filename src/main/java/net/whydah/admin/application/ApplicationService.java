@@ -62,7 +62,6 @@ public class ApplicationService {
             if (adminChecker.authorise(applicationTokenId, userTokenId)) {
                 Response responseFromUib = uibApplicationConnection.getApplication(applicationTokenId, userTokenId, applicationId);
                 log.debug("responseFromUib.status:{}", responseFromUib.getStatus());
-                log.debug("responseFromUib.entity:{}", responseFromUib.readEntity(String.class));
                 if (responseFromUib.getStatus() == 200) {
 
                     String jsonResult = responseFromUib.readEntity(String.class);
@@ -84,7 +83,7 @@ public class ApplicationService {
                 throw AppExceptionCode.MISC_NotAuthorizedException_9992;
             }
         } catch (Exception e) {
-            log.error("unable to handle response from UIB: [}", e);
+            log.error("unable to handle response from UIB: {}", e);
             Application application = uibApplicationConnection.getApplication2(applicationTokenId, userTokenId, applicationId);
             String json = ApplicationMapper.toJson(application);
             log.debug("applicationJson {}", first50(json));
