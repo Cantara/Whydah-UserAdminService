@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import static net.whydah.sso.util.LoggerUtil.first50;
+
 /**
  * Created by HUY
  */
@@ -83,7 +85,12 @@ public class ApplicationService {
             }
         } catch (Exception e) {
             log.error("unable to handle response from UIB: [}", e);
-            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+            Application application = uibApplicationConnection.getApplication2(applicationTokenId, userTokenId, applicationId);
+            String json = ApplicationMapper.toJson(application);
+            log.debug("applicationJson {}", first50(json));
+            return Response.ok(json).build();
+
+//            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
         }
 
 	}
