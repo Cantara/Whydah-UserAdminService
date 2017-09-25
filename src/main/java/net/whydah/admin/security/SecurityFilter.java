@@ -134,7 +134,7 @@ public class SecurityFilter implements Filter {
         String applicationAuthPattern = "/application/auth";
         String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
         String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
-        String pwResetAuthPattern = "/auth/password/reset/username";
+        String pwResetAuthPattern = "/auth/password/reset/username/(.*?)";
         String pwPattern = "/user/.+/(reset|change)_password";
         String userSignupPattern = "/signup/user";
         String listApplicationsPattern = "/applications";
