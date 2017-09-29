@@ -48,6 +48,10 @@ public class UibApplicationsConnection {
 
 
     public String listAll(String applicationTokenId) throws AppException {
+        if (applicationTokenId == null) {
+            return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
+        }
+
         if (cachedApplicationsStringInstant != null) {
             if (Instant.now().isBefore(cachedApplicationsStringInstant.plusSeconds(30))) {
                 log.info("Returning applications from cache");
