@@ -88,6 +88,9 @@ public class UibApplicationsConnection {
     }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
+        if (applicationTokenId == null) {
+            return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
+        }
         if (cachedApplicationMap.get(query) != null) {
             if (Instant.now().isBefore(cachedApplicationMapInstant.plusSeconds(20))) {
                 log.info("Returning application(s) from cache");
