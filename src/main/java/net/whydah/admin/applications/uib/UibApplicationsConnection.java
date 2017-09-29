@@ -48,7 +48,7 @@ public class UibApplicationsConnection {
 
 
     public String listAll(String applicationTokenId) throws AppException {
-        if (applicationTokenId == null) {
+        if (applicationTokenId == null || applicationTokenId.length() < 4) {
             return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
         }
 
@@ -92,7 +92,7 @@ public class UibApplicationsConnection {
     }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
-        if (applicationTokenId == null) {
+        if (applicationTokenId == null || applicationTokenId.length() < 4) {
             return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
         }
         if (cachedApplicationMap.get(query) != null) {
@@ -117,7 +117,7 @@ public class UibApplicationsConnection {
         switch (statusCode) {
             case STATUS_OK:
                 cachedApplicationMapInstant = Instant.now();
-                cachedApplicationMap = new LinkedHashMap();
+                cachedApplicationMap = new LinkedHashMap();  // only old data, start caching again
                 cachedApplicationMap.put(query, output);
                 break;
             case NO_CONTENT:
