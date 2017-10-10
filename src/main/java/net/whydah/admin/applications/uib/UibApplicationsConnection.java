@@ -19,6 +19,8 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static net.whydah.sso.util.LoggerUtil.first50;
+
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
  */
@@ -54,9 +56,12 @@ public class UibApplicationsConnection {
 
         if (cachedApplicationsStringInstant != null) {
             if (Instant.now().isBefore(cachedApplicationsStringInstant.plusSeconds(30))) {
-                log.info("Returning applications from cache");
+                log.debug("Returning applications from cache");
                 // 30 second cache to avoid too much UIB noise
                 return cachedApplicationsString;
+            } else {
+                log.debug("Returning applications from UIB request");
+
             }
         }
         Client client = ClientBuilder.newClient();
@@ -64,10 +69,9 @@ public class UibApplicationsConnection {
         uib = client.target(userIdentityBackendUri);
         WebTarget webResource = uib.path(applicationTokenId).path("applications");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
-       // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
-        log.trace("listAll {}", output);
+        log.trace("listAll Applications: {}", first50(output));
         switch (statusCode) {
             case STATUS_OK:
                 cachedApplicationsStringInstant = Instant.now();
@@ -76,15 +80,15 @@ public class UibApplicationsConnection {
             case NO_CONTENT:
                 break;
             case STATUS_BAD_REQUEST:
-                log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
+                log.error("listAll-Response from UIB: {}: {}", response.getStatus(), first50(output));
                 //throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
                 throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
             case NOT_AUTHERIZED:
-                log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
+                log.error("listAll-Response from UIB: {}: {}", response.getStatus(), first50(output));
                 throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
                 //throw new BadRequestException("listAll failed. Bad request " + response.toString() + ",  Status code " + response.getStatus());
             default:
-                log.error("listAll-Response from UIB: {}: {}", response.getStatus(), output);
+                log.error("listAll-Response from UIB: {}: {}", response.getStatus(), first50(output));
                 //throw new AuthenticationFailedException("listAll failed. Status code " + response.getStatus());
                 throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("listAll-Response from UIB: {}: {}", response.getStatus(), output);
         }
@@ -113,7 +117,7 @@ public class UibApplicationsConnection {
         // String output = response.readEntity(String.class);
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
-        log.info("findApplications {}", output);
+        log.info("findApplications {}", first50(output));
         switch (statusCode) {
             case STATUS_OK:
                 cachedApplicationMapInstant = Instant.now();
