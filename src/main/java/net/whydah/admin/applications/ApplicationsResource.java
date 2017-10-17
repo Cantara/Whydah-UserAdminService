@@ -118,8 +118,8 @@ public class ApplicationsResource {
 			@PathParam("userTokenId") String userTokenId) throws AppException {
 		
 		boolean result = applicationsService.getAdminChecker().authorise(applicationTokenId, userTokenId);
-		log.trace("check access for apptokenid={}/usertokenid={} - result: {}", applicationTokenId, userTokenId, result);
-		return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
+        log.trace("check access for applicationTokenId={}/usertokenid={} - result: {}", applicationTokenId, userTokenId, result);
+        return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
 		
 
 	}
@@ -130,8 +130,8 @@ public class ApplicationsResource {
 	public Response hasUASAccess(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
 		
 		boolean result = applicationsService.getAdminChecker().authorise(applicationTokenId);
-		log.trace("check access for apptokenid={} result: {}", applicationTokenId, result);
-		return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
+        log.trace("check access for applicationTokenId={} result: {}", applicationTokenId, result);
+        return Response.ok("{\"result\":" + String.valueOf(result) + "}").build();
 		
 
 	}
