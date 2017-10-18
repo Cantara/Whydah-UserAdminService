@@ -142,5 +142,11 @@ public class UibApplicationsConnection {
         return output;
     }
 
+    public static void clearCache() {
+        cachedApplicationsStringInstant = null;
+        cachedApplicationMapInstant = null;
+
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package net.whydah.admin.application.uib;
 
+import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.application.mappers.ApplicationMapper;
@@ -40,7 +41,8 @@ public class UibApplicationConnection {
 		WebTarget uib = getUIBWebTarget();
 		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application");
 		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-		return copyResponse(responseFromUib);
+        UibApplicationsConnection.clearCache();
+        return copyResponse(responseFromUib);
 	}
 
 	public Response getApplication(String applicationTokenId, String userTokenId, String applicationId) throws AppException {
@@ -62,7 +64,8 @@ public class UibApplicationConnection {
 		WebTarget uib = getUIBWebTarget();
 		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application").path(applicationId);
 		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-		return copyResponse(responseFromUib);
+        UibApplicationsConnection.clearCache();
+        return copyResponse(responseFromUib);
 	}
 
 	public Response deleteApplication(String applicationTokenId, String userTokenId, String applicationId) {
@@ -70,7 +73,8 @@ public class UibApplicationConnection {
 		WebTarget uib = getUIBWebTarget();
 		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application").path(applicationId);
 		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
-		return copyResponse(responseFromUib);
+        UibApplicationsConnection.clearCache();
+        return copyResponse(responseFromUib);
 	}
 
 	private WebTarget getUIBWebTarget() {
