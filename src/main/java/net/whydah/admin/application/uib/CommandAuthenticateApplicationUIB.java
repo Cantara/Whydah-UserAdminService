@@ -1,7 +1,8 @@
-package net.whydah.admin.application;
+package net.whydah.admin.application.uib;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.internal.commands.uib.adminapi.application.CommandAuthenticateApplicationUAS;
 import org.slf4j.Logger;
@@ -33,7 +34,9 @@ public class CommandAuthenticateApplicationUIB extends HystrixCommand<Response> 
 
     public CommandAuthenticateApplicationUIB(String uibUri, String stsApplicationtokenId, String uasAppCredentialXml,
                                              String appCredentialXml) {
-        super(HystrixCommandGroupKey.Factory.asKey("UIBApplicationAdminGroup"));
+        super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("UASUserAdminGroup")).
+                andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(3000)));
+
         this.uibUri = uibUri;
         this.stsApplicationtokenId = stsApplicationtokenId;
         this.uasAppCredentialXml = uasAppCredentialXml;

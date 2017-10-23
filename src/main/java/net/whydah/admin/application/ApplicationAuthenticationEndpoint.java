@@ -1,5 +1,6 @@
 package net.whydah.admin.application;
 
+import net.whydah.admin.application.uib.CommandAuthenticateApplicationUIB;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.types.ApplicationCredential;
