@@ -1,7 +1,6 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.errorhandling.AppException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +53,8 @@ public class ApplicationsAdminResource {
                             @PathParam("applicationName") String applicationName) throws AppException {
     	log.trace("findByName(Admin) is called ");
 
-    	String application = applicationsService.findApplication(applicationTokenId,userTokenId, applicationName);
-    	return Response.ok(application).build();
+        String application = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
+        return Response.ok(application).build();
 
     }
 
@@ -77,7 +76,7 @@ public class ApplicationsAdminResource {
                                @PathParam("applicationName") String applicationName) throws AppException {
         log.trace("findByName(Admin) is called ");
 
-        String application = applicationsService.findApplication(applicationTokenId,userTokenId, applicationName);
+        String application = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
         return Response.ok(application).build();
 
     }
