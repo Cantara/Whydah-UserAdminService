@@ -64,11 +64,15 @@ public class UibApplicationsConnection {
 
             }
         }
-        Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
-        uib = client.target(userIdentityBackendUri);
-        WebTarget webResource = uib.path(applicationTokenId).path("applications");
-        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+//        Client client = ClientBuilder.newClient();
+//        log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
+//        uib = client.target(userIdentityBackendUri);
+//        WebTarget webResource = uib.path(applicationTokenId).path("applications");
+//        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+
+        Response response =
+                new CommandGetApplicationsFromUIB(uib.toString(), applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded()).execute();
+
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         log.trace("listAll Applications: {}", first50(output));

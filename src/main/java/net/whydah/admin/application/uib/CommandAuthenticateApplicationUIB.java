@@ -16,6 +16,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import static net.whydah.admin.ConstantValue.UAS_APP_CREDENTIAL_XML;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -24,9 +25,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 2015-11-21.
  */
 public class CommandAuthenticateApplicationUIB extends HystrixCommand<Response> {
-    public static final String UAS_APP_CREDENTIAL_XML = "uasAppCredentialXml";
-    private static final String APPLICATION_AUTH_PATH = "application/auth";
     private static final Logger log = getLogger(CommandAuthenticateApplicationUIB.class);
+    private static final String APPLICATION_AUTH_PATH = "application/auth";
+
     private String uibUri;
     private String stsApplicationtokenId;
     private String uasAppCredentialXml;

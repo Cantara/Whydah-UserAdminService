@@ -76,5 +76,7 @@ public class ConstantValue {
 	
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static final String HTML_LINE_SEPARATOR = "<br/>";
-	
+
+	public static final String UAS_APP_CREDENTIAL_XML = "uasAppCredentialXml";
+
 }
