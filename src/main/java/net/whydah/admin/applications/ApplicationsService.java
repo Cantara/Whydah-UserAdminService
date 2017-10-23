@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static net.whydah.sso.util.LoggerUtil.first50;
+
 /**
  * Created by baardl on 29.03.14.
  */
@@ -43,7 +45,7 @@ public class ApplicationsService {
             log.warn("adminChecked failed, returning 9992");
             throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
-        log.trace("listAll {}", applications);
+        log.trace("listAll {}", first50(applications));
         return applications;
     }
 
@@ -53,12 +55,13 @@ public class ApplicationsService {
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, applicationName);
         } else {
-        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+            log.warn("adminChecked failed, returning 9992");
+            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
         if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
         	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
-        log.trace("findByName {}", applications);
+        log.trace("findByName {}", first50(applications));
         return applications;
     }
     

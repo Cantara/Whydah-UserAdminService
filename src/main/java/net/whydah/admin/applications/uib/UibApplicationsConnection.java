@@ -48,6 +48,7 @@ public class UibApplicationsConnection {
 
     public String listAll(String applicationTokenId) throws AppException {
         if (applicationTokenId == null || applicationTokenId.length() < 4) {
+            log.warn("Null or bogus applicationTokenId found {}, returning null", applicationTokenId);
             return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
         }
 
@@ -62,7 +63,7 @@ public class UibApplicationsConnection {
             }
         }
 //        Client client = ClientBuilder.newClient();
-//        log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
+        log.info("Connection to UserIdentityBackend on {}", userIdentityBackendUri);
 //        uib = client.target(userIdentityBackendUri);
 //        WebTarget webResource = uib.path(applicationTokenId).path("applications");
 //        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
@@ -72,7 +73,7 @@ public class UibApplicationsConnection {
 
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
-        log.trace("listAll Applications: {}", first50(output));
+        log.info("listAll Applications: {}", first50(output));
         switch (statusCode) {
             case STATUS_OK:
                 cachedApplicationsStringInstant = Instant.now();
