@@ -105,7 +105,7 @@ public class ApplicationsResource {
 	public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
+		String applications = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
 		return Response.ok(applications).build();
 
 	}
@@ -158,9 +158,9 @@ public class ApplicationsResource {
 	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		log.trace("findByName - listAll is called, query {}", applicationName);
+		log.trace("findByName - is called, query {}", applicationName);
 
-		String applications = applicationsService.findApplication(applicationTokenId, userTokenId, applicationName);
+		String applications = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
 		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
 		return Response.ok(applications).build();
 

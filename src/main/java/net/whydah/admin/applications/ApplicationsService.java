@@ -49,7 +49,7 @@ public class ApplicationsService {
         return applications;
     }
 
-    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) throws AppException {
+    public String findApplications(String applicationTokenId, String userTokenId, String applicationName) throws AppException {
         String applications = null;
     	log.trace("findByName - listAll is called, query {}", applicationName);
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
