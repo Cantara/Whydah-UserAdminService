@@ -97,7 +97,8 @@ public class UibApplicationsConnection {
     }
 
     public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
-        if (applicationTokenId == null || applicationTokenId.length() < 4) {
+        if (applicationTokenId == null || applicationTokenId.length() < 4 || query == null || query.length() < 1) {
+            log.warn("Null or bogus applicationTokenId found {} query:{}, returning null", applicationTokenId, query);
             return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
         }
         if (cachedApplicationMap.get(query) != null) {
@@ -118,7 +119,7 @@ public class UibApplicationsConnection {
         // String output = response.readEntity(String.class);
 
         Response response =
-                new CommandFindApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
+                new CommandFindApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, userTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
 
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);

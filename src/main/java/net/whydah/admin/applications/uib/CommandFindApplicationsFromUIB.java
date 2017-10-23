@@ -24,16 +24,18 @@ public class CommandFindApplicationsFromUIB extends HystrixCommand<Response> {
     private static final Logger log = getLogger(CommandFindApplicationsFromUIB.class);
     private String uibUri;
     private String stsApplicationtokenId;
+    private String userTokenId;
     private String uasAppCredentialXml;
     private String query;
 
-    public CommandFindApplicationsFromUIB(String uibUri, String stsApplicationtokenId, String uasAppCredentialXml, String query) {
+    public CommandFindApplicationsFromUIB(String uibUri, String stsApplicationtokenId, String userTokenId, String uasAppCredentialXml, String query) {
         super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("UASUserAdminGroup")).
                 andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(3000)));
 
         this.uibUri = uibUri;
         this.stsApplicationtokenId = stsApplicationtokenId;
         this.uasAppCredentialXml = uasAppCredentialXml;
+        this.userTokenId = userTokenId;
         this.query = query;
         if (uibUri == null || stsApplicationtokenId == null || uasAppCredentialXml == null) {
             log.error("{} initialized with null-values - will fail", CommandFindApplicationsFromUIB.class.getSimpleName());
@@ -45,7 +47,7 @@ public class CommandFindApplicationsFromUIB extends HystrixCommand<Response> {
         log.trace("{} - stsApplicationtokenId={}, ", CommandFindApplicationsFromUIB.class.getSimpleName(), stsApplicationtokenId);
         Client client = ClientBuilder.newClient();
         WebTarget uib = client.target(uibUri);
-        WebTarget webResource = uib.path(stsApplicationtokenId).path(APPLICATIONS_FIND_PATH).path(query);
+        WebTarget webResource = uib.path(stsApplicationtokenId).path(userTokenId).path(APPLICATIONS_FIND_PATH).path(query);
         MultivaluedMap<String, String> formData = new MultivaluedHashMap<>(2);
         formData.add(UAS_APP_CREDENTIAL_XML, uasAppCredentialXml);
         return webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasAppCredentialXml).get();
