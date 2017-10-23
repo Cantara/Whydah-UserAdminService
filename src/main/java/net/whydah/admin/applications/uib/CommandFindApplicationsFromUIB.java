@@ -41,10 +41,10 @@ public class CommandFindApplicationsFromUIB extends HystrixCommand<Response> {
 
     @Override
     protected Response run() {
-        log.trace("{} - stsApplicationtokenId={}, userTokenId:{}, query:{}", CommandFindApplicationsFromUIB.class.getSimpleName(), stsApplicationtokenId, userTokenId, query);
+        log.info("{} - stsApplicationtokenId={}, userTokenId:{}, query:{}", CommandFindApplicationsFromUIB.class.getSimpleName(), stsApplicationtokenId, userTokenId, query);
         Client client = ClientBuilder.newClient();
         WebTarget uib = client.target(uibUri);
-        WebTarget webResource = uib.path(stsApplicationtokenId).path(userTokenId).path("applications").path("find").path(query);
+        WebTarget webResource = uib.path(stsApplicationtokenId).path(userTokenId).path("find").path("applications").path(query);
 //        MultivaluedMap<String, String> formData = new MultivaluedHashMap<>(2);
 //        formData.add(UAS_APP_CREDENTIAL_XML, uasAppCredentialXml);
         return webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasAppCredentialXml).get();
