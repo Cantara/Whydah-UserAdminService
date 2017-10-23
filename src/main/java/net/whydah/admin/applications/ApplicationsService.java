@@ -40,7 +40,8 @@ public class ApplicationsService {
             	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
             }
         } else {
-        	throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+            log.warn("adminChecked failed, returning 9992");
+            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
         log.trace("listAll {}", applications);
         return applications;
