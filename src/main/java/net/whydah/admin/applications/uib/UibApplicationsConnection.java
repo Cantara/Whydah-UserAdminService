@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -30,7 +29,7 @@ public class UibApplicationsConnection {
     private static final int NOT_AUTHERIZED = 403;
 
 
-    private  WebTarget uib;
+    //    private  WebTarget uib;
     private final String userIdentityBackendUri;
     private final UASCredentials uasCredentials;
     private static String cachedApplicationsString = "";
@@ -69,7 +68,7 @@ public class UibApplicationsConnection {
 //        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
 
         Response response =
-                new CommandGetApplicationsFromUIB(uib.toString(), applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded()).execute();
+                new CommandGetApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded()).execute();
 
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
@@ -119,7 +118,7 @@ public class UibApplicationsConnection {
         // String output = response.readEntity(String.class);
 
         Response response =
-                new CommandFindApplicationsFromUIB(uib.toString(), applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
+                new CommandFindApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
 
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
