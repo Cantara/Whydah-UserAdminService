@@ -111,6 +111,16 @@ public class ApplicationsResource {
 
 	}
 
+    @GET
+    @Path("/find/applications/{applicationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Deprecated
+    public Response findByNameWithoutUserTokenId(@PathParam("applicationtokenid") String applicationTokenId,
+                                                 @PathParam("applicationName") String applicationName) throws AppException {
+        String applications = applicationsService.findApplications(applicationTokenId, UUID.randomUUID().toString(), applicationName);
+        return Response.ok(applications).build();
+
+    }
 
     @GET
 	@Path("{userTokenId}/hasUASAccess")
