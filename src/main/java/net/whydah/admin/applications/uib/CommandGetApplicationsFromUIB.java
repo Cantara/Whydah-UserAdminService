@@ -45,7 +45,7 @@ public class CommandGetApplicationsFromUIB extends HystrixCommand<Response> {
         WebTarget webResource = uib.path(stsApplicationtokenId).path(APPLICATIONS_PATH);
         MultivaluedMap<String, String> formData = new MultivaluedHashMap<>(2);
         formData.add(UAS_APP_CREDENTIAL_XML, uasAppCredentialXml);
-        return webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, UASCredentials.encode(uasAppCredentialXml)).get();
+        return webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasAppCredentialXml).get();
 
     }
 
