@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.UUID;
 
 /**
  * Accessable in DEV mode:
@@ -165,12 +166,24 @@ public class ApplicationsResource {
 		return Response.ok(applications).build();
 
 	}
-	
+
 	@GET
-	@Path("/ping/pong")
-	@Produces(MediaType.TEXT_HTML)
-	@Deprecated //Not used by ansible scrips anymore as of 2015-07-06
-	public Response ping() {
-		return Response.ok("pong").build();
-	}
+    @Path("/applications/find/{applicationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findByNameNuToken(@PathParam("applicationtokenid") String applicationTokenId,
+                                      @PathParam("applicationName") String applicationName) throws AppException {
+        log.trace("findByName - is called, query {}", applicationName);
+
+        String applications = applicationsService.findApplications(applicationTokenId, UUID.randomUUID().toString(), applicationName);
+        return Response.ok(applications).build();
+
+    }
+
+    @GET
+    @Path("/ping/pong")
+    @Produces(MediaType.TEXT_HTML)
+    @Deprecated //Not used by ansible scrips anymore as of 2015-07-06
+    public Response ping() {
+        return Response.ok("pong").build();
+    }
 }

@@ -138,11 +138,12 @@ public class SecurityFilter implements Filter {
         String pwPattern = "/user/.+/(reset|change)_password";
         String userSignupPattern = "/signup/user";
         String listApplicationsPattern = "/applications";
+        String findApplicationsPattern = "/applications/find";
         String hasUASAccess = "/hasUASAccess";
         String send_scheduled_email = "/send_scheduled_email";
 
         String userPWEnabeled = "/user/.+/password_login_enabled";
-        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userPWEnabeled};
+        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userPWEnabeled, findApplicationsPattern};
         for (String pattern : patternsWithoutUserTokenId) {
             if (Pattern.compile(pattern).matcher(path).matches()) {
                 log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
