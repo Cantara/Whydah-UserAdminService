@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -111,14 +108,18 @@ public class UibApplicationsConnection {
             }
         }
 
-        Client client = ClientBuilder.newClient();
+//        Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , userIdentityBackendUri);
-        uib = client.target(userIdentityBackendUri);
+//        uib = client.target(userIdentityBackendUri);
         //WebTarget webResource = uib.path("/" + userAdminServiceTokenId + "/applications/find/"+query);
-        WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("applications").path("find").path(query);
+//        WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("applications").path("find").path(query);
         //WebTarget webResource = uib.path("/applications/find/"+query);
-        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+//        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         // String output = response.readEntity(String.class);
+
+        Response response =
+                new CommandFindApplicationsFromUIB(uib.toString(), applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
+
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         log.info("findApplications {}", first50(output));
