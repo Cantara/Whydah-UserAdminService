@@ -138,8 +138,8 @@ public class SecurityFilter implements Filter {
         String pwPattern = "/user/.+/(reset|change)_password";
         String userSignupPattern = "/signup/user";
         String listApplicationsPattern = "/applications";
-        String findApplicationsPattern = "/applications/find";
-        String findApplicationsPattern2 = "/find/applications";
+        String findApplicationsPattern = "/applications/find/*";
+        String findApplicationsPattern2 = "/find/applications/*";
         String hasUASAccess = "/hasUASAccess";
         String send_scheduled_email = "/send_scheduled_email";
 
