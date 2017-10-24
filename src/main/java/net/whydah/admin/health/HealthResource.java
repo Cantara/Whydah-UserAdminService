@@ -2,6 +2,8 @@ package net.whydah.admin.health;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.sso.util.WhydahUtil;
+import org.constretto.annotation.Configuration;
+import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,15 @@ import java.util.Properties;
 public class HealthResource {
     private static final Logger log = LoggerFactory.getLogger(HealthResource.class);
     private final CredentialStore credentialStore;
+    private static String applicationInstanceName;
 
 
     @Autowired
-    public HealthResource(CredentialStore credentialStore) {
+    @Configure
+    public HealthResource(CredentialStore credentialStore, @Configuration("applicationname") String applicationname) {
         this.credentialStore = credentialStore;
+        this.applicationInstanceName = applicationname;
+
     }
 
     @GET
@@ -73,12 +79,12 @@ public class HealthResource {
         if (mavenVersionResource != null) {
             try {
                 mavenProperties.load(mavenVersionResource.openStream());
-                return mavenProperties.getProperty("version", "missing version info in " + resourcePath);
+                return mavenProperties.getProperty("version", "missing version info in " + resourcePath) + " [" + applicationInstanceName + " - " + WhydahUtil.getMyIPAddresssesString() + "]";
             } catch (IOException e) {
                 log.warn("Problem reading version resource from classpath: ", e);
             }
         }
-        return "(DEV VERSION)";
+        return "(DEV VERSION)" + " [" + applicationInstanceName + " - " + WhydahUtil.getMyIPAddresssesString() + "]";
     }
 
 }
