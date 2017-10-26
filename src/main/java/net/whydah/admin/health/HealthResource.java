@@ -28,6 +28,7 @@ public class HealthResource {
     private static final Logger log = LoggerFactory.getLogger(HealthResource.class);
     private final CredentialStore credentialStore;
     private static String applicationInstanceName;
+    private static boolean ok = true;
 
 
     @Autowired
@@ -42,9 +43,8 @@ public class HealthResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response isHealthy() {
-        boolean ok = true;
-        String statusText = WhydahUtil.getPrintableStatus(credentialStore.getWas());
-        log.trace("isHealthy={}, status: {}", ok, statusText);
+//        String statusText = WhydahUtil.getPrintableStatus(credentialStore.getWas());
+//        log.trace("isHealthy={}, status: {}", ok, statusText);
         if (ok) {
             return Response.ok(getHealthTextJson()).build();
         } else {
@@ -56,7 +56,7 @@ public class HealthResource {
 
     public String getHealthTextJson() {
         return "{\n" +
-                "  \"Status\": \"OK\",\n" +
+                "  \"Status\": \"" + ok + "\",\n" +
                 "  \"Version\": \"" + getVersion() + "\",\n" +
                 "  \"DEFCON\": \"" + credentialStore.getWas().getDefcon() + "\",\n" +
                 "  \"STS\": \"" + credentialStore.getWas().getSTS() + "\",\n" +
