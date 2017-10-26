@@ -47,17 +47,17 @@ public class UibApplicationsConnection {
 
     public String listAll(String applicationTokenId) throws AppException {
         if (applicationTokenId == null || applicationTokenId.length() < 4) {
-            log.warn("Null or bogus applicationTokenId found {}, returning null", applicationTokenId);
+            log.warn("listAll Null or bogus applicationTokenId found {}, returning null", applicationTokenId);
             return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
         }
 
         if (cachedApplicationsStringInstant != null && cachedApplicationsString != null && cachedApplicationsString.length() > 50) {
             if (Instant.now().isBefore(cachedApplicationsStringInstant.plusSeconds(30))) {
-                log.debug("Returning applications from cache");
+                log.debug("listAll Returning applications from cache");
                 // 30 second cache to avoid too much UIB noise
                 return cachedApplicationsString;
             } else {
-                log.debug("Returning applications from UIB request");
+                log.debug("listAll Returning applications from UIB request");
 
             }
         }
