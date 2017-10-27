@@ -1,6 +1,7 @@
 package net.whydah.admin.applications;
 
 import net.whydah.admin.errorhandling.AppException;
+import net.whydah.sso.application.mappers.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +70,8 @@ public class ApplicationsResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=utf-8")
 	public Response listAll(@PathParam("applicationtokenid") String applicationTokenId) throws AppException {
 		String applications = applicationsService.listAll(applicationTokenId);
-		return Response.ok(applications).build();
-	}
+        return Response.ok(ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications))).build();
+    }
 
 	/**
 	 * @throws AppException 
