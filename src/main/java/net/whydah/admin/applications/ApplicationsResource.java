@@ -107,7 +107,8 @@ public class ApplicationsResource {
 	public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		String applications = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
+        log.debug("{userTokenId}/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, userTokenId, applicationTokenId);
+        String applications = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
 		return Response.ok(applications).build();
 
 	}
@@ -118,6 +119,7 @@ public class ApplicationsResource {
     @Deprecated
     public Response findByNameWithoutUserTokenId(@PathParam("applicationtokenid") String applicationTokenId,
                                                  @PathParam("applicationName") String applicationName) throws AppException {
+        log.debug("/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, "missing", applicationTokenId);
         String applications = applicationsService.findApplications(applicationTokenId, UUID.randomUUID().toString(), applicationName);
         return Response.ok(applications).build();
 
@@ -170,7 +172,8 @@ public class ApplicationsResource {
 	public Response findByNameOld(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-		log.trace("findByName - is called, query {}", applicationName);
+        log.debug("{userTokenId}/applications/find/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, userTokenId, applicationTokenId);
+        log.trace("findByName - is called, query {}", applicationName);
 
 		String applications = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
 		//            String applications = applicationsService.listAll(applicationTokenId, userTokenId);
@@ -183,6 +186,7 @@ public class ApplicationsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNameNuToken(@PathParam("applicationtokenid") String applicationTokenId,
                                       @PathParam("applicationName") String applicationName) throws AppException {
+        log.debug("/applications/find/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, "missing", applicationTokenId);
         log.trace("findByName - is called, query {}", applicationName);
 
         String applications = applicationsService.findApplications(applicationTokenId, UUID.randomUUID().toString(), applicationName);
