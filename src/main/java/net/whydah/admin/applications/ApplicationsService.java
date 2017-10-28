@@ -51,7 +51,7 @@ public class ApplicationsService {
 
     public String findApplications(String applicationTokenId, String userTokenId, String applicationName) throws AppException {
         String applications = null;
-    	log.trace("findByName - listAll is called, query {}", applicationName);
+        log.info("findByName - findApplications is called, query {}", applicationName);
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, applicationName);
         } else {
@@ -59,9 +59,10 @@ public class ApplicationsService {
             throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
         if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
-        	applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+            log.info("isInternalWhydahAdminApp({} = false - filtering applications", applicationTokenId);
+            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
-        log.trace("findByName {}", first50(applications));
+        log.info("findByName {}", first50(applications));
         return applications;
     }
     

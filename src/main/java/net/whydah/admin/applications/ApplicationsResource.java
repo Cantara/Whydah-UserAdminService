@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static net.whydah.sso.util.LoggerUtil.first50;
+
 /**
  * Accessable in DEV mode:
  * - http://localhost:9992/useradminservice/1/1/applications
@@ -107,9 +109,10 @@ public class ApplicationsResource {
 	public Response findByName(@PathParam("applicationtokenid") String applicationTokenId,
 			@PathParam("userTokenId") String userTokenId,
 			@PathParam("applicationName") String applicationName) throws AppException {
-        log.debug("{userTokenId}/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, userTokenId, applicationTokenId);
+        log.info("{userTokenId}/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, userTokenId, applicationTokenId);
         String applications = applicationsService.findApplications(applicationTokenId, userTokenId, applicationName);
-		return Response.ok(applications).build();
+        log.info("/find/applications/{} - returns:{}", applicationName, first50(applications));
+        return Response.ok(applications).build();
 
 	}
 
@@ -119,8 +122,9 @@ public class ApplicationsResource {
     @Deprecated
     public Response findByNameWithoutUserTokenId(@PathParam("applicationtokenid") String applicationTokenId,
                                                  @PathParam("applicationName") String applicationName) throws AppException {
-        log.debug("/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, "missing", applicationTokenId);
+        log.info("/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, "missing", applicationTokenId);
         String applications = applicationsService.findApplications(applicationTokenId, UUID.randomUUID().toString(), applicationName);
+        log.info("/find/applications/{} - returns:{}", applicationName, first50(applications));
         return Response.ok(applications).build();
 
     }
