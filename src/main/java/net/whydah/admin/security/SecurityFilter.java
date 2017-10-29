@@ -159,6 +159,7 @@ public class SecurityFilter implements Filter {
             log.warn("SecurityFilter - got application:" + callingApplication);
             // Does the calling application has UAS access
             if (callingApplication == null || !callingApplication.getSecurity().isWhydahUASAccess()) {
+                log.warn("SecurityFiler - got application without UAS access");
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
 
@@ -174,16 +175,19 @@ public class SecurityFilter implements Filter {
 
             Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
             if (!userTokenIsValid) {
+                log.warn("SecurityFiler - got application without vaid userToken");
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
             UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
             String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
             if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
+                log.debug("{} was matched adminUserRole {}. SecurityFilter passed.", path, adminUserRole);
                 return null;
             }
         } catch (Exception e) {
             log.error("Unable to lookup application in UIB", e);
         }
+        log.warn("SecurityFiler - fallback... unhandeled ACL");
         return HttpServletResponse.SC_UNAUTHORIZED;
 
     }
