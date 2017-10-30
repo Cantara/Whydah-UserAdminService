@@ -63,13 +63,33 @@ public class WhydahRoleCheckUtil {
 				}
 			}
 		}
-        try {
-            credentialStore.getWas().reportThreatSignal("Application authentication failure", new Object[]{ConstantValue.APP_TOKEN_ID, applicationTokenId, ConstantValue.USER_TOKEN_ID, userTokenId});
-        } catch (Exception e) {
-            // Ignore
-        }
+        reportThreat("Application authentication failure", applicationTokenId, userTokenId);
         log.warn("ApplicationTokenId:{} and UserTokenId:{} failed WhydahUserAdmin authorization", applicationTokenId, userTokenId);
         return false;
+	}
+
+	private void reportThreat(String msg, String applicationTokenId, String userTokenId) {
+		try {
+        	String appId = "NULL";
+        	String appName = "NULL";
+        	if(applicationTokenId!=null){
+        		appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
+        		if(appId!=null){
+        			Application app = appStore.getApplication(appId);
+        			if(app!=null){
+        				app.getName();
+        			}
+        		}
+        	}
+            credentialStore.getWas().reportThreatSignal(msg, new Object[]{
+            		ConstantValue.APP_TOKEN_ID, applicationTokenId, 
+            		ConstantValue.USER_TOKEN_ID, userTokenId,
+            		ConstantValue.APPLICATIONID, appId,
+            		ConstantValue.APPLICATIONNAME, appName
+            });
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
 	}
 
 	public boolean authorise(String applicationTokenId){
@@ -86,11 +106,7 @@ public class WhydahRoleCheckUtil {
 				}
 			}
 		}
-        try {
-        	credentialStore.getWas().reportThreatSignal("Application authentication failure", new Object[]{ConstantValue.APP_TOKEN_ID, applicationTokenId});
-        } catch (Exception e) {
-            // Ignore
-        }
+        reportThreat("Application authentication failure", applicationTokenId, "N/A");
         log.debug("ApplicationTokenId {} failed to log in", applicationTokenId);
 		return false;
 	}
@@ -196,7 +212,8 @@ public class WhydahRoleCheckUtil {
 					}
 				}
 			}
-			credentialStore.getWas().reportThreatSignal("Whydah Admin user is false for user trying to access Whydah Admin API");
+			
+			reportThreat("Whydah Admin user is false for user trying to access Whydah Admin API", applicationTokenId, userTokenId);
 			log.info("Whydah Admin user is false for name={}, uid={}. Cannot log in", userToken.getUserName(), userToken.getUid());
 		} else {
 			log.error("Error when getting role list - status code from UIB: " + statusCode);
