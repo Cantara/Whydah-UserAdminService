@@ -55,11 +55,11 @@ public class ApplicationsService {
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
             applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, applicationName);
         } else {
-            log.warn("adminChecked failed, returning 9992");
+            log.warn("findByName - adminChecked failed, returning 9992");
             throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 		}
         if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
-            log.info("isInternalWhydahAdminApp({} = false - filtering applications", applicationTokenId);
+            log.info("findByName - isInternalWhydahAdminApp({} = false - filtering applications", applicationTokenId);
             applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
         }
         log.info("findByName {}", first50(applications));
