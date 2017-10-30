@@ -34,9 +34,9 @@ public class UibApplicationsConnection {
     private final String userIdentityBackendUri;
     private final UASCredentials uasCredentials;
     private static String cachedApplicationsString = "";
-    private static Instant cachedApplicationsStringInstant;
+    private static Instant cachedApplicationsStringInstant = Instant.now();
     private static Map<String, String> cachedApplicationMap = new LinkedHashMap<String, String>();
-    private static Instant cachedApplicationMapInstant;
+    private static Instant cachedApplicationMapInstant = Instant.now();
 
     @Autowired
     @Configure
