@@ -107,7 +107,7 @@ public class UibApplicationsConnection {
                 log.warn("findApplications - Empty query found {} query:{}, returning null", applicationTokenId, query);
                 return null;  // DO NOT BLOCK THREAD on requests that are doomed to fail
             }
-            if (cachedApplicationMap.get(query) != null) {
+            if (cachedApplicationMap.get(query) != null && cachedApplicationMapInstant != null) {
                 if (Instant.now().isBefore(cachedApplicationMapInstant.plusSeconds(20))) {
                     log.info("findApplications - Returning application(s) from cache");
                     // 30 second cache to avoid too much UIB noise
