@@ -37,19 +37,16 @@ public class CredentialStore {
 
     public String getUserAdminServiceTokenId() {
         if (was == null) {
-            was = WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential);
-//            was.setDisableUpdateAppLink(true);
-            
+            was = getWas();
         }
         return was.getActiveApplicationTokenId();
 
     }
 
 
-    public WhydahApplicationSession getWas() {
+    synchronized public WhydahApplicationSession getWas() {
         if (was == null) {
             was = WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential);
-//            was.setDisableUpdateAppLink(true);
         }
         return was;
     }
