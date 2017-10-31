@@ -92,8 +92,11 @@ public class SecurityFilter implements Filter {
             return HttpServletResponse.SC_SERVICE_UNAVAILABLE;
 
         }
+
+
         if (credentialStore.getWas().checkActiveSession() == false) {
-                credentialStore.getWas().renewWhydahApplicationSession();
+            log.info("Invalid whydah session, returning HTTP 503 (SERVICE_UNAVAILABLE)");
+            return HttpServletResponse.SC_SERVICE_UNAVAILABLE;
         }
 
         String callerApplicationTokenId = findPathElement(pathInfo, 1).substring(1);
