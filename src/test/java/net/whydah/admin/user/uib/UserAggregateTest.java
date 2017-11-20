@@ -21,13 +21,14 @@ import static org.testng.AssertJUnit.assertNotNull;
 public class UserAggregateTest {
     private static final Logger log = LoggerFactory.getLogger(UserAggregateTest.class);
 
-    private String userAgregateTemplate = "{\"uid\":\"" + UUID.randomUUID().toString() + "\",\"username\":\"usernameABC\",\"firstName\":\"firstName\",\"lastName\":\"lastName\",\"personRef\":\"personRef\",\"email\":\"email@cantara.no\",\"cellPhone\":\"12345678\",\"password\":\"password\",\"roles\":[{\"applicationId\":\"applicationId\",\"applicationName\":\"applicationName\",\"organizationName\":\"organizationName\",\"applicationRoleName\":\"roleName\",\"applicationRoleValue\":\"email\",\"id\":\"null\"},{\"applicationId\":\"applicationId123\",\"applicationName\":\"applicationName123\",\"organizationName\":\"organizationName123\",\"applicationRoleName\":\"roleName123\",\"applicationRoleValue\":\"roleValue123\",\"id\":\"null\"}]}\n";
+    private final String uid = UUID.randomUUID().toString();
+    private String userAgregateTemplate = "{\"uid\":\"" + uid + "\",\"username\":\"usernameABC\",\"firstName\":\"firstName\",\"lastName\":\"lastName\",\"personRef\":\"personRef\",\"email\":\"email@cantara.no\",\"cellPhone\":\"12345678\",\"password\":\"password\",\"roles\":[{\"applicationId\":\"applicationId\",\"applicationName\":\"applicationName\",\"organizationName\":\"organizationName\",\"applicationRoleName\":\"roleName\",\"applicationRoleValue\":\"email\",\"id\":\"null\"},{\"applicationId\":\"applicationId123\",\"applicationName\":\"applicationName123\",\"organizationName\":\"organizationName123\",\"applicationRoleName\":\"roleName123\",\"applicationRoleValue\":\"roleValue123\",\"id\":\"null\"}]}\n";
 
     @Test
     public void buildUserAggregate() throws Exception {
         UserAggregate userAggregate = UserAggregateMapper.fromUserAggregateNoIdentityJson(userAgregateTemplate);
         assertNotNull(userAggregate);
-        assertEquals("uid", userAggregate.getUid());
+        assertEquals(uid, userAggregate.getUid());
         assertEquals("personRef", userAggregate.getPersonRef());
         assertEquals("12345678", userAggregate.getCellPhone());
         List<UserApplicationRoleEntry> userRoles = userAggregate.getRoleList();
