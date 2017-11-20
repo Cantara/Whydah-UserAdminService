@@ -21,12 +21,12 @@ public class MinimalUserTest {
     @Test
     public void createFromJson() throws Exception {
         String userJson = "\n" +
-                "{\"username\":\"helloMe\", \"firstName\":\"hello\", \"lastName\":\"me\", \"personRef\":\"\", \"email\":\"hello.me@example.com\", \"cellPhone\":\"+47 90221133\"}";
+                "{\"username\":\"helloMe\", \"firstName\":\"hello\", \"lastName\":\"meLastname\", \"personRef\":\"\", \"email\":\"hello.me@example.com\", \"cellPhone\":\"+47 90221133\"}";
         UserIdentity minimalUser = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
         assertNotNull(minimalUser);
         assertEquals(minimalUser.getUsername(),"helloMe");
         assertEquals(minimalUser.getFirstName(),"hello");
-        assertEquals(minimalUser.getLastName(),"me");
+        assertEquals(minimalUser.getLastName(), "meLastname");
         assertEquals(minimalUser.getPersonRef(),"");
         assertEquals(minimalUser.getEmail(),"hello.me@example.com");
         assertEquals(minimalUser.getCellPhone(),"+47 90221133");

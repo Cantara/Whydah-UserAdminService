@@ -1,24 +1,22 @@
 package net.whydah.admin.applications.uib;
 
-import static net.whydah.sso.util.LoggerUtil.first50;
-
-import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
-
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.ddd.model.ApplicationTokenID;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.ws.rs.core.Response;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static net.whydah.sso.util.LoggerUtil.first50;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>
