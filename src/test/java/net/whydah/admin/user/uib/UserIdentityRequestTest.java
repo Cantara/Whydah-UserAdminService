@@ -17,7 +17,7 @@ public class UserIdentityRequestTest {
 
     @Test
     public void testToJson() throws Exception {
-        UserIdentity userIdentityRequest = new UserIdentity("username", "fn", "ln", "pR", "@","1234");
+        UserIdentity userIdentityRequest = new UserIdentity("username", "firstn", "lastn", "pR", "me@cantara.no", "90001234");
         assertNotNull(UserIdentityMapper.toJson(userIdentityRequest));
 
     }
