@@ -3,7 +3,7 @@ package net.whydah.admin.applications.uib;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
-import net.whydah.sso.ddd.model.ApplicationTokenID;
+import net.whydah.sso.ddd.model.application.ApplicationTokenID;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
