@@ -168,8 +168,8 @@ public class WhydahRoleCheckUtil {
 			return hasUASAccess;
 		} else {
 			if(app==null){
-				log.warn(appStore.apps.size()>0? "App not found" : "Application list is empty");
-			} else {
+                log.warn(appStore.apps.size() > 0 ? "Application with applicationId:" + appId + " not found" : "Application list is empty");
+            } else {
 				log.error("app.getSecurity() is null. This error should not happen");
 			}
 			return false;
