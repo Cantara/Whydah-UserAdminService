@@ -21,18 +21,18 @@ public class CommandFindApplicationsFromUIB extends HystrixCommand<Response> {
     private static final Logger log = getLogger(CommandFindApplicationsFromUIB.class);
     private String uibUri;
     private String stsApplicationtokenId;
-    private String userTokenId;
+    //private String userTokenId;
     private String uasAppCredentialXml;
     private String query;
 
-    public CommandFindApplicationsFromUIB(String uibUri, String stsApplicationtokenId, String userTokenId, String uasAppCredentialXml, String query) {
+    public CommandFindApplicationsFromUIB(String uibUri, String stsApplicationtokenId, String uasAppCredentialXml, String query) {
         super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("UASUserAdminGroup")).
                 andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(3000)));
 
         this.uibUri = uibUri;
         this.stsApplicationtokenId = stsApplicationtokenId;
         this.uasAppCredentialXml = uasAppCredentialXml;
-        this.userTokenId = userTokenId;
+        //this.userTokenId = userTokenId;
         this.query = query;
         if (uibUri == null || stsApplicationtokenId == null || uasAppCredentialXml == null) {
             log.error("{} initialized with null-values - will fail", CommandFindApplicationsFromUIB.class.getSimpleName());
@@ -41,7 +41,7 @@ public class CommandFindApplicationsFromUIB extends HystrixCommand<Response> {
 
     @Override
     protected Response run() {
-        log.info("{} - stsApplicationtokenId={}, userTokenId:{}, query:{}", CommandFindApplicationsFromUIB.class.getSimpleName(), stsApplicationtokenId, userTokenId, query);
+        log.info("{} - stsApplicationtokenId={}, userTokenId:{}, query:{}", CommandFindApplicationsFromUIB.class.getSimpleName(), stsApplicationtokenId, query);
         Client client = ClientBuilder.newClient();
         WebTarget uib = client.target(uibUri);
         WebTarget webResource = uib.path(stsApplicationtokenId).path("find").path("applications").path(query);

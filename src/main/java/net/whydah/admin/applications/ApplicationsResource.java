@@ -123,7 +123,7 @@ public class ApplicationsResource {
     public Response findByNameWithoutUserTokenId(@PathParam("applicationtokenid") String applicationTokenId,
                                                  @PathParam("applicationName") String applicationName) throws AppException {
         log.info("/find/applications/{}  userTokenId:{}  - applicationTokenId:{}", applicationName, "missing", applicationTokenId);
-        String applications = applicationsService.findApplications(applicationTokenId, UUID.randomUUID().toString(), applicationName);
+        String applications = applicationsService.findApplications(applicationTokenId, applicationName);
         log.info("/find/applications/{} - returns:{}", applicationName, first50(applications));
         return Response.ok(applications).build();
 

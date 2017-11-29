@@ -39,16 +39,16 @@ public class ApplicationsAdminService {
         return applications;
     }
 
-    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
-        String applications = null;
-        if (hasAccess(applicationTokenId, userTokenId)) {
-//            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
-            applications = applicationsRepository.findByName(applicationName);
-        } else {
-            //FIXME handle no access to this method.
-        }
-        return applications;
-    }
+//    public String findApplication(String applicationTokenId, String userTokenId, String applicationName) {
+//        String applications = null;
+//        if (hasAccess(applicationTokenId, userTokenId)) {
+////            applications = uibApplicationsConnection.listAll(credentialStore.getUserAdminServiceTokenId(), userTokenId);
+//            applications = applicationsRepository.findByName(applicationName);
+//        } else {
+//            //FIXME handle no access to this method.
+//        }
+//        return applications;
+//    }
 
     boolean hasAccess(String applicationTokenId, String userTokenId) {
         //FIXME validate user and applciation trying to create a new application.

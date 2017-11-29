@@ -97,7 +97,7 @@ public class UibApplicationsConnection {
         return output;
     }
 
-    public String findApplications(String applicationTokenId, String userTokenId, String query) throws AppException {
+    public String findApplications(String applicationTokenId, String query) throws AppException {
         try {
             if (!ApplicationTokenID.isValid(applicationTokenId) || query == null) {
                 log.warn("findApplications - Null or bogus applicationTokenId found {} query:{}, returning null", applicationTokenId, query);
@@ -125,7 +125,7 @@ public class UibApplicationsConnection {
             // String output = response.readEntity(String.class);
 
             Response response =
-                    new CommandFindApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, userTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
+                    new CommandFindApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded(), query).execute();
 
             int statusCode = response.getStatus();
             String output = response.readEntity(String.class);

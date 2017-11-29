@@ -53,7 +53,7 @@ public class ApplicationsService {
         String applications = null;
         log.info("findByName - findApplications is called, query {}", applicationName);
         if (adminChecker.authorise(applicationTokenId, userTokenId)) {
-            applications = uibApplicationsConnection.findApplications(applicationTokenId, userTokenId, applicationName);
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
         } else {
             log.warn("findByName - adminChecked failed, returning 9992");
             throw AppExceptionCode.MISC_NotAuthorizedException_9992;
@@ -67,6 +67,22 @@ public class ApplicationsService {
     }
     
 
+    public String findApplications(String applicationTokenId, String applicationName) throws AppException {
+        String applications = null;
+        log.info("findByName - findApplications is called, query {}", applicationName);
+        if (adminChecker.authorise(applicationTokenId)) {
+            applications = uibApplicationsConnection.findApplications(applicationTokenId, applicationName);
+        } else {
+            log.warn("findByName - adminChecked failed, returning 9992");
+            throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+		}
+        if(!adminChecker.isInternalWhydahAdminApp(applicationTokenId)){
+            log.info("findByName - isInternalWhydahAdminApp({} = false - filtering applications", applicationTokenId);
+            applications = ApplicationMapper.toSafeJson(ApplicationMapper.fromJsonList(applications));
+        }
+        log.info("findByName {}", first50(applications));
+        return applications;
+    }
    
 
 }
