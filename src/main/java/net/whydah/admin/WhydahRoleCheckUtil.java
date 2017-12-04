@@ -41,7 +41,7 @@ public class WhydahRoleCheckUtil {
 		this.uibUserConnection = uibUserConnection;
 		this.credentialStore = credentialStore;
 		this.appStore = new ApplicationModelFacade(credentialStore, uibApplicationsConnection);
-        if (uaswaId == null || uaswaId.equals("")) {
+        if (uaswaId == null || uaswaId.length() < 3) {
         } else {
 			this.uaswa = uaswaId;
 		}
