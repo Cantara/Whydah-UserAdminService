@@ -25,7 +25,7 @@ public class ExceptionConfig {
 				if(error.getCode()== 9999){
 					error.setDeveloperMessage("");
 				}
-			} else if(level == 1){
+			} else if(level == 2){
 				error.setDeveloperMessage("");
 			}
 			return error;
