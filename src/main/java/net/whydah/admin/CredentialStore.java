@@ -37,7 +37,7 @@ public class CredentialStore {
 
     public String getUserAdminServiceTokenId() {
         if (was == null) {
-            was = getWas();
+            getWas();
         }
         return was.getActiveApplicationTokenId();
 
