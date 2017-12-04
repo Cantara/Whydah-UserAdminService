@@ -41,7 +41,8 @@ public class WhydahRoleCheckUtil {
 		this.uibUserConnection = uibUserConnection;
 		this.credentialStore = credentialStore;
 		this.appStore = new ApplicationModelFacade(credentialStore, uibApplicationsConnection);
-		if(uaswaId!=null&!uaswaId.equals("")){
+        if (uaswaId == null || uaswaId.equals("")) {
+        } else {
 			this.uaswa = uaswaId;
 		}
 	}
@@ -246,7 +247,7 @@ public class WhydahRoleCheckUtil {
 			}
 		} else {
 			if(app==null){
-                log.warn(appStore.apps.size() > 0 ? "Application with applicationId:" + appId + " not found" : "Application list is empty");
+                log.warn(appStore.apps.size() > 0 ? "Application with applicationId:null not found" : "Application list is empty");
             }
 			return false;
 		}
