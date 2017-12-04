@@ -34,19 +34,24 @@ public class ExceptionConfig {
 	}
 	
 	//SET THE HIGHEST SECURITY AS DEFAULT
-	public static ErrorLevel level = ErrorLevel.SHOW_NO_DEVELOPER_MESSAGE_AND_EXCEPTION_STACKTRACE;
+    public static final ErrorLevel level;
 	
 	static {
 		String error = Configuration.getString("errorlevel");
-		if(error !=null){
-			if(error.trim().equals("0")){
-				level = ErrorLevel.SHOW_ALL;
-			} else if (error.trim().equals("1")){
-				level = ErrorLevel.SHOW_ALL_BUT_NO_STACKTRACE;
-			} else if (error.trim().equals("2")){
-				level = ErrorLevel.SHOW_NO_DEVELOPER_MESSAGE_AND_EXCEPTION_STACKTRACE;
-			}
-		}
+        if(error !=null){
+            if(error.trim().equals("0")){
+                level = ErrorLevel.SHOW_ALL;
+            } else if (error.trim().equals("1")){
+                level = ErrorLevel.SHOW_ALL_BUT_NO_STACKTRACE;
+            } else if (error.trim().equals("2")){
+                level = ErrorLevel.SHOW_NO_DEVELOPER_MESSAGE_AND_EXCEPTION_STACKTRACE;
+            } else {
+                level = ErrorLevel.SHOW_NO_DEVELOPER_MESSAGE_AND_EXCEPTION_STACKTRACE;
+            }
+        } else {
+            level = ErrorLevel.SHOW_NO_DEVELOPER_MESSAGE_AND_EXCEPTION_STACKTRACE;
+
+        }
 		
 	}
 	
