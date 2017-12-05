@@ -4,7 +4,6 @@ import net.whydah.admin.CredentialStore;
 import net.whydah.admin.application.uib.UibApplicationConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.application.types.Application;
-import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
@@ -23,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -37,6 +38,7 @@ public class SecurityFilter implements Filter {
 
     private String stsAppId;
     private URI tokenServiceUri;
+    private Set okApplicationTokenList = new LinkedHashSet<String>();
     private UibApplicationConnection uibApplicationConnection;
     private final CredentialStore credentialStore;
 
@@ -94,14 +96,18 @@ public class SecurityFilter implements Filter {
         }
 
 
-        if (credentialStore.getWas().checkActiveSession() == false) {
-            log.info("Invalid whydah session, returning HTTP 503 (SERVICE_UNAVAILABLE)");
+        if (!credentialStore.hasValidApplicationSession()) {
+            log.info("Invalid UAS whydah session, returning HTTP 503 (SERVICE_UNAVAILABLE)");
             return HttpServletResponse.SC_SERVICE_UNAVAILABLE;
         }
 
         String callerApplicationTokenId = findPathElement(pathInfo, 1).substring(1);
+        if (!credentialStore.isValidApplicationSession(callerApplicationTokenId)) {
+            log.info("Invalid caller whydah session, invalid applicationtokenid, returning unauthorized");
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
-        String appId = new CommandGetApplicationIdFromApplicationTokenId(tokenServiceUri, callerApplicationTokenId).execute();
+        String appId = credentialStore.getApplicationID(callerApplicationTokenId);
         if (appId == null) {
             log.warn("SecurityFilter - unable to lookup application from applicationtokenid, returning unauthorized");
             return HttpServletResponse.SC_UNAUTHORIZED;
