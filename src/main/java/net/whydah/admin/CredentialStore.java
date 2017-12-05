@@ -3,7 +3,7 @@ package net.whydah.admin;
 import net.whydah.sso.application.types.ApplicationCredential;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
-import net.whydah.sso.ddd.model.application.ApplicationTokenID;
+import net.whydah.sso.ddd.model.application.ApplicationId;
 import net.whydah.sso.session.WhydahApplicationSession;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -82,7 +82,7 @@ public class CredentialStore {
             return okApplicationIDMap.get(callerApplicationTokenId);
         }
         String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(getWas().getSTS()), callerApplicationTokenId).execute();
-        if (ApplicationTokenID.isValid(appId)) {
+        if (ApplicationId.isValid(appId)) {
             okApplicationIDMap.put(callerApplicationTokenId, appId);
             return appId;
         }
