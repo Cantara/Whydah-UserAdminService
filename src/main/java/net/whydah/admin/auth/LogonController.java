@@ -1,5 +1,6 @@
 package net.whydah.admin.auth;
 
+import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.sso.user.mappers.UserCredentialMapper;
 import org.slf4j.Logger;
@@ -39,8 +40,18 @@ public class LogonController {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
-        return Response.ok(userXml).build();
+        try {
+            String userXml = uibAuthConnection.logonUser(applicationTokenId, userCredentialsXml);
+            return Response.ok(userXml).build();
+        } catch (BadRequestException bre) {
+            return Response.status(Response.Status.EXPECTATION_FAILED).build();
+        } catch (AuthenticationFailedException afe) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+
     }
 
 
