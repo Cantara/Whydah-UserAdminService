@@ -22,7 +22,7 @@ import java.util.Set;
 @Repository
 public class CredentialStore {
 
-    private static WhydahApplicationSession whydahApplicationSession = null;
+    private WhydahApplicationSession whydahApplicationSession = null;
     private final String stsUri;
     private final String uasUri;
     private final ApplicationCredential uasApplicationCredential;
@@ -97,7 +97,7 @@ public class CredentialStore {
         return whydahApplicationSession;
     }
 
-    public static synchronized void setWas(WhydahApplicationSession was) {
-        CredentialStore.whydahApplicationSession = was;
+    public synchronized void setWas(WhydahApplicationSession was) {
+        whydahApplicationSession = was;
     }
 }
