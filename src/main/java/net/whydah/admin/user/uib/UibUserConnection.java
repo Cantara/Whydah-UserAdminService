@@ -137,7 +137,7 @@ public class UibUserConnection {
         if (response != null) {
             statusCode = response.getStatus();
         }
-        if(statusCode==200||statusCode==201){
+        if(statusCode==200||statusCode==201||statusCode==204){
             Response responseGetUserIdentity = getUserIdentity(userAdminServiceTokenId, adminUserTokenId, uid);
             if (responseGetUserIdentity.getStatus() == 200) {
                 String userIdentityJson = responseGetUserIdentity.readEntity(String.class);
