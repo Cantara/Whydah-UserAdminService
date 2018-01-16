@@ -109,7 +109,7 @@ public class SecurityFilter implements Filter {
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
         String appId = credentialStore.getApplicationID(callerApplicationTokenId);
         if (appId == null) {
-            log.warn("SecurityFilter - unable to lookup application from applicationtokenid, returning unauthorized");
+            log.warn("SecurityFilter - unable to lookup application from applicationtokenid {}, returning unauthorized for path {}", callerApplicationTokenId, pathInfo);
             return HttpServletResponse.SC_UNAUTHORIZED;
 
             // Lets get UAS through
