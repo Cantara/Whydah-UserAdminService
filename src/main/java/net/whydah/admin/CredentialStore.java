@@ -59,14 +59,14 @@ public class CredentialStore {
         return getWas().getActiveApplicationTokenId() != null;
     }
 
-    public boolean isValidApplicationSession(String applicationTokenId) {
+    public boolean isValidApplicationSession(URI tokenServiceUri, String applicationTokenId) {
         if (okApplicationTokenSet.size() > 30) { // small size, no timeout yet
             okApplicationTokenSet = new LinkedHashSet<String>();
         }
         if (okApplicationTokenSet.contains(applicationTokenId)) {
             return true;
         }
-        boolean isOk = new CommandValidateApplicationTokenId(getWas().getSTS(), getWas().getActiveApplicationTokenId()).execute();
+        boolean isOk = new CommandValidateApplicationTokenId(tokenServiceUri, getWas().getActiveApplicationTokenId()).execute();
         if (isOk) {
             okApplicationTokenSet.add(applicationTokenId);
         }

@@ -102,10 +102,7 @@ public class SecurityFilter implements Filter {
         }
 
         String callerApplicationTokenId = findPathElement(pathInfo, 1).substring(1);
-        if (!credentialStore.isValidApplicationSession(callerApplicationTokenId)) {
-            log.info("Invalid caller whydah session, invalid applicationtokenid, returning unauthorized");
-            return HttpServletResponse.SC_UNAUTHORIZED;
-        }
+        
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
         String appId = credentialStore.getApplicationID(callerApplicationTokenId);
         if (appId == null) {
@@ -124,6 +121,9 @@ public class SecurityFilter implements Filter {
                 log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
+        } else if (!credentialStore.isValidApplicationSession(tokenServiceUri, callerApplicationTokenId)) {
+        	log.info("Invalid caller whydah session, invalid applicationtokenid, returning unauthorized");
+        	return HttpServletResponse.SC_UNAUTHORIZED;
         }
 
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
