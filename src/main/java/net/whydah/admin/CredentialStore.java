@@ -82,7 +82,8 @@ public class CredentialStore {
             return okApplicationIDMap.get(callerApplicationTokenId);
         }
         String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(getWas().getSTS()), callerApplicationTokenId).execute();
-        if (ApplicationId.isValid(appId)) {
+        //HUY: it is a bug, appid can be null for the first time. we should only add the value to the list if it is something not a null value
+        if (appId!=null && ApplicationId.isValid(appId)) {
             okApplicationIDMap.put(callerApplicationTokenId, appId);
             return appId;
         }
