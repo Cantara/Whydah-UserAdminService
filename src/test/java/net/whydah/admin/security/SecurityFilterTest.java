@@ -18,7 +18,7 @@ public class SecurityFilterTest {
 
     @BeforeClass
     public void setup() throws ServletException {
-        securityFilter = new SecurityFilter("test.com", null, null, null, null);
+        securityFilter = new SecurityFilter("test.com", null, null, null);
     }
 
     @Test

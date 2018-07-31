@@ -68,9 +68,11 @@ public class UibApplicationsConnection {
 //        WebTarget webResource = uib.path(applicationTokenId).path("applications");
 //        Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
 
-        Response response =
-                new CommandGetApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded()).execute();
-
+        Response response = new CommandGetApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded()).execute();
+        if(response==null) {
+        	log.error("executed CommandGetApplicationsFromUIB and there was no response from UIB");
+        	return null;
+        }
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);
         log.info("listAll Applications: {}", first50(output));

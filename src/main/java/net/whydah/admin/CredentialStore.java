@@ -22,12 +22,12 @@ import java.util.Set;
 @Repository
 public class CredentialStore {
 
-    private WhydahApplicationSession whydahApplicationSession = null;
+    private static WhydahApplicationSession whydahApplicationSession = null;
     private final String stsUri;
     private final String uasUri;
     private final ApplicationCredential uasApplicationCredential;
-    private Set okApplicationTokenSet = new LinkedHashSet<String>();
-    private Map<String, String> okApplicationIDMap = new LinkedHashMap<String, String>();
+    private static Set okApplicationTokenSet = new LinkedHashSet<String>();
+    private static Map<String, String> okApplicationIDMap = new LinkedHashMap<String, String>();
 
 
     @Autowired

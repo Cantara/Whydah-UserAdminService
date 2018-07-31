@@ -1,6 +1,6 @@
 package net.whydah.admin.security;
 
-import net.whydah.admin.ApplicationModelFacade;
+import net.whydah.admin.ApplicationCacheStorage;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.application.uib.UibApplicationConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
@@ -39,21 +39,21 @@ public class SecurityFilter implements Filter {
 
     private String stsAppId;
     private URI tokenServiceUri;
-    private Set okApplicationTokenList = new LinkedHashSet<String>();
-    private UibApplicationConnection uibApplicationConnection;
+    //private Set okApplicationTokenList = new LinkedHashSet<String>();
+    //private UibApplicationConnection uibApplicationConnection;
     private final CredentialStore credentialStore;
 
 
     @Autowired
     @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, UibApplicationConnection uibApplicationConnection, CredentialStore credentialStore) {
+    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, CredentialStore credentialStore) {
         this.stsAppId = stsAppId;
         if (this.stsAppId == null || this.stsAppId.equals("")) {
             this.stsAppId = "2211";
         }
         this.tokenServiceUri = URI.create(stsUri);
         this.credentialStore = credentialStore;
-        this.uibApplicationConnection = uibApplicationConnection;
+        //this.uibApplicationConnection = uibApplicationConnection;
     }
 
     @Override

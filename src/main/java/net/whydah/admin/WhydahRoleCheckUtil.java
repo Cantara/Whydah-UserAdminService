@@ -30,7 +30,7 @@ public class WhydahRoleCheckUtil {
     CredentialStore credentialStore;
     UibApplicationsConnection uibApplicationsConnection;
     UibUserConnection uibUserConnection;
-    ApplicationModelFacade appStore;
+    ApplicationCacheStorage appStore;
     String uaswa = "2219";
 
     @Autowired
@@ -40,7 +40,7 @@ public class WhydahRoleCheckUtil {
         this.uibApplicationsConnection = uibApplicationsConnection;
         this.uibUserConnection = uibUserConnection;
         this.credentialStore = credentialStore;
-        this.appStore = new ApplicationModelFacade(credentialStore, uibApplicationsConnection);
+        this.appStore = new ApplicationCacheStorage(credentialStore, uibApplicationsConnection, stsUrl);
         if (uaswaId == null || uaswaId.length() < 3) {
         } else {
             this.uaswa = uaswaId;
@@ -74,7 +74,7 @@ public class WhydahRoleCheckUtil {
             String appId = "NULL";
             String appName = "NULL";
             if (applicationTokenId != null) {
-                appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
+                appId = appStore.getApplicationIdByAppTokenId(applicationTokenId);
                 if (appId != null) {
                     Application app = appStore.getApplication(appId);
                     if (app != null) {
@@ -145,17 +145,20 @@ public class WhydahRoleCheckUtil {
     public boolean isUASAccessGranted(String applicationTokenId) {
         //we have to get the appId from the sts
         //String appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
-        String appId = null;
-        if (appStore.apptopkenId_appId_Map.containsKey(applicationTokenId)) {
-            appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
-        } else {
-            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
-            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
-        }
+//        String appId = null;
+//        if (appStore.apptopkenId_appId_Map.containsKey(applicationTokenId)) {
+//            appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
+//        } else {
+//            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
+//            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
+//        }
+    	String appId = appStore.getApplicationIdByAppTokenId(applicationTokenId);
 
         // If I'm calling myself, that is fine
-        if (appId.equals(credentialStore.getMyApplicationID())) {
-            return true;
+        if (appId==null) {
+            return false;
+        } else if (appId.equals(credentialStore.getMyApplicationID())) {
+        	return true;
         }
 
         //get application data
@@ -224,15 +227,15 @@ public class WhydahRoleCheckUtil {
 
     //check internal Whydah admin app
     public boolean isInternalWhydahAdminApp(String applicationTokenId) {
-        String appId = null;
-        if (appStore.apptopkenId_appId_Map.containsKey(applicationTokenId)) {
-            appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
-        } else {
-            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
-            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
-        }
+//        String appId = null;
+//        if (appStore.apptopkenId_appId_Map.containsKey(applicationTokenId)) {
+//            appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
+//        } else {
+//            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
+//            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
+//        }
         //get application data
-        Application app = appStore.getApplication(appId);
+        Application app = appStore.getApplicationByAppTokenId(applicationTokenId);
         if (app != null) {
             if (app.getSecurity() != null) {
                 boolean isWhyDahAdmin = app.getSecurity().isWhydahAdmin();
@@ -253,20 +256,31 @@ public class WhydahRoleCheckUtil {
     public boolean isUAWA(String applicationTokenId) {
         //2 conditions: - has whydahadmin=true and has a correct appid
         //String applicationId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
-        String appId = null;
-        if (appStore.apptopkenId_appId_Map.containsKey(applicationTokenId)) {
-            appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
-        } else {
-            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
-            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
-        }
+//        String appId = null;
+//        if (appStore.apptopkenId_appId_Map.containsKey(applicationTokenId)) {
+//            appId = appStore.apptopkenId_appId_Map.get(applicationTokenId);
+//        } else {
+//            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
+//            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
+//        }
         //get application data
-        Application app = appStore.getApplication(appId);
-        log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", appId);
-        if (app.getSecurity().isWhydahAdmin() && app.getId().equals(uaswa)) {
-            return true;
-        } else {
-            return false;
+        Application app = appStore.getApplicationByAppTokenId(applicationTokenId);    
+        if (app!=null) {
+        	log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", app.getId());
+        	 if (app.getSecurity() != null) {
+                 boolean isUAWA = app.getSecurity().isWhydahAdmin() && app.getId().equals(uaswa);
+                 if (isUAWA) {
+                     log.info("Application " + app.getName() + " with apptokenid=" + applicationTokenId + " is UAWA");
+                 }
+                 return isUAWA;
+             } else {
+                 log.error("app.getSecurity() is null. This error should not happen");
+                 return false;
+             }
+        	
+        } else {         	
+        	log.warn(appStore.apps.size() > 0 ? "Application with applicationId:null not found" : "Application list is empty");
+        	return false;
         }
     }
 }
