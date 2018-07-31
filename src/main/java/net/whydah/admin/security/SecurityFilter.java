@@ -1,5 +1,6 @@
 package net.whydah.admin.security;
 
+import net.whydah.admin.ApplicationModelFacade;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.application.uib.UibApplicationConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
@@ -162,15 +163,22 @@ public class SecurityFilter implements Filter {
             }
         }
         try {
-            Application callingApplication = uibApplicationConnection.getApplication2(callerApplicationTokenId, usertokenId, appId);
-            //uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
-
-            log.warn("SecurityFilter - got application:" + callingApplication);
-            // Does the calling application has UAS access
-            if (callingApplication == null || !callingApplication.getSecurity().isWhydahUASAccess()) {
-                log.warn("SecurityFiler - got application without UAS access");
-                return HttpServletResponse.SC_UNAUTHORIZED;
-            }
+        	
+        	//HUY: this line uibApplicationConnection.getApplication2(...) is redendant and should not be there. 
+        	//Bad idea to check UIB every time. The check is already handled in subsequent service points
+        	
+//            Application callingApplication = uibApplicationConnection.getApplication2(callerApplicationTokenId, usertokenId, appId);
+//            //uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
+//
+//        	
+//            log.warn("SecurityFilter - got application:" + callingApplication);
+//            // Does the calling application has UAS access
+//            if (callingApplication == null || !callingApplication.getSecurity().isWhydahUASAccess()) {
+//                log.warn("SecurityFiler - got application without UAS access");
+//                return HttpServletResponse.SC_UNAUTHORIZED;
+//            }
+        	
+        	
 
 
             //paths WITH userTokenId verification

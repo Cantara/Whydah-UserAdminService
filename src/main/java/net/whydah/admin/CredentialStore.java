@@ -40,7 +40,7 @@ public class CredentialStore {
         this.stsUri = stsUri;
         this.uasUri = uasUri;
         this.uasApplicationCredential = new ApplicationCredential(applicationid, applicationname, applicationsecret);
-        
+        getWas();//Init WAS first
     }
 
     public String getMyApplicationID() {
