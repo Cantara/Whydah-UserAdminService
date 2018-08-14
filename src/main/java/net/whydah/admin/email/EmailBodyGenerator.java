@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -47,8 +48,7 @@ public class EmailBodyGenerator {
         freemarkerConfig.setTemplateUpdateDelayMilliseconds(6000);
         
     }
-
-
+   
     public String resetPassword(String url, String username) {
         HashMap<String, String> model = new HashMap<>();
         model.put("username", username);
@@ -77,7 +77,7 @@ public class EmailBodyGenerator {
     }
     */
 
-    private String createBody(String templateName, HashMap<String, String> model) {
+    public String createBody(String templateName, Map<String, String> model) {
         StringWriter stringWriter = new StringWriter();
         try {
             Template template = freemarkerConfig.getTemplate(templateName);

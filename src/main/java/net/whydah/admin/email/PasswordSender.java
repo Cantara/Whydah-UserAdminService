@@ -44,7 +44,7 @@ public class PasswordSender {
             mailSender.send(userEmail, reset_subject!=null?reset_subject:RESET_PASSWORD_SUBJECT, body);
             messageSent = true;
         } catch (Exception e) {
-            log.info("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
+            log.error("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
         }
         return messageSent;
     }
@@ -66,7 +66,7 @@ public class PasswordSender {
             }
             messageSent = true;
         } catch (Exception e) {
-            log.info("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
+            log.error("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
         }
         return messageSent;
     }

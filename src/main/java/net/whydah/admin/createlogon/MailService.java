@@ -3,16 +3,24 @@ package net.whydah.admin.createlogon;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.whydah.admin.email.EmailBodyGenerator;
 import net.whydah.admin.email.MailSender;
 
+import org.constretto.ConstrettoConfiguration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class MailService {
@@ -26,11 +34,17 @@ public class MailService {
 	String toEmail;
 	String mailMessage;
 	String subject;
+	
+    
+    private final ConstrettoConfiguration configuration;
+    private final EmailBodyGenerator bodyGenerator;
 
 	@Autowired
 	@Configure
-	public MailService(MailSender sender) {
+	public MailService(ConstrettoConfiguration configuration, EmailBodyGenerator bodyGenerator, MailSender sender) {
 		this.mailSender = sender;
+		this.configuration = configuration;
+        this.bodyGenerator = bodyGenerator;
 	}
 
 	class RemindTask extends TimerTask {
@@ -40,6 +54,34 @@ public class MailService {
 			toolkit.beep();
 			timer.cancel(); //Not necessary because we call System.exit
 		}
+	}
+	
+	public void send(long timestamp, String toEmail, String subject, String templateParamsInJson, String templateName)  {
+
+
+		this.toEmail = toEmail;	
+		ObjectMapper mapper = new ObjectMapper();	
+		try {
+			if(subject==null || subject.equals("")) {
+				this.subject = configuration.evaluateToString("email.subject." + templateName);
+			}
+			
+			this.mailMessage = bodyGenerator.createBody(templateName, mapper.readValue(templateParamsInJson, Map.class));
+			
+			toolkit = Toolkit.getDefaultToolkit();
+			timer = new Timer();
+
+			long milliseconds = timestamp - new Date().getTime();
+			log.debug("Milliseconds:{}", milliseconds);
+			timer.schedule(new RemindTask(), milliseconds);
+			
+		} catch (Exception e) {
+            log.error("Failed to send mail to {}. Reason {}", toEmail, e.getMessage());
+        }
+		
+		
+
+
 	}
 
 	public void send(long timestamp, String toEmail, String subject, String mailMessage)  {

@@ -151,21 +151,6 @@ public class CreateLogonUserController {
     }
 
 
-    @Path("/send_scheduled_email")
-    @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response send_scheduled_email(@PathParam("applicationtokenid") String applicationtokenid,
-                                         @FormParam("timestamp") String timestamp,
-                                         @FormParam("emailaddress") String emailaddress,
-                                         @FormParam("subject") String subject,
-                                         @FormParam("emailMessage") String emailMessage) {
-        log.info("send_scheduled_email - Try to schedule mail user with emailaddress {}", emailaddress);
-       
-        //new ScheduledSendEMailTask(Long.parseLong(timestamp),emailaddress,subject,emailMessage);
-        mailService.send(Long.parseLong(timestamp),emailaddress,subject,emailMessage);
-        return Response.ok("email scheduled").build();
 
-    }
 
 }
