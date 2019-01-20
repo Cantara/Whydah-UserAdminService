@@ -1,5 +1,5 @@
-UserAdminService
-====================
+# UserAdminService
+
 
 ![Build Status](https://jenkins.capraconsulting.no/buildStatus/icon?job=Whydah-UserAdminService) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)  
 
@@ -9,9 +9,14 @@ The component to allow 3rd party authenticated applications to add and manage us
 
 ![Architectural Overview](https://raw2.github.com/altran/Whydah-SSOLoginWebApp/master/Whydah%20infrastructure.png)
 
+## Configruation
+Copy useradminservice_override.properties.example to useradminservice_override.properties
 
-Installation
-============
+You will need to change the username and password on two places:
+* email.smtp.username and email.smtp.password
+* gmail.username and gmail.password
+
+## Installation
 
 
 * create a user for the service
