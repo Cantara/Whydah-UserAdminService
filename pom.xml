@@ -22,7 +22,7 @@
 
     <properties>
         <service.name>Whydah-UserAdminService</service.name>
-        <whydah.admin.sdk.version>2.5.10</whydah.admin.sdk.version>
+        <whydah.admin.sdk.version>2.5.11</whydah.admin.sdk.version>
         <jersey.version>2.26-b03</jersey.version>
         <jetty.version>9.4.15.v20190215</jetty.version>
         <spring.version>5.1.4.RELEASE</spring.version>
