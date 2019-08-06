@@ -1,6 +1,6 @@
 package net.whydah.admin.auth;
 
-import org.valuereporter.agent.activity.ObservedActivity;
+import org.valuereporter.activity.ObservedActivity;
 
 /**
  * Created by baardl on 04.03.16.
