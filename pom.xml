@@ -25,7 +25,7 @@
         <whydah.admin.sdk.version>2.5.30</whydah.admin.sdk.version>
         <jersey.version>2.29.1</jersey.version>
         <jetty.version>9.4.24.v20191120</jetty.version>
-        <spring.version>5.2.0.RELEASE</spring.version>
+        <spring.version>5.2.2.RELEASE</spring.version>
 
         <slf4j.version>1.7.29</slf4j.version>
     </properties>
@@ -358,8 +358,8 @@
                                 </excludes>
                             </artifactSet>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
