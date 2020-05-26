@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
@@ -64,13 +63,14 @@ public class MailSender {
 
 	public void send(String recipients, String subject, String body) {
 		log.debug("Sending email to recipients={}, subject={}, body={}", recipients, subject, body);
-	
+
 		Properties smtpProperties = new Properties();
-	
+
 		smtpProperties.put("mail.smtp.host", smtpHost);
 		smtpProperties.put("mail.smtp.socketFactory.port", smtpPort);
 		smtpProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		smtpProperties.put("mail.smtp.auth", "true");
+		smtpProperties.put("mail.smtp.starttls.enable", "true");
 		smtpProperties.put("mail.smtp.port", smtpPort);
 
 
