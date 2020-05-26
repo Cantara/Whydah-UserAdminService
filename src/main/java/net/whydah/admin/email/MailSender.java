@@ -66,12 +66,23 @@ public class MailSender {
 
 		Properties smtpProperties = new Properties();
 
+//		props.setProperty("mail.transport.protocol", "smtp");
+//		props.setProperty("mail.host", "smtp.gmail.com");
+//		props.put("mail.smtp.auth", "true");
+//		props.put("mail.smtp.port", "465");
+//		props.put("mail.debug", "true");
+//		props.put("mail.smtp.socketFactory.port", "465");
+//		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+//		props.put("mail.smtp.socketFactory.fallback", "false");
+
 		smtpProperties.put("mail.smtp.host", smtpHost);
 		smtpProperties.put("mail.smtp.socketFactory.port", smtpPort);
 		smtpProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		smtpProperties.put("mail.smtp.socketFactory.fallback", "false");
 		smtpProperties.put("mail.smtp.auth", "true");
 		smtpProperties.put("mail.smtp.starttls.enable", "true");
 		smtpProperties.put("mail.smtp.port", smtpPort);
+		smtpProperties.put("mail.debug", "true");
 
 
 		//Cantara smtp, will only work with @cantara-adresses
