@@ -78,10 +78,10 @@ public class MailSender {
 		smtpProperties.put("mail.smtp.host", smtpHost);
 		smtpProperties.put("mail.smtp.socketFactory.port", smtpPort);
 		smtpProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		smtpProperties.put("mail.smtp.socketFactory.fallback", "false");
-		smtpProperties.put("mail.smtp.auth.mechanisms", "XOAUTH2");
+//		smtpProperties.put("mail.smtp.socketFactory.fallback", "false");
+//		smtpProperties.put("mail.smtp.auth.mechanisms", "XOAUTH2");
 		smtpProperties.put("mail.smtp.auth", "true");
-		smtpProperties.put("mail.smtp.starttls.enable", "true");
+//		smtpProperties.put("mail.smtp.starttls.enable", "true");
 		smtpProperties.put("mail.smtp.port", smtpPort);
 		smtpProperties.put("mail.debug", "true");
 
