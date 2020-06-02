@@ -30,6 +30,7 @@
     <logger name="net.whydah.sso.application.helpers" level="INFO" />
     <logger name="net.whydah" level="INFO"/>
     <logger name="net.whydah.admin" level="DEBUG"/>
+    <logger name="sun.net.www.protocol.http.HttpURLConnection" level="INFO"></logger>
 
 
     <root>
