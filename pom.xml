@@ -22,7 +22,7 @@
 
     <properties>
         <service.name>Whydah-UserAdminService</service.name>
-        <whydah.admin.sdk.version>2.6.0</whydah.admin.sdk.version>
+        <whydah.admin.sdk.version>2.6.2</whydah.admin.sdk.version>
         <jersey.version>2.32</jersey.version>
         <jetty.version>9.4.33.v20201020</jetty.version>
         <spring.version>5.2.9.RELEASE</spring.version>
@@ -30,19 +30,6 @@
         <slf4j.version>1.7.30</slf4j.version>
     </properties>
 
-    <repositories>
-        <!-- Needed for parent  -->
-        <repository>
-            <id>cantara-releases</id>
-            <name>Cantara Release Repository</name>
-            <url>https://mvnrepo.cantara.no/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>cantara-snapshots</id>
-            <name>Cantara Snapshot Repository</name>
-            <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
 
     <developers>
         <developer>
@@ -487,4 +474,19 @@
             </plugin>
         </plugins>
     </build>
+    
+    
+    <repositories>
+        <!-- Needed for parent  -->
+        <repository>
+            <id>cantara-releases</id>
+            <name>Cantara Release Repository</name>
+            <url>https://mvnrepo.cantara.no/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>cantara-snapshots</id>
+            <name>Cantara Snapshot Repository</name>
+            <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 </project>
