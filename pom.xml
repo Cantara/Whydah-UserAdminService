@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.whydah.identity</groupId>
     <artifactId>UserAdminService</artifactId>
-    <version>2.6.1-SNAPSHOT</version>
+    <version>2.6.3</version>
     <name>UserAdminService</name>
     <url>https://wiki.cantara.no/display/iam/UserAdminService</url>
 
@@ -17,7 +17,7 @@
         <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
         <url>https://github.com/cantara/Whydah-UserAdminService</url>
     
-    <tag>HEAD</tag>
+    <tag>UserAdminService-2.6.3</tag>
   </scm>
 
     <properties>
@@ -350,8 +350,8 @@
                                 </excludes>
                             </artifactSet>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
