@@ -57,36 +57,34 @@ public class CreateLogonUserController {
 
     /**
      * @param applicationtokenid
-     * @param fbUserXml          lookinc simmilar to this
+     * @param userXml          lookinc simmilar to this
      *                           <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
      *                           <user>
      *                           <params>
-     *                           <fbAccessToken>accessMe1234567</fbAccessToken>
+     *                          
      *                           <userId>null</userId>
      *                           <firstName>null</firstName>
      *                           <lastName>null</lastName>
-     *                           <username>null</username>
-     *                           <gender>null</gender>
+     *                           <username>null</username>     
      *                           <email>null</email>
-     *                           <birthday>null</birthday>
-     *                           <hometown>null</hometown>
+     *                           <cellPhone>null</cellPhone>
      *                           </params>
      *                           </user>
      * @return
      */
     @POST
-    @Path("/create_logon_facebook_user")
+    @Path("/createandlogon")
     @Consumes({MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_XML})
-    public Response createAndLogonUser(@PathParam("applicationtokenid") String applicationtokenid, @PathParam("usertokenid") String userTokenId, String fbUserXml) {
-        log.trace("Try to create user from facebookUserXml {}", fbUserXml);
+    public Response createAndLogonUser(@PathParam("applicationtokenid") String applicationtokenid, String userXml) {
+        log.trace("Try to create user from xml {}", userXml);
         Response response = null;
         String userCreatedXml = null;
         try {
-            userCreatedXml = uibConnection.createUser(applicationtokenid, fbUserXml);
+            userCreatedXml = uibConnection.createUser(applicationtokenid, userXml);
             response = Response.ok(userCreatedXml).build();
         } catch (AuthenticationFailedException e) {
-            log.trace("Failed to create user with applicationtokenid {}, facebookUserXml: {}", applicationtokenid, fbUserXml);
+            log.trace("Failed to create user with applicationtokenid {}, facebookUserXml: {}", applicationtokenid, userXml);
             response = Response.serverError().build();
         }
         return response;

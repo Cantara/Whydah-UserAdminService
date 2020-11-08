@@ -6,6 +6,8 @@ import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserIdentity;
+import net.whydah.sso.util.StringConv;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -29,7 +31,7 @@ public class UibCreateLogonConnection {
     private static final int STATUS_BAD_REQUEST = 400; //Response.Status.BAD_REQUEST.getStatusCode();
     private static final int STATUS_OK = 200; //Response.Status.OK.getStatusCode();
     private static final String SIGNUP_USER_PATH = "signup/user";
-    private static final String CREATE_AND_LOGON_OPERATION = "createandlogon";
+    private static final String CREATE_AND_LOGON_OPERATION = "authenticate/user/createandlogon";
 
 
     private  WebTarget uibService;
@@ -48,15 +50,17 @@ public class UibCreateLogonConnection {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uibService = client.target(myUibUrl);
-        WebTarget webResource = uibService.path(applicationTokenId).path(SIGNUP_USER_PATH).path(CREATE_AND_LOGON_OPERATION);
+        WebTarget webResource = uibService.path(applicationTokenId).path(CREATE_AND_LOGON_OPERATION);
         log.debug("URI to use {}",webResource.getUri());
-        Response response = webResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
+        Response response = webResource.request(MediaType.APPLICATION_XML).
+        		header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).
+        		post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
         int statusCode = response.getStatus();
         if (statusCode != 200) {
             log.info("Request to UIB failed status {}, response {}", statusCode, response.getEntity());
             throw new ConnectionFailedException("Error creating user based on facebookUserXml {" + fbUserXml + "}, Response: {"+response.getEntity() +"}, Status {"+ statusCode +"}");
         }
-        return response.getEntity().toString();
+        return response.readEntity(String.class);
 
     }
 

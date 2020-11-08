@@ -53,12 +53,12 @@ public class UibAuthConnection {
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
     }
 
-    public String logonUser(String userAdminServiceTokenId, String userCredentialsXml) {
-        log.trace("logonUser(userAdminServiceTokenId: {}, userCredentialsXml:{})", userAdminServiceTokenId, userCredentialsXml);
+    public String logonUser(String appTokenId, String userCredentialsXml) {
+        log.trace("logonUser(userAdminServiceTokenId: {}, userCredentialsXml:{})", appTokenId, userCredentialsXml);
         long startTime = System.currentTimeMillis();
         Client client = ClientBuilder.newClient();
         uib = client.target(myuibUrl);
-        WebTarget logonUserResource = uib.path(userAdminServiceTokenId).path("authenticate/user");
+        WebTarget logonUserResource = uib.path(appTokenId).path("authenticate/user");
         Response response = logonUserResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(userCredentialsXml, MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
         String userXml = null;

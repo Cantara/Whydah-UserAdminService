@@ -146,7 +146,8 @@ public class SecurityFilter implements Filter {
         String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
         String pwResetAuthPattern = "/auth/password/reset/username/(.*?)";
         String pwPattern = "/user/.+/(reset|change)_password";
-        String userSignupPattern = "/signup/user";
+        String userSignupPattern = "/signup";
+        String userThirdParySignupPattern = "/createandlogon";
         String listApplicationsPattern = "/applications";
         String findApplicationsPattern = "/applications/find/(.*?)";
         String findApplicationsPattern_ = "/applications/find";
@@ -155,7 +156,7 @@ public class SecurityFilter implements Filter {
         String hasUASAccess = "/hasUASAccess";
         String send_scheduled_email = "/send_scheduled_email";
         String userPWEnabeled = "/user/.+/password_login_enabled";
-        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userPWEnabeled, findApplicationsPattern, findApplicationsPattern2, findApplicationsPattern_, findApplicationsPattern2_};
+        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, userThirdParySignupPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userPWEnabeled, findApplicationsPattern, findApplicationsPattern2, findApplicationsPattern_, findApplicationsPattern2_};
         for (String pattern : patternsWithoutUserTokenId) {
             if (Pattern.compile(pattern).matcher(path).matches()) {
                 log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
