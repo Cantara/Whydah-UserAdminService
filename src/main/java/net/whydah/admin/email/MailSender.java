@@ -60,7 +60,11 @@ public class MailSender {
 		log.info("email.smtp.from.address:" + smtpFromAddress);
 		log.info("email.smtp.from.personalname:" + smtpFromPersonalname);
 
-		send("totto@totto.org", "Testmail fra Whydah", "mostly empty body");
+		try {
+			send("totto@totto.org", "Testmail fra Whydah", "mostly empty body");
+		} catch (Exception e) {
+			log.warn("Trouble with testmail:", e);
+		}
 
 		// https://accounts.google.com/DisplayUnlockCaptcha
 	}
