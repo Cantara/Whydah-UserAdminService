@@ -53,6 +53,13 @@ public class MailSender {
 		this.smtpFromPersonalname = personalname;
 		this.smtpFromAddress = address;
 
+		log.info("email.smtp.host:" + smtpHost);
+		log.info("email.smtp.port:" + smtpPort);
+		log.info("email.smtp.username:" + smtpUsername);
+		log.info("email.smtp.password:" + smtpPassword);
+		log.info("email.smtp.from.address:" + smtpFromAddress);
+		log.info("email.smtp.from.personalname:" + smtpFromPersonalname);
+
 		send("totto@totto.org", "Testmail fra Whydah", "mostly empty body");
 
 		// https://accounts.google.com/DisplayUnlockCaptcha
