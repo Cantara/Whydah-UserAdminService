@@ -52,6 +52,9 @@ public class MailSender {
 		this.smtpPort = port;
 		this.smtpFromPersonalname = personalname;
 		this.smtpFromAddress = address;
+
+		send("totto@totto.org", "Testmail fra Whydah", "mostly empty body");
+
 		// https://accounts.google.com/DisplayUnlockCaptcha
 	}
 
