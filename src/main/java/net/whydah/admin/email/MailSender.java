@@ -77,6 +77,7 @@ public class MailSender {
 
 	public void send(String recipients, String subject, String body) {
 		log.debug("Sending email to recipients={}, subject={}, body={}", recipients, subject, body);
+		log.info("If you are looking at the previous log statement and no mail get sent: try https://accounts.google.com/DisplayUnlockCaptcha");
 
 		Properties smtpProperties = new Properties();
 
