@@ -85,5 +85,13 @@ public class UibUsersConnection {
         return copyResponse(response);
 	}
 
+	public Response checkExist(String userAdminServiceTokenId, String userTokenId, String username) {
+		Client client = ClientBuilder.newClient();
+		log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+		uib = client.target(myUibUrl);
+		WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/checkexist").path(username);
+		Response response = webResource.request().header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+		return copyResponse(response);
+	}
 
 }

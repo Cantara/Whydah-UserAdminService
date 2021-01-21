@@ -210,4 +210,32 @@ public class UsersService {
 		}
 		return false;//otherwise
 	}
+	
+	public String checkExist(String applicationTokenId, String userTokenId, String username) throws AppException {
+		String result = null;
+		if (hasAccess("checkExist",applicationTokenId, userTokenId)) {
+			Response response = uibUsersConnection.checkExist(applicationTokenId, userTokenId, username);
+			int statusCode = response.getStatus();
+			String output = response.readEntity(String.class);
+			switch (statusCode) {
+			case STATUS_OK:
+				log.trace("Response from UIB {}", LoggerUtil.first50(output));
+				result = output;
+				break;
+			case STATUS_BAD_REQUEST:
+				log.error("Response from UIB: {}: {}", response.getStatus(), output);
+				//throw new BadRequestException("BadRequest for query " + query + ",  Status code " + response.getStatus());
+				throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("BadRequest for query " + username + ",  Status code " + response.getStatus());
+			default:
+				log.error("Response from UIB: {}: {}", response.getStatus(), output);
+				//throw new AuthenticationFailedException("Request failed. Status code " + response.getStatus());
+				throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("Request failed. Status code " + response.getStatus());
+			}
+			return result;
+
+		} else {
+			throw AppExceptionCode.MISC_NotAuthorizedException_9992;
+		}
+	}
+
 }

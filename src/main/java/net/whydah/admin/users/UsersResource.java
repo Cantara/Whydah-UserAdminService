@@ -167,5 +167,28 @@ public class UsersResource {
         }
 
     }
+    
+    @GET
+    @Path("/checkexist/{username}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response checkExists(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
+    		 @PathParam("username") String username) throws AppException {
+
+        String usersJson = null;
+        try {
+            usersJson = usersService.checkExist(applicationTokenId, userTokenId, username);
+            if (usersJson != null) {
+                return Response.ok(usersJson).build();
+            } else {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            }
+
+        } catch (RuntimeException e) {
+            log.error("Unkonwn error.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+
+    }
 
 }
