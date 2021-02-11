@@ -1,13 +1,11 @@
 package net.whydah.admin.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.UserAction;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -69,6 +66,7 @@ public class PasswordController {
   	 */
     @POST
     @Path("/reset/username/{username}")
+    @Consumes({MediaType.TEXT_HTML, MediaType.TEXT_HTML, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) throws AppException {
         log.trace("reset username={}", username);
