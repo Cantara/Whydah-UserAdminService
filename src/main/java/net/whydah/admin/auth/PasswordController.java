@@ -66,7 +66,7 @@ public class PasswordController {
   	 */
     @POST
     @Path("/reset/username/{username}")
-    @Consumes({MediaType.MEDIA_TYPE_WILDCARD, MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) throws AppException {
         log.trace("reset username={}", username);
@@ -135,6 +135,7 @@ public class PasswordController {
   	 */
     @POST
     @Path("/reset/username/{username}/template/{resetPasswordTemplateName}")
+    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("resetPasswordTemplateName") String resetPasswordTemplateName) {
         log.trace("reset username={}, resetPasswordTemplateName:{}", username, resetPasswordTemplateName);
