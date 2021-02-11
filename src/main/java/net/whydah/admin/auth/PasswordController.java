@@ -66,7 +66,7 @@ public class PasswordController {
   	 */
     @POST
     @Path("/reset/username/{username}")
-    @Consumes({MediaType.TEXT_HTML, MediaType.TEXT_HTML, MediaType.APPLICATION_FORM_URLENCODED})
+    @Consumes({MediaType.MEDIA_TYPE_WILDCARD, MediaType.APPLICATION_JSON})
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) throws AppException {
         log.trace("reset username={}", username);
