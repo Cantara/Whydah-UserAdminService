@@ -20,6 +20,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>
  */
+@Path("/{applicationtokenid}/auth/password")
 @Controller
 public class PasswordController {
     private static final Logger log = LoggerFactory.getLogger(PasswordController.class);
@@ -64,8 +65,8 @@ public class PasswordController {
   	 * 
   	 */ 
     @POST
-    @Path("/{applicationtokenid}/auth/password/reset/username/{username}")
-    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
+    @Path("/reset/username/{username}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username) throws AppException {
         log.trace("reset username={}", username);
@@ -133,8 +134,8 @@ public class PasswordController {
   	 * 
   	 */
     @POST
-    @Path("/{applicationtokenid}/auth/password/reset/username/{username}/template/{resetPasswordTemplateName}")
-    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
+    @Path("/reset/username/{username}/template/{resetPasswordTemplateName}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response reset(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("resetPasswordTemplateName") String resetPasswordTemplateName) {
         log.trace("reset username={}, resetPasswordTemplateName:{}", username, resetPasswordTemplateName);
@@ -176,7 +177,7 @@ public class PasswordController {
      * @apiIgnore Internal
   	 */
     @POST
-    @Path("/{applicationtokenid}/auth/password/reset/username/{username}/newpassword/{passwordChangeToken}")
+    @Path("/reset/username/{username}/newpassword/{passwordChangeToken}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response resetNewPW(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("username") String username, @PathParam("passwordChangeToken") String passwordChangeToken, String newPasswordJson) throws AppException {
