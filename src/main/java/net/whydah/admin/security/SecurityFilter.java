@@ -1,13 +1,10 @@
 package net.whydah.admin.security;
 
-import net.whydah.admin.ApplicationCacheStorage;
 import net.whydah.admin.CredentialStore;
-import net.whydah.admin.application.uib.UibApplicationConnection;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
-import net.whydah.sso.application.types.Application;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
-import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
-import net.whydah.sso.commands.userauth.CommandValidateUsertokenId;
+import net.whydah.sso.commands.userauth.CommandGetUserTokenByUserTokenId;
+import net.whydah.sso.commands.userauth.CommandValidateUserTokenId;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.util.WhydahUtil;
@@ -23,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -191,13 +186,13 @@ public class SecurityFilter implements Filter {
         /{applicationtokenid}/{usertokenid}/users           //UsersResource
          */
 
-            Boolean userTokenIsValid = new CommandValidateUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
+            Boolean userTokenIsValid = new CommandValidateUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
             if (!userTokenIsValid) {
                 log.warn("SecurityFiler - got application without vaid userToken");
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
             UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
-            String userTokenXml = new CommandGetUsertokenByUsertokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
+            String userTokenXml = new CommandGetUserTokenByUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
             if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
                 log.debug("{} was matched adminUserRole {}. SecurityFilter passed.", path, adminUserRole);
                 return null;

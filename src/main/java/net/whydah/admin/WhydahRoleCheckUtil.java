@@ -3,8 +3,7 @@ package net.whydah.admin;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.types.Application;
-import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
-import net.whydah.sso.commands.userauth.CommandGetUsertokenByUsertokenId;
+import net.whydah.sso.commands.userauth.CommandGetUserTokenByUserTokenId;
 import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.mappers.UserTokenMapper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
@@ -183,7 +182,7 @@ public class WhydahRoleCheckUtil {
     //a must-have role to be an admin
     //systest, 2212, Whydah-UserAdminService, Whydah, WhydahUserAdmin, 1
     public boolean hasUASAccessAdminRole(String applicationTokenId, String userTokenId) {
-        String userTokenXml = new CommandGetUsertokenByUsertokenId(URI.create(stsUrl), applicationTokenId, "", userTokenId).execute();
+        String userTokenXml = new CommandGetUserTokenByUserTokenId(URI.create(stsUrl), applicationTokenId, "", userTokenId).execute();
         UserToken userToken = UserTokenMapper.fromUserTokenXml(userTokenXml);
         //TODO: should have systest role or something pre-configured properly, now we just skip it
         //FIX ME
