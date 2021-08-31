@@ -62,7 +62,7 @@ public class HealthResource {
                 "  \"STS\": \"" + credentialStore.getWas().getSTS() + "\",\n" +
                 "  \"UAS\": \"" + credentialStore.getWas().getUAS() + "\",\n" +
                 "  \"hasApplicationToken\": \"" + Boolean.toString((credentialStore.getWas().getActiveApplicationTokenId() != null)) + "\",\n" +
-                "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\",\n" +
+               // "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\",\n" +
                 "  \"hasApplicationsMetadata\": \"" + Boolean.toString(credentialStore.getWas().hasApplicationMetaData()) + "\",\n" +
 
                 "  \"now\": \"" + Instant.now() + "\",\n" +
