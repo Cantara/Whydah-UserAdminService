@@ -28,7 +28,7 @@ public class ApplicationCacheStorage {
 	CredentialStore credentialStore;
 	private static final int SESSION_CHECK_INTERVAL = 120; 
 	String stsUrl;
-	public static Map<String, String> apptopkenId_appId_Map = new HashMap<>(); //TODO: find a way to validate this map later
+	//public static Map<String, String> apptopkenId_appId_Map = new HashMap<>(); //TODO: find a way to validate this map later
 	static ScheduledExecutorService scheduler;
 	
 	public ApplicationCacheStorage(CredentialStore credentialStore, UibApplicationsConnection uibApplicationsConnection, String stsUrl){
@@ -53,35 +53,38 @@ public class ApplicationCacheStorage {
 	}
 	
 	public Application getApplicationByAppTokenId(String applicationTokenId) {
-		String appId=null;
-		if (apptopkenId_appId_Map.containsKey(applicationTokenId)) {
-            appId = apptopkenId_appId_Map.get(applicationTokenId);
-        } else {
-            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();     
-        }
-
-		if(appId!=null) {
-			apptopkenId_appId_Map.put(applicationTokenId, appId);
-			return getApplication(appId);
-		}
-		return null;
+		
+		return getApplication(credentialStore.getApplicationID(applicationTokenId));
+//		String appId=null;
+//		
+//		if (apptopkenId_appId_Map.containsKey(applicationTokenId)) {
+//            appId = apptopkenId_appId_Map.get(applicationTokenId);
+//        } else {
+//            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();     
+//        }
+//
+//		if(appId!=null) {
+//			apptopkenId_appId_Map.put(applicationTokenId, appId);
+//			return getApplication(appId);
+//		}
+//		return null;
 		
 	}
 	
 	public String getApplicationIdByAppTokenId(String applicationTokenId) {
-		String appId=null;
-		if (apptopkenId_appId_Map.containsKey(applicationTokenId)) {
-            appId = apptopkenId_appId_Map.get(applicationTokenId);
-        } else {
-            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();     
-        }
-
-		if(appId!=null) {
-			apptopkenId_appId_Map.put(applicationTokenId, appId);
-			return appId;
-		}
-		return null;
-		
+//		String appId=null;
+//		if (apptopkenId_appId_Map.containsKey(applicationTokenId)) {
+//            appId = apptopkenId_appId_Map.get(applicationTokenId);
+//        } else {
+//            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();     
+//        }
+//
+//		if(appId!=null) {
+//			apptopkenId_appId_Map.put(applicationTokenId, appId);
+//			return appId;
+//		}
+//		return null;
+		return credentialStore.getApplicationID(applicationTokenId);
 	}
 
 	public Application getApplication(String applicationID) {
