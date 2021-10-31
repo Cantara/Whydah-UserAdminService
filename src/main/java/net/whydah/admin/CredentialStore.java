@@ -5,6 +5,8 @@ import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTok
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.ddd.model.application.ApplicationId;
 import net.whydah.sso.session.WhydahApplicationSession;
+import net.whydah.sso.session.WhydahApplicationSession2;
+
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ import java.util.Set;
 @Repository
 public class CredentialStore {
 
-    private static WhydahApplicationSession whydahApplicationSession = null;
+    private static WhydahApplicationSession2 whydahApplicationSession = null;
     private final String stsUri;
     private final String uasUri;
     private final ApplicationCredential uasApplicationCredential;
@@ -91,14 +93,14 @@ public class CredentialStore {
 
     }
 
-    public WhydahApplicationSession getWas() {
+    public WhydahApplicationSession2 getWas() {
         if (whydahApplicationSession == null) {
-            setWas(WhydahApplicationSession.getInstance(stsUri, uasUri, uasApplicationCredential));
+            setWas(WhydahApplicationSession2.getInstance(stsUri, uasUri, uasApplicationCredential));
         }
         return whydahApplicationSession;
     }
 
-    public synchronized void setWas(WhydahApplicationSession was) {
+    public synchronized void setWas(WhydahApplicationSession2 was) {
         whydahApplicationSession = was;
     }
 }

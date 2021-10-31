@@ -55,6 +55,7 @@ public class PasswordSender {
         String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
         log.info("Sending resetPassword email for user {} to {}, token={}, tampleteName={}", username, userEmail, token, templateName);
         String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
+        log.debug(body);
         try {
             if (templateName == null || templateName.length() < 10) {
             	String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
