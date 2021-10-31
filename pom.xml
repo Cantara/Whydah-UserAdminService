@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.whydah.identity</groupId>
     <artifactId>UserAdminService</artifactId>
-    <version>2.7.15-SNAPSHOT</version>
+    <version>2.8.5-SNAPSHOT</version>
     <name>UserAdminService</name>
     <url>https://wiki.cantara.no/display/iam/UserAdminService</url>
     <parent>
@@ -12,10 +12,10 @@
     </parent>
     <properties>
         <service.name>Whydah-UserAdminService</service.name>
-        <whydah.admin.sdk.version>2.7.22</whydah.admin.sdk.version>
-        <jersey.version>2.34</jersey.version>
-        <jetty.version>9.4.43.v20210629</jetty.version>
-        <spring.version>5.3.9</spring.version>
+        <whydah.admin.sdk.version>2.8.1</whydah.admin.sdk.version>
+        <jersey.version>2.35</jersey.version>
+        <jetty.version>9.4.44.v20210927</jetty.version>
+        <spring.version>5.3.10</spring.version>
         <slf4j.version>1.7.32</slf4j.version>
     </properties>
     <scm>
@@ -199,7 +199,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.6</version>
         </dependency>
         <!-- javax.mail and javax.activation is used by logback SmtpAppender -->
         <dependency>
@@ -309,8 +309,8 @@
                                 </excludes>
                             </artifactSet>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
