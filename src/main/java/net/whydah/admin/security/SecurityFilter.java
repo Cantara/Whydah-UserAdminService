@@ -112,7 +112,20 @@ public class SecurityFilter implements Filter {
 
             // And sts gets special treatement too
         } else if (appId.equals(stsAppId)) {
-            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(tokenServiceUri, callerApplicationTokenId).execute();
+        	log.debug("Check STS token {}" + callerApplicationTokenId);
+        	//HUY: sometimes this callback failed. Try allowing longer timeout
+        	//also add some logging for detecting if the callback command is really failed
+            Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(tokenServiceUri, callerApplicationTokenId, 10000) {
+            	protected Boolean getFallback() {
+            		log.error("Fall back called");
+            		return super.getFallback();
+            	};
+            	
+            	protected Boolean dealWithFailedResponse(String responseBody, int statusCode) {
+            		log.error("Failed response body {} code {}", responseBody, statusCode);
+            		return super.dealWithFailedResponse(responseBody, statusCode);
+            	};
+            }.execute();
             if (!applicationTokenIsValid) {
                 log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
                 return HttpServletResponse.SC_UNAUTHORIZED;
