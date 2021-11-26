@@ -81,7 +81,20 @@
                     <groupId>javax.annotation</groupId>
                     <artifactId>jsr250-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
         </dependency>
         <dependency>
             <groupId>org.valuereporter</groupId>
@@ -199,7 +212,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.6</version>
+            <version>1.2.7</version>
         </dependency>
         <!-- javax.mail and javax.activation is used by logback SmtpAppender -->
         <dependency>
