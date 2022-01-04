@@ -266,12 +266,21 @@
         </dependency>
         
         <!--  Since Java 11 javax.xml.bind is not contained anymore in the system library and has to be added as dependency with this one -->
-        <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+        
+		<!-- API, java.xml.bind module -->
 		<dependency>
-		    <groupId>javax.xml.bind</groupId>
-		    <artifactId>jaxb-api</artifactId>
-		    <version>2.4.0-b180830.0359</version>
+		    <groupId>jakarta.xml.bind</groupId>
+		    <artifactId>jakarta.xml.bind-api</artifactId>
+		    <version>2.3.2</version>
 		</dependency>
+		
+		<!-- Runtime, com.sun.xml.bind module -->
+		<dependency>
+		    <groupId>org.glassfish.jaxb</groupId>
+		    <artifactId>jaxb-runtime</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		
 		        
     </dependencies>
 
