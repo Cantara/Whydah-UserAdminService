@@ -115,11 +115,15 @@ public class CredentialStore {
             okApplicationIDMap.put(callerApplicationTokenId, appId); // most-recent
             return appId;
         }
-        appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(getWas().getSTS()), callerApplicationTokenId).execute();
-        //HUY: it is a bug, appid can be null for the first time. we should only add the value to the list if it is something not a null value
-        if (appId != null && ApplicationId.isValid(appId)) {
-            okApplicationIDMap.put(callerApplicationTokenId, appId);
-            return appId;
+        if(callerApplicationTokenId.equalsIgnoreCase(getWas().getActiveApplicationTokenId())) { //just ignore if it is me
+        	okApplicationIDMap.put(callerApplicationTokenId, getWas().getActiveApplicationToken().getApplicationID());
+            return getWas().getActiveApplicationToken().getApplicationID(); 
+        } else {
+        	appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(getWas().getSTS()), callerApplicationTokenId).execute();
+        	if (appId != null && ApplicationId.isValid(appId)) {
+        		okApplicationIDMap.put(callerApplicationTokenId, appId);
+        		return appId;
+        	}
         }
         return null;
     }
