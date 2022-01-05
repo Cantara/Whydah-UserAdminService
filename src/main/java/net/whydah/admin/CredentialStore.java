@@ -1,5 +1,6 @@
 package net.whydah.admin;
 
+import net.whydah.admin.applications.ApplicationsAdminResource;
 import net.whydah.sso.application.types.ApplicationCredential;
 import net.whydah.sso.commands.appauth.CommandGetApplicationIdFromApplicationTokenId;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
@@ -7,6 +8,8 @@ import net.whydah.sso.ddd.model.application.ApplicationId;
 import net.whydah.sso.session.WhydahApplicationSession2;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @Repository
 public class CredentialStore {
-
+	private static final Logger log = LoggerFactory.getLogger(CredentialStore.class);
+	
     public static final int OK_APPLICATION_TOKEN_SET_MAX_SIZE = 30;
     public static final int OK_APPLICATION_TOKEN_ID_MAP_MAX_SIZE = 50;
 
@@ -114,6 +118,9 @@ public class CredentialStore {
         if (appId != null) {
             okApplicationIDMap.put(callerApplicationTokenId, appId); // most-recent
             return appId;
+        }
+        if(getWas().getActiveApplicationToken() ==null) {
+        	log.warn("No active token found. getWas().getActiveApplicationToken() returns null");
         }
         if(callerApplicationTokenId.equalsIgnoreCase(getWas().getActiveApplicationTokenId())) { //just ignore if it is me
         	okApplicationIDMap.put(callerApplicationTokenId, getWas().getActiveApplicationToken().getApplicationID());
