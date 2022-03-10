@@ -26,7 +26,7 @@ import java.util.logging.LogManager;
 public class MainWithJetty {
     public static final String CONTEXT_PATH = "/useradminservice";
     private static final Logger log = LoggerFactory.getLogger(MainWithJetty.class);
-
+    
     private Server server;
     private String resourceBase;
     private static int jettyPort;
@@ -48,30 +48,22 @@ public class MainWithJetty {
         SLF4JBridgeHandler.install();
         LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
 
-        final ConstrettoConfiguration configuration = new ConstrettoBuilder()
-                .createPropertiesStore()
-                .addResource(Resource.create("classpath:useradminservice.properties"))
-                .addResource(Resource.create("file:./useradminservice_override.properties"))
-                .done()
-                .getConfiguration();
-
-        printConfiguration(configuration);
-
+       
         // Property-overwrite of SSL verification to support weak ssl certificates
-        String sslVerification = configuration.evaluateToString("sslverification");
+        String sslVerification = ConfigValues.getString("sslverification");
         if ("disabled".equalsIgnoreCase(sslVerification)) {
             SSLTool.disableCertificateValidation();
         }
 
         //Start Valuereporter event distributer.
-        String reporterHost = configuration.evaluateToString("valuereporter.host");
-        String reporterPort = configuration.evaluateToString("valuereporter.port");
-        String prefix = configuration.evaluateToString("applicationname");
-        int cacheSize = configuration.evaluateToInt("valuereporter.activity.batchsize");
-        int forwardInterval = configuration.evaluateToInt("valuereporter.activity.postintervalms");
+        String reporterHost = ConfigValues.getString("valuereporter.host");
+        String reporterPort = ConfigValues.getString("valuereporter.port");
+        String prefix = ConfigValues.getString("applicationname");
+        int cacheSize = ConfigValues.get("valuereporter.activity.batchsize", 500);
+        int forwardInterval = ConfigValues.get("valuereporter.activity.postintervalms", 10000);
         new Thread(ObservedActivityDistributer.getInstance(reporterHost, reporterPort, prefix, cacheSize, forwardInterval)).start();
         new Thread(new HttpObservationDistributer(reporterHost, reporterPort, prefix)).start();
-        Integer webappPort = configuration.evaluateToInt("service.port");
+        Integer webappPort = ConfigValues.get("service.port", 9992);
         MainWithJetty main = new MainWithJetty(webappPort);
         main.start();
         main.join();
@@ -139,10 +131,5 @@ public class MainWithJetty {
     }
     */
 
-    private static void printConfiguration(ConstrettoConfiguration configuration) {
-        Map<String, String> properties = configuration.asMap();
-        for (String key : properties.keySet()) {
-            log.info("Using Property: {}, value: {}", key, properties.get(key));
-        }
-    }
+   
 }

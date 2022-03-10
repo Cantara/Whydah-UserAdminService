@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import net.whydah.admin.ConfigValues;
+
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -17,7 +19,7 @@ import java.util.Properties;
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a>
  */
 @Component
-public class MailSender {
+public class MailSender implements IMailSender {
 	private static final Logger log = LoggerFactory.getLogger(MailSender.class);
 
 
@@ -37,21 +39,14 @@ public class MailSender {
 //			email.smtp.from.address=whydahdev.cantara@gmail.com
 //			email.smtp.from.personalname=Whydah
 
-	@Autowired
-	@Configure
-	public MailSender(@Configuration("email.smtp.host") String host,
-			@Configuration("email.smtp.port") String port,
-			@Configuration("email.smtp.username") String smtpUsername,
-			@Configuration("email.smtp.password") String smtpPassword,
-			@Configuration("email.smtp.from.address") String address,
-			@Configuration("email.smtp.from.personalname") String personalname
-			) {
-		this.smtpUsername = smtpUsername;
-		this.smtpPassword = smtpPassword;
-		this.smtpHost = host;
-		this.smtpPort = port;
-		this.smtpFromPersonalname = personalname;
-		this.smtpFromAddress = address;
+	
+	public MailSender() {
+		this.smtpUsername = ConfigValues.getString("email.smtp.username");
+		this.smtpPassword = ConfigValues.getString("email.smtp.password");
+		this.smtpHost = ConfigValues.getString("email.smtp.host");
+		this.smtpPort = ConfigValues.getString("email.smtp.port");
+		this.smtpFromPersonalname = ConfigValues.getString("email.smtp.from.personalname");
+		this.smtpFromAddress = ConfigValues.getString("email.smtp.from.address");
 
 		log.info("email.smtp.host:" + smtpHost);
 		log.info("email.smtp.port:" + smtpPort);
