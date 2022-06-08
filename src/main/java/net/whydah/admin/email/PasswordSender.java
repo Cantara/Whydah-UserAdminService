@@ -66,7 +66,7 @@ public class PasswordSender {
             }
             messageSent = true;
         } catch (Exception e) {
-            log.error("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
+            log.error("Failed to send passwordResetMail to {}. Reason {}.  Stacktrace {}", userEmail, e.getMessage(), e);
         }
         return messageSent;
     }
