@@ -40,8 +40,8 @@ public class PasswordSender {
         log.info("Sending resetPassword email for user {} to {}, token={}", username, userEmail, token);
         String body = bodyGenerator.resetPassword(resetUrl, username);
         try {
-        	String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
-            mailSender.send(userEmail, reset_subject!=null?reset_subject:RESET_PASSWORD_SUBJECT, body);
+            String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+            mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             messageSent = true;
         } catch (Exception e) {
             log.error("Failed to send passwordResetMail to {}. Reason {}", userEmail, e.getMessage());
@@ -52,15 +52,14 @@ public class PasswordSender {
 
     public boolean sendResetPasswordEmail(String username, String token, String userEmail, String templateName) {
         boolean messageSent = false;
-        String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
-        log.info("Sending resetPassword email for user {} to {}, token={}, tampleteName={}", username, userEmail, token, templateName);
-        String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
-        log.debug(body);
         try {
+            String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
+            log.info("Sending resetPassword email for user {} to {}, token={}, templateName={}", username, userEmail, token, templateName);
+            String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
+            log.debug(body);
             if (templateName == null || templateName.length() < 10) {
-            	String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
-                mailSender.send(userEmail, reset_subject!=null? reset_subject : RESET_PASSWORD_SUBJECT, body);
-
+                String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+                mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             } else {
                 String template_subject = configuration.evaluateToString("email.subject." + templateName);
                 mailSender.send(userEmail, template_subject, body);
