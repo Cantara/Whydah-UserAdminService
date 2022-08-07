@@ -55,13 +55,18 @@ public class PasswordSender {
         try {
             String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
             log.info("Sending resetPassword email for user {} to {}, token={}, templateName={}", username, userEmail, token, templateName);
-            String body = bodyGenerator.resetPassword(resetUrl, username, templateName);
-            log.debug(body);
+            
             if (templateName == null || templateName.length() < 10) {
                 String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+                String system_name = configuration.evaluateToString("email.systemname.PasswordResetEmail.ftl");
+                String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
+                log.debug(body);
                 mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             } else {
                 String template_subject = configuration.evaluateToString("email.subject." + templateName);
+                String system_name = configuration.evaluateToString("email.systemname."+ templateName);
+                String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
+                log.debug(body);
                 mailSender.send(userEmail, template_subject, body);
             }
             messageSent = true;

@@ -56,12 +56,12 @@ public class EmailBodyGenerator {
         return createBody(RESET_PASSWORD_EMAIL_TEMPLATE, model);
     }
 
-    public String resetPassword(String url, String username, String passwordResetEmailTemplateName) {
+    public String resetPassword(String url, String username, String systemName, String passwordResetEmailTemplateName) {
         HashMap<String, String> model = new HashMap<>();
         model.put("username", username);
         model.put("url", url);
         model.put("name", username);
-        model.put("systemName", "Whydah system" );
+        model.put("systemName", systemName );
         if (passwordResetEmailTemplateName == null || passwordResetEmailTemplateName.length() < 4) {
             return createBody(RESET_PASSWORD_EMAIL_TEMPLATE, model);
         }
