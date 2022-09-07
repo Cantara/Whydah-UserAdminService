@@ -1,29 +1,26 @@
 package net.whydah.admin.createlogon;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.ConfigValues;
 import net.whydah.admin.email.EmailBodyGenerator;
 import net.whydah.admin.email.IMailSender;
 import net.whydah.admin.email.MailSender;
 import net.whydah.admin.email.msgraph.MsGraphMailSender;
-
 import org.constretto.ConstrettoConfiguration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.awt.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class MailService {
@@ -32,15 +29,11 @@ public class MailService {
 	private static final Logger log = getLogger(MailService.class);
 	private final IMailSender mailSender;
 
-	Toolkit toolkit;
-	Timer timer;
-	String toEmail;
-	String mailMessage;
-	String subject;
-	
-    
     private final ConstrettoConfiguration configuration;
     private final EmailBodyGenerator bodyGenerator;
+	private final AtomicLong nextTaskId = new AtomicLong(1);
+	private final Map<Long, RemindTask> taskById = new ConcurrentHashMap<>();
+	private final Timer timer = new Timer("mail-service-timer");
 
 	@Autowired
 	@Configure
@@ -48,6 +41,7 @@ public class MailService {
 		if(!ConfigValues.get("email.smtp.app.clientid", "").isEmpty() &&
 				!ConfigValues.get("email.smtp.app.fromaddress", "").isEmpty() &&
 				!ConfigValues.get("email.smtp.app.clientsecret", "").isEmpty()) {
+			log.debug("Choosing IMailSender: " + MsGraphMailSender.class.getName());
 			this.mailSender = new MsGraphMailSender(
 					ConfigValues.getString("email.smtp.app.fromaddress"), 
 					ConfigValues.getString("email.smtp.app.clientid"), 
@@ -55,6 +49,7 @@ public class MailService {
 					ConfigValues.getString("email.smtp.app.clientsecret")				 
 					);
 		} else {
+			log.debug("Choosing IMailSender: " + MailSender.class.getName());
 			this.mailSender = new MailSender();
 		}
 		
@@ -62,33 +57,59 @@ public class MailService {
         this.bodyGenerator = bodyGenerator;
 	}
 
+	public IMailSender getEmailSender() {
+		return mailSender;
+	}
+
 	class RemindTask extends TimerTask {
+		final Long taskId;
+		final String toEmail;
+		final String mailMessage;
+		final String subject;
+
+		public RemindTask(String toEmail, String mailMessage, String subject) {
+			this.taskId = nextTaskId.getAndIncrement();
+			this.toEmail = toEmail;
+			this.mailMessage = mailMessage;
+			this.subject = subject;
+		}
+
+		public void schedule(long delay) {
+			taskById.put(taskId, this);
+			timer.schedule(this, delay);
+		}
+
 		public void run() {
-			log.debug("Task running." + new Date().toString());
-			mailSender.send(toEmail,subject,mailMessage);
-			toolkit.beep();
-			timer.cancel(); //Not necessary because we call System.exit
+			try {
+				log.debug("Task running." + new Date().toString());
+				mailSender.send(toEmail, subject, mailMessage);
+				{
+					Toolkit toolkit = Toolkit.getDefaultToolkit();
+					toolkit.beep(); // TODO is this really something we want in the production code?
+				}
+			} finally {
+				taskById.remove(taskId);
+			}
 		}
 	}
 	
 	public void send(long timestamp, String toEmail, String subject, String templateParamsInJson, String templateName)  {
 
 
-		this.toEmail = toEmail;	
-		ObjectMapper mapper = new ObjectMapper();	
+		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if(subject==null || subject.equals("")) {
-				this.subject = configuration.evaluateToString("email.subject." + templateName);
+			String effectiveSubject = subject;
+			if(effectiveSubject==null || effectiveSubject.equals("")) {
+				effectiveSubject = configuration.evaluateToString("email.subject." + templateName);
 			}
 			
-			this.mailMessage = bodyGenerator.createBody(templateName, mapper.readValue(templateParamsInJson, Map.class));
+			String mailMessage = bodyGenerator.createBody(templateName, mapper.readValue(templateParamsInJson, Map.class));
 			
-			toolkit = Toolkit.getDefaultToolkit();
-			timer = new Timer();
-
 			long milliseconds = timestamp - new Date().getTime();
 			log.debug("Milliseconds:{}", milliseconds);
-			timer.schedule(new RemindTask(), milliseconds);
+
+			RemindTask task = new RemindTask(toEmail, mailMessage, effectiveSubject);
+			task.schedule(milliseconds);
 			
 		} catch (Exception e) {
             log.error("Failed to send mail to {}. Reason {}", toEmail, e.getMessage());
@@ -102,17 +123,10 @@ public class MailService {
 	public void send(long timestamp, String toEmail, String subject, String mailMessage)  {
 
 
-		this.toEmail = toEmail;
-		this.mailMessage = mailMessage;
-		this.subject=subject;
-
-		toolkit = Toolkit.getDefaultToolkit();
-		timer = new Timer();
-
 		long milliseconds = timestamp - new Date().getTime();
 		log.debug("Milliseconds:{}", milliseconds);
-		timer.schedule(new RemindTask(), milliseconds);
-
+		RemindTask task = new RemindTask(toEmail, mailMessage, subject);
+		task.schedule(milliseconds);
 
 	}
 
