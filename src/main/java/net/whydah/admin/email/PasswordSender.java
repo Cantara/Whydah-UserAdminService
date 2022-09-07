@@ -1,5 +1,6 @@
 package net.whydah.admin.email;
 
+import net.whydah.admin.createlogon.MailService;
 import org.constretto.ConstrettoConfiguration;
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
@@ -23,14 +24,14 @@ public class PasswordSender {
     private final String ssoLoginServiceUrl;
 
     private final EmailBodyGenerator bodyGenerator;
-    private final MailSender mailSender;
+    private final MailService mailService;
 
     @Autowired
     @Configure
-    public PasswordSender(ConstrettoConfiguration configuration, EmailBodyGenerator bodyGenerator, MailSender mailSender, @Configuration("ssologinservice") String ssoLoginServiceUrl) {
+    public PasswordSender(ConstrettoConfiguration configuration, EmailBodyGenerator bodyGenerator, MailService mailService, @Configuration("ssologinservice") String ssoLoginServiceUrl) {
         this.configuration = configuration;
         this.bodyGenerator = bodyGenerator;
-        this.mailSender = mailSender;
+        this.mailService = mailService;
         this.ssoLoginServiceUrl = ssoLoginServiceUrl;
     }
 
@@ -41,6 +42,7 @@ public class PasswordSender {
         String body = bodyGenerator.resetPassword(resetUrl, username);
         try {
             String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+            IMailSender mailSender = mailService.getEmailSender();
             mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             messageSent = true;
         } catch (Exception e) {
@@ -61,12 +63,14 @@ public class PasswordSender {
                 String system_name = configuration.evaluateToString("email.systemname.PasswordResetEmail.ftl");
                 String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
                 log.debug(body);
+                IMailSender mailSender = mailService.getEmailSender();
                 mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             } else {
                 String template_subject = configuration.evaluateToString("email.subject." + templateName);
                 String system_name = configuration.evaluateToString("email.systemname."+ templateName);
                 String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
                 log.debug(body);
+                IMailSender mailSender = mailService.getEmailSender();
                 mailSender.send(userEmail, template_subject, body);
             }
             messageSent = true;
