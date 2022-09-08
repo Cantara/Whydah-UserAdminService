@@ -1,38 +1,17 @@
 package net.whydah.admin.email.msgraph;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Supplier;
-
-import javax.mail.Address;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.aad.msal4j.IAuthenticationResult;
+import net.whydah.admin.email.IMailSender;
+import net.whydah.admin.util.HttpConnectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.microsoft.aad.msal4j.IAuthenticationResult;
-import com.microsoft.graph.models.BodyType;
-import com.microsoft.graph.models.EmailAddress;
-import com.microsoft.graph.models.ItemBody;
-import com.microsoft.graph.models.Message;
-import com.microsoft.graph.models.Recipient;
-import com.microsoft.graph.models.UserSendMailParameterSet;
-
-import okhttp3.Request;
-import com.microsoft.graph.requests.GraphServiceClient;
-
-import net.whydah.admin.email.IMailSender;
-import net.whydah.admin.email.MailSender;
-import net.whydah.admin.email.msgraph.MailPayload.Email;
-import net.whydah.admin.util.HttpConnectionHelper;
+import javax.mail.internet.InternetAddress;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Supplier;
 
 
 //ref
@@ -62,8 +41,11 @@ public class MsGraphMailSender implements IMailSender {
 			MailPayload payload = new MailPayload(new Supplier<MailPayload.Message>() {
 				@Override
 				public MailPayload.Message get() {
-					MailPayload.Message msg = new MailPayload.Message(subject, 
-							new MailPayload.MessageBody("Text", content), new Supplier<List<MailPayload.Recipient>>() {
+					String contentLc = content.toLowerCase();
+					boolean isHtmlContent = contentLc.contains("<!doctype html>"); // TODO provide stronger content-detection
+					String contentType = isHtmlContent ? "html" : "text";
+					MailPayload.Message msg = new MailPayload.Message(subject,
+							new MailPayload.MessageBody(contentType, content), new Supplier<List<MailPayload.Recipient>>() {
 
 						@Override
 						public List<MailPayload.Recipient> get() {
