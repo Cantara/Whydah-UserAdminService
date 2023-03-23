@@ -298,7 +298,7 @@
 		<dependency>
 		    <groupId>com.microsoft.graph</groupId>
 		    <artifactId>microsoft-graph</artifactId>
-		    <version>5.47.0</version>
+		    <version>5.50.0</version>
 		</dependency>
 		
 		        
