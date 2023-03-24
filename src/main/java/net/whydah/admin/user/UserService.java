@@ -7,7 +7,6 @@ import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.user.uib.UibUserConnection;
-import net.whydah.admin.users.uib.UibUsersConnection;
 import net.whydah.sso.user.helpers.UserRoleJsonPathHelper;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
@@ -40,7 +39,6 @@ public class UserService {
 	private static final int STATUS_CONFLICT = 409;
 
 	private final UibUserConnection uibUserConnection;
-	private final UibUsersConnection uibUsersConnection;
 
 	private final CredentialStore credentialStore;
 	private final ObjectMapper mapper;
@@ -52,9 +50,8 @@ public class UserService {
 
 	@Autowired
 	@Configure
-	public UserService(UibUserConnection uibUserConnection, UibUsersConnection uibUsersConnection, CredentialStore credentialStore, WhydahRoleCheckUtil adminChecker) {
+	public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore, WhydahRoleCheckUtil adminChecker) {
 		this.uibUserConnection = uibUserConnection;
-		this.uibUsersConnection = uibUsersConnection;
 		this.credentialStore = credentialStore;
 		this.adminChecker = adminChecker;
 		this.mapper = new ObjectMapper();

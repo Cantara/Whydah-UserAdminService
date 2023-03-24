@@ -5,7 +5,6 @@ import net.whydah.admin.auth.uib.UibAuthConnection;
 import net.whydah.admin.createlogon.uib.UibCreateLogonConnection;
 import net.whydah.admin.email.PasswordSender;
 import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.users.uib.UibUsersConnection;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
@@ -33,7 +32,6 @@ public class SignupService {
     private final UibCreateLogonConnection uibConnection;
     private final ConstrettoConfiguration configuration;
     private final UibAuthConnection uibAuthConnection;
-    private final UibUsersConnection uibUsersConnection;
     private final PasswordSender passwordSender;
 
     private String defaultApplicationId;
@@ -54,9 +52,8 @@ public class SignupService {
 
     @Autowired
     public SignupService(UibCreateLogonConnection uibConnection, ConstrettoConfiguration configuration,
-                         UibAuthConnection uibAuthConnection, UibUsersConnection uibUsersConnection, PasswordSender passwordSender, ObjectMapper objectMapper) {
+                         UibAuthConnection uibAuthConnection, PasswordSender passwordSender, ObjectMapper objectMapper) {
         this.uibConnection = uibConnection;
-        this.uibUsersConnection = uibUsersConnection;
         this.configuration = configuration;
         this.uibAuthConnection = uibAuthConnection;
         this.passwordSender = passwordSender;
