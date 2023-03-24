@@ -149,11 +149,11 @@ public class UsersService {
 			String output = response.readEntity(String.class);
 			switch (statusCode) {
 			case STATUS_OK:
-				log.debug("exportUsers Response from UIB {}", output);
+				log.debug("STATUS_OK exportUsers Response from UIB -" + output);
 				usersJson = output;
 				break;
 			case STATUS_BAD_REQUEST:
-				log.error("Response from UIB: {}: {}", response.getStatus(), output);
+				log.error("STATUS_BAD_REQUEST Response from UIB: {}: {}", response.getStatus(), output);
 				//throw new BadRequestException("BadRequest for query " + query + ",  Status code " + response.getStatus());
 				throw AppExceptionCode.MISC_BadRequestException_9997.setDeveloperMessage("BadRequest for export  the page =" + page + ",  Status code " + response.getStatus());
 			default:
@@ -161,7 +161,7 @@ public class UsersService {
 				//throw new AuthenticationFailedException("Request failed. Status code " + response.getStatus());
 				throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("Request failed. Status code " + response.getStatus());
 			}
-			log.debug("exportUsers ok - page:", page);
+			log.debug("exportUsers ok - page:" + page);
 			return usersJson;
 		} else {
 			log.warn("User has not access to export users");
