@@ -1,8 +1,6 @@
 package net.whydah.admin.users.uib;
 
-import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.security.UASCredentials;
-
 import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
@@ -10,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -60,7 +57,7 @@ public class UibUsersConnection {
     
     public Response exportUsers(String userAdminServiceTokenId, String userTokenId, String page) {
         Client client = ClientBuilder.newClient();
-        log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
+        log.info("exportUsers Connection to UserIdentityBackend on {}", myUibUrl);
         uib = client.target(myUibUrl);
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/export").path(page);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();

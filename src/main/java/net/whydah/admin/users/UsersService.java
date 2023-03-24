@@ -142,13 +142,14 @@ public class UsersService {
 
 	public String exportUsers(String applicationTokenId, String userTokenId, String page) throws AppException {
 		String usersJson = null;
+		log.debug("exportUsers start - page:", page);
 		if (hasAccess("exportUsers",applicationTokenId, userTokenId)) {
 			Response response = uibUsersConnection.exportUsers(applicationTokenId, userTokenId, page);
 			int statusCode = response.getStatus();
 			String output = response.readEntity(String.class);
 			switch (statusCode) {
 			case STATUS_OK:
-				log.trace("Response from UIB {}", output);
+				log.debug("exportUsers Response from UIB {}", output);
 				usersJson = output;
 				break;
 			case STATUS_BAD_REQUEST:
@@ -160,8 +161,10 @@ public class UsersService {
 				//throw new AuthenticationFailedException("Request failed. Status code " + response.getStatus());
 				throw AppExceptionCode.MISC_OperationFailedException_9996.setDeveloperMessage("Request failed. Status code " + response.getStatus());
 			}
+			log.debug("exportUsers ok - page:", page);
 			return usersJson;
 		} else {
+			log.warn("User has not access to export users");
 			throw AppExceptionCode.MISC_NotAuthorizedException_9992;
 			//throw new NotAuthorizedException("Not Authorized to searchUsers");
 		}

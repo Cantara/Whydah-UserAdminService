@@ -1,22 +1,20 @@
 package net.whydah.admin.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.user.uib.UibUserConnection;
+import net.whydah.admin.users.uib.UibUsersConnection;
 import net.whydah.sso.user.helpers.UserRoleJsonPathHelper;
-import net.whydah.sso.user.helpers.UserRoleXpathHelper;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,6 +40,8 @@ public class UserService {
 	private static final int STATUS_CONFLICT = 409;
 
 	private final UibUserConnection uibUserConnection;
+	private final UibUsersConnection uibUsersConnection;
+
 	private final CredentialStore credentialStore;
 	private final ObjectMapper mapper;
 	private WhydahRoleCheckUtil adminChecker;
@@ -53,8 +52,9 @@ public class UserService {
 
 	@Autowired
 	@Configure
-	public UserService(UibUserConnection uibUserConnection, CredentialStore credentialStore, WhydahRoleCheckUtil adminChecker) {
+	public UserService(UibUserConnection uibUserConnection, UibUsersConnection uibUsersConnection, CredentialStore credentialStore, WhydahRoleCheckUtil adminChecker) {
 		this.uibUserConnection = uibUserConnection;
+		this.uibUsersConnection = uibUsersConnection;
 		this.credentialStore = credentialStore;
 		this.adminChecker = adminChecker;
 		this.mapper = new ObjectMapper();
@@ -64,16 +64,19 @@ public class UserService {
 	public UserIdentity createUser(String applicationTokenId, String userTokenId, String userJsonIdentity) throws AppException {
 		UserIdentity userIdentity = null;
 		if (adminChecker.authorise(applicationTokenId, userTokenId)) {
+			UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJsonIdentity);
+			Response userCheckResponse = uibUsersConnection.checkExist(applicationTokenId, userTokenId, signupUser.getUsername());
+			int userCheckStatusCode = userCheckResponse.getStatus();
 			Response response = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), userTokenId, userJsonIdentity);
 			String userJson = response.readEntity(String.class);
 			int statusCode = response.getStatus();
 			switch (statusCode) {
-			case STATUS_OK:
-				log.trace("createUser-Response from UIB {}", userJson);
-				userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
-				break;
-			case STATUS_CREATED:
-				log.trace("createUser-userCreated {}", userJson);
+				case STATUS_OK:
+					log.trace("createUser-Response from UIB {}", userJson);
+					userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
+					break;
+				case STATUS_CREATED:
+					log.trace("createUser-userCreated {}", userJson);
 				userIdentity = UserIdentityMapper.fromUserIdentityWithNoIdentityJson(userJson);
 				break;
 			case STATUS_CONFLICT:
