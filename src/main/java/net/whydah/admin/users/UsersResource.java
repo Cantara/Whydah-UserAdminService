@@ -125,10 +125,10 @@ public class UsersResource {
         try {
             usersJson = usersService.exportUsers(applicationTokenId, userTokenId, page);
             if (usersJson != null) {
-                log.debug("exportUsers result" + usersJson;
+                log.debug("exportUsers result" + usersJson);
                 return Response.ok(usersJson).build();
             } else {
-                log.debug("exportUsers empty result" + usersJson;
+                log.debug("exportUsers empty result" + usersJson);
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
 
