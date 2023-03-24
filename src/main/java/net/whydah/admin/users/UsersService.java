@@ -142,7 +142,7 @@ public class UsersService {
 
 	public String exportUsers(String applicationTokenId, String userTokenId, String page) throws AppException {
 		String usersJson = null;
-		log.debug("exportUsers start - page:", page);
+		log.debug("exportUsers start - page:" + page);
 		if (hasAccess("exportUsers",applicationTokenId, userTokenId)) {
 			Response response = uibUsersConnection.exportUsers(applicationTokenId, userTokenId, page);
 			int statusCode = response.getStatus();
