@@ -1,19 +1,14 @@
 package net.whydah.admin.users;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.errorhandling.AppException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -125,17 +120,20 @@ public class UsersResource {
     public Response exportUsers(@PathParam("applicationtokenid") String applicationTokenId, @PathParam("userTokenId") String userTokenId,
     		@PathParam("page") String page) throws AppException {
 
+        log.debug("exportUsers start");
         String usersJson = null;
         try {
             usersJson = usersService.exportUsers(applicationTokenId, userTokenId, page);
             if (usersJson != null) {
+                log.debug("exportUsers result" + usersJson;
                 return Response.ok(usersJson).build();
             } else {
+                log.debug("exportUsers empty result" + usersJson;
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
 
         } catch (RuntimeException e) {
-            log.error("Unkonwn error.", e);
+            log.error("Unkonwn error." + Arrays.toString(e.getStackTrace()));
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
