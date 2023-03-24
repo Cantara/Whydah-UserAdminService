@@ -123,17 +123,17 @@ public class UsersResource {
         log.debug("exportUsers start");
         String usersJson = null;
         try {
-            usersJson = usersService.exportUsers(applicationTokenId, userTokenId, page);
+            usersJson = " " + usersService.exportUsers(applicationTokenId, userTokenId, page) + " ";
             if (usersJson != null) {
-                log.debug("exportUsers result" + usersJson);
-                return Response.ok(usersJson).build();
+                log.debug("exportUsers result: " + usersJson);
+                return Response.ok(usersJson.trim()).build();
             } else {
-                log.debug("exportUsers empty result" + usersJson);
+                log.debug("exportUsers empty result: " + usersJson);
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
 
         } catch (RuntimeException e) {
-            log.error("Unkonwn error." + Arrays.toString(e.getStackTrace()));
+            log.error("exportUsers Unknown error." + Arrays.toString(e.getStackTrace()));
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
