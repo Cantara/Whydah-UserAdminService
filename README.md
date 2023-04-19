@@ -1,7 +1,7 @@
 # UserAdminService
 
 
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Cantara/Whydah-UserAdminService) ![Build Status](https://jenkins.quadim.ai/buildStatus/icon?job=Whydah-UserAdminService) ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Cantara/Whydah-UserAdminService) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)  [![Known Vulnerabilities](https://snyk.io/test/github/Cantara/Whydah-UserAdminService/badge.svg)](https://snyk.io/test/github/Cantara/Whydah-UserAdminService)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Cantara/Whydah-UserAdminService) ![Build Status](https://jenkins.cantara.no/buildStatus/icon?job=Whydah-UserAdminService) ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Cantara/Whydah-UserAdminService) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)  [![Known Vulnerabilities](https://snyk.io/test/github/Cantara/Whydah-UserAdminService/badge.svg)](https://snyk.io/test/github/Cantara/Whydah-UserAdminService)
 
 The component to allow 3rd party authenticated applications to add and manage users in Whydah IAM/SSO
 
