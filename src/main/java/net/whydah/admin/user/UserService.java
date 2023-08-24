@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.WhydahRoleCheckUtil;
+import net.whydah.admin.auth.UserLogonObservedActivity;
+import net.whydah.admin.auth.UserRemoveObservedActivity;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.user.uib.UibUserConnection;
@@ -14,11 +16,15 @@ import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
+import net.whydah.sts.user.statistics.UserSessionObservedActivity;
+
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.valuereporter.activity.ObservedActivity;
+import org.valuereporter.client.MonitorReporter;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
@@ -381,6 +387,13 @@ public class UserService {
 			int statusCode = response.getStatus();
 			switch (statusCode) {
 			case STATUS_NO_CONTENT:
+				try {
+					ObservedActivity observedActivity = new UserRemoveObservedActivity(uid, "userDeleted", applicationTokenId, credentialStore.getApplicationID(applicationTokenId));
+					MonitorReporter.reportActivity(observedActivity);
+				} catch(Exception ex) {
+					ex.printStackTrace();
+					log.error("failed to send observed activity when deleting user");
+				}
 				log.trace("deleteUser-Response from UIB uid={}", uid);
 				break;
 			case STATUS_BAD_REQUEST:
