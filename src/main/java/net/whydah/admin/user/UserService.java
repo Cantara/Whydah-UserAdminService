@@ -1,10 +1,23 @@
 package net.whydah.admin.user;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
+import org.constretto.annotation.Configure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.valuereporter.activity.ObservedActivity;
+import org.valuereporter.client.MonitorReporter;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.WhydahRoleCheckUtil;
-import net.whydah.admin.auth.UserLogonObservedActivity;
 import net.whydah.admin.auth.UserRemoveObservedActivity;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
@@ -16,19 +29,6 @@ import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-import net.whydah.sts.user.statistics.UserSessionObservedActivity;
-
-import org.constretto.annotation.Configure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.valuereporter.activity.ObservedActivity;
-import org.valuereporter.client.MonitorReporter;
-
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by baardl on 18.04.14.
