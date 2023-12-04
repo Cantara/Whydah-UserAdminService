@@ -299,7 +299,7 @@
 		<dependency>
 		    <groupId>com.microsoft.graph</groupId>
 		    <artifactId>microsoft-graph</artifactId>
-		    <version>5.75.0</version>
+		    <version>5.76.0</version>
 		</dependency>
 		
 		        
