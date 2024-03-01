@@ -13,6 +13,10 @@
     <properties>
         <service.name>Whydah-UserAdminService</service.name>
         <whydah.admin.sdk.version>2.23.0</whydah.admin.sdk.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
+        <java.version>11</java.version>
         <jersey.version>2.41</jersey.version>
         <jetty.version>9.4.54.v20240208</jetty.version>
         <spring.version>5.3.32</spring.version>
@@ -295,13 +299,13 @@
 		    <version>1.11.1</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/com.microsoft.graph/microsoft-graph -->
+		<!-- https://mvnrepository.com/artifact/com.microsoft.graph/microsoft-graph
 		<dependency>
 		    <groupId>com.microsoft.graph</groupId>
 		    <artifactId>microsoft-graph</artifactId>
 		    <version>6.1.0</version>
 		</dependency>
-		
+		-->
 		        
     </dependencies>
 

@@ -13,9 +13,9 @@ import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
-import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
-import com.microsoft.graph.models.User;
-import com.microsoft.graph.requests.GraphServiceClient;
+//import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
+//import com.microsoft.graph.models.User;
+//import com.microsoft.graph.requests.GraphServiceClient;
 
 /**
  * Graph
