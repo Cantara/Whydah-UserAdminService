@@ -299,13 +299,13 @@
 		    <version>1.11.1</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/com.microsoft.graph/microsoft-graph
+		
 		<dependency>
 		    <groupId>com.microsoft.graph</groupId>
 		    <artifactId>microsoft-graph</artifactId>
 		    <version>6.1.0</version>
 		</dependency>
-		-->
+	
 		        
     </dependencies>
 
