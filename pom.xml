@@ -19,7 +19,7 @@
         <java.version>11</java.version>
         <jersey.version>2.41</jersey.version>
         <jetty.version>9.4.54.v20240208</jetty.version>
-        <spring.version>5.3.32</spring.version>
+        <spring.version>5.3.33</spring.version>
         <slf4j.version>2.0.12</slf4j.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
@@ -299,7 +299,7 @@
 		<dependency>
 		    <groupId>com.azure</groupId>
 		    <artifactId>azure-identity</artifactId>
-		    <version>1.11.2</version>
+		    <version>1.11.4</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
