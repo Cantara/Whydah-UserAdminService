@@ -177,6 +177,16 @@ public class UserService {
         }
         return false;
 	}
+	
+	public boolean hasThirdpartyLogin(String applicationTokenId, String userName, String provider) {
+		Response responseFromUib = uibUserConnection.hasThirdPartyLogin(credentialStore.getUserAdminServiceTokenId(), userName, provider);
+		log.debug("Response from UIB: {}", responseFromUib.getEntity().toString());
+        if (responseFromUib.hasEntity()) {
+            Boolean responseBody = Boolean.valueOf(responseFromUib.readEntity(String.class));
+            return responseBody;
+        }
+        return false;
+	}
 
 	public UserApplicationRoleEntry addUserRole(String applicationTokenId, String userTokenId, String uid, UserApplicationRoleEntry roleRequest) throws AppException {
 		UserApplicationRoleEntry role;

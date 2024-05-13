@@ -115,6 +115,13 @@ public class UibUserConnection {
         Response responseFromUib = webResource.request(MediaType.TEXT_PLAIN).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(responseFromUib);
     }
+    
+    public Response hasThirdPartyLogin(String userAdminServiceTokenId, String userName, String provider) {
+    	uib = getWebTarget();
+        WebTarget webResource = uib.path(userAdminServiceTokenId).path("user").path(userName).path(provider).path("thirdparty_login_enabled");
+        Response responseFromUib = webResource.request(MediaType.TEXT_PLAIN).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+        return copyResponse(responseFromUib);
+    }
 
     public Response addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
     	uib = getWebTarget();

@@ -65,9 +65,7 @@ public class PasswordResource {
 
     }
 
-    /**
-     * Proxy for authenticateAndChangePasswordUsingToken
-     */
+    
     @GET
     @Path("/user/{username}/password_login_enabled")
     public Response hasUserNameSetPassword(@PathParam("applicationtokenid") String applicationtokenid,
@@ -79,7 +77,19 @@ public class PasswordResource {
         return Response.status(200).entity(Boolean.toString(response)).build();
 
     }
-    // /user/{username}/password_login_enabled"
+
+    
+    @GET
+    @Path("/user/{username}/{provider}/thirdparty_login_enabled")
+    public Response hasThirdpartyLoginEnabled(@PathParam("applicationtokenid") String applicationtokenid,
+                                           @PathParam("username") String username, @PathParam("provider") String provider) {
+        log.info("hasThirdpartyLoginEnabled for username={} using applicationtokenid={}, provider={}", username, applicationtokenid, provider);
+
+        boolean response = userService.hasThirdpartyLogin(applicationtokenid, username, provider);
+        log.info("hasUserNameSetPassword for username={} provider={} response={}", username, provider, response);
+        return Response.status(200).entity(Boolean.toString(response)).build();
+
+    }
 
     private Response copyResponse(String responseFromUib) {
         Response.ResponseBuilder rb;
