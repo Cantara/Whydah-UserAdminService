@@ -22,6 +22,7 @@
         <spring.version>5.3.36</spring.version>
         <slf4j.version>2.0.13</slf4j.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
+        <unirest-java.version>3.14.5</unirest-java.version>
     </properties>
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
@@ -314,6 +315,12 @@
 		    <groupId>com.thoughtworks.paranamer</groupId>
 		    <artifactId>paranamer</artifactId>
 		    <version>2.8</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.konghq</groupId>
+		    <artifactId>unirest-java</artifactId>
+		    <version>${unirest-java.version}</version>
 		</dependency>
 				
     </dependencies>

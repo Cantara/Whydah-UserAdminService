@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.constretto.annotation.Configuration;
 import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,10 @@ public class UserService {
 	private final CredentialStore credentialStore;
 	private final ObjectMapper mapper;
 	private WhydahRoleCheckUtil adminChecker;
+	
+	@Autowired
+	private USSReporter ussReporter;
+	
 
 	public WhydahRoleCheckUtil getAdminChecker() {
 		return adminChecker;
@@ -400,6 +405,7 @@ public class UserService {
 				try {
 					ObservedActivity observedActivity = new UserRemoveObservedActivity(uid, "userDeleted", applicationTokenId, credentialStore.getApplicationID(applicationTokenId));
 					MonitorReporter.reportActivity(observedActivity);
+					ussReporter.sendDeleteEventToUSS(uid);
 				} catch(Exception ex) {
 					ex.printStackTrace();
 					log.error("failed to send observed activity when deleting user");
