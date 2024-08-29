@@ -20,7 +20,7 @@
         <jersey.version>2.44</jersey.version>
         <jetty.version>9.4.55.v20240627</jetty.version>
         <spring.version>5.3.38</spring.version>
-        <slf4j.version>2.0.13</slf4j.version>
+        <slf4j.version>2.0.14</slf4j.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <unirest-java.version>3.14.5</unirest-java.version>
     </properties>
@@ -381,8 +381,8 @@
                                 </excludes>
                             </artifactSet>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
