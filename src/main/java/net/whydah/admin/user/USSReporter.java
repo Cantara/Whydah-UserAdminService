@@ -27,7 +27,7 @@ public class USSReporter {
 
 	public void sendDeleteEventToUSS(String uid) {
 		try {
-			String ok = Unirest.post(USS_URL.replaceFirst("/$", "") + "/api/" + USS_ACCESSTOKEN + "/delete/" + uid)
+			String ok = Unirest.delete(USS_URL.replaceFirst("/$", "") + "/api/" + USS_ACCESSTOKEN + "/delete/" + uid)
 					.contentType("application/json").accept("application/json").asString().getBody();
 
 			log.debug("response {} from USS", ok);
