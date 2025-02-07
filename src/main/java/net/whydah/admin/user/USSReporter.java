@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import kong.unirest.Unirest;
+import net.whydah.admin.util.HttpConnectionHelper;
+import net.whydah.admin.util.HttpConnectionHelper.Response;
 
 @Component
 public class USSReporter {
@@ -27,10 +28,9 @@ public class USSReporter {
 
 	public void sendDeleteEventToUSS(String uid) {
 		try {
-			String ok = Unirest.delete(USS_URL.replaceFirst("/$", "") + "/api/" + USS_ACCESSTOKEN + "/delete/" + uid)
-					.contentType("application/json").accept("application/json").asString().getBody();
-
-			log.debug("response {} from USS", ok);
+			
+			Response res = HttpConnectionHelper.delete(USS_URL.replaceFirst("/$", "") + "/api/" + USS_ACCESSTOKEN + "/delete/" + uid);
+			log.debug("response {} from USS", res.getContent());
 
 		} catch (Exception ex) {
 			log.error("unexpected error", ex);
