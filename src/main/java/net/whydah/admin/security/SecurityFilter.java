@@ -202,7 +202,7 @@ public class SecurityFilter implements Filter {
 
             Boolean userTokenIsValid = new CommandValidateUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
             if (!userTokenIsValid) {
-                log.warn("SecurityFiler - got application without vaid userToken");
+                log.warn("SecurityFiler - got application without vaid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
             UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();

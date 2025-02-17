@@ -70,8 +70,10 @@ public class UsersResource {
         try {
             usersJson = usersService.searchUsers(applicationTokenId, userTokenId, query);
             if (usersJson != null) {
+                log.debug("usersService.searchUsers returned:" + usersJson);
                 return Response.ok(usersJson).build();
             } else {
+                log.debug("usersService.searchUsers returned:" + Response.Status.NO_CONTENT);
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
 
