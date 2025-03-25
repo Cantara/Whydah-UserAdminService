@@ -1,5 +1,7 @@
 package net.whydah.admin.user;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
@@ -12,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
 import java.util.List;
 
 /**

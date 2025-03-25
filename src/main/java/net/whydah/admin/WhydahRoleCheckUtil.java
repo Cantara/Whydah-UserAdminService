@@ -1,5 +1,6 @@
 package net.whydah.admin;
 
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.applications.uib.UibApplicationsConnection;
 import net.whydah.admin.user.uib.UibUserConnection;
 import net.whydah.sso.application.types.Application;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 

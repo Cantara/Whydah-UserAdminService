@@ -1,5 +1,6 @@
 package net.whydah.admin.applications.uib;
 
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;

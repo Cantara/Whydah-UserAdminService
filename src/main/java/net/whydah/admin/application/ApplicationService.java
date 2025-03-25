@@ -1,5 +1,7 @@
 package net.whydah.admin.application;
 
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.application.uib.UibApplicationConnection;
 import net.whydah.admin.errorhandling.AppException;
@@ -10,9 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import static net.whydah.sso.util.LoggerUtil.first50;
 

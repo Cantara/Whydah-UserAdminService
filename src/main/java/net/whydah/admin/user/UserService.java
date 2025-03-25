@@ -1,21 +1,7 @@
 package net.whydah.admin.user;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.valuereporter.activity.ObservedActivity;
-import org.valuereporter.client.MonitorReporter;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.WhydahRoleCheckUtil;
@@ -30,6 +16,16 @@ import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
+import org.constretto.annotation.Configure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.valuereporter.activity.ObservedActivity;
+import org.valuereporter.client.MonitorReporter;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by baardl on 18.04.14.

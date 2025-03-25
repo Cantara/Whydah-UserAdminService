@@ -1,16 +1,15 @@
 package net.whydah.admin.users;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.errorhandling.AppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * @author <a href="bard.lind@gmail.com">Bard Lind</a>

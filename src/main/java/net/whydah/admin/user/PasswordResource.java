@@ -1,5 +1,7 @@
 package net.whydah.admin.user;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.users.UsersService;
 import net.whydah.sso.internal.commands.uib.userauth.CommandChangeUserPasswordUsingToken;
 import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
@@ -8,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 
 /**
  * Jax-RS resource responsible for user password management.

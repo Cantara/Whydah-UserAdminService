@@ -1,5 +1,12 @@
 package net.whydah.admin.auth.uib;
 
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.auth.UserLogonObservedActivity;
 import net.whydah.admin.errorhandling.AppException;
@@ -14,14 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.valuereporter.activity.ObservedActivity;
 import org.valuereporter.client.MonitorReporter;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 //import org.valuereporter.agent.MonitorReporter;
 //import org.valuereporter.agent.activity.ObservedActivity;

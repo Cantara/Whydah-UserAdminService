@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Random;
 import java.util.Scanner;
@@ -58,8 +59,11 @@ public class ServiceStartTest {
     public void testGetHealth() {
         HttpURLConnection conn = null;
         try {
-            URL url = new URL(MainWithJetty.getHEALTHURL());
-            log.info("Testing health endpoint: {}", url);
+            String healthUrl = MainWithJetty.getHEALTHURL();
+            log.info("Testing health endpoint: {}", healthUrl);
+
+            URI uri = new URI(healthUrl);
+            URL url = uri.toURL();
 
             conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);

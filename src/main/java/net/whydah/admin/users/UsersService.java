@@ -1,5 +1,6 @@
 package net.whydah.admin.users;
 
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.CredentialStore;
 import net.whydah.admin.WhydahRoleCheckUtil;
 import net.whydah.admin.errorhandling.AppException;
@@ -10,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.ws.rs.core.Response;
 
 /**
  * @author <a href="mailto:bard.lind@gmail.com">Bard Lind</a>

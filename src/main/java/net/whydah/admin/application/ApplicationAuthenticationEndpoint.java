@@ -1,5 +1,8 @@
 package net.whydah.admin.application;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.application.uib.CommandAuthenticateApplicationUIB;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
@@ -10,10 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 2015-11-21.

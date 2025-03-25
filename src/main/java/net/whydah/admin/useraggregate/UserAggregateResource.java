@@ -1,7 +1,11 @@
 package net.whydah.admin.useraggregate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.Response;
 import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.user.UserService;
 import net.whydah.sso.user.mappers.UserAggregateMapper;
@@ -10,17 +14,10 @@ import net.whydah.sso.user.mappers.UserRoleMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;

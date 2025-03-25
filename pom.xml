@@ -18,12 +18,13 @@
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
         <java.version>21</java.version>
-        <jersey.version>2.46</jersey.version>
-        <jetty.version>9.4.57.v20241219</jetty.version>
+        <jersey.version>3.1.5</jersey.version>
+        <jetty.version>11.0.20</jetty.version>
         <spring.version>6.2.3</spring.version>
         <slf4j.version>2.0.17</slf4j.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <unirest-java.version>3.14.5</unirest-java.version>
+        <jakarta.version>3.1.0</jakarta.version>
     </properties>
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
@@ -99,7 +100,7 @@
         <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.ext/jersey-spring4 -->
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-spring5</artifactId>
+            <artifactId>jersey-spring6</artifactId>
             <version>${jersey.version}</version>
             <exclusions>
                 <exclusion>
@@ -109,7 +110,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-       
+
+        <!-- Add Jakarta EE dependencies -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${jakarta.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -166,6 +173,18 @@
             <artifactId>spring-aop</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
