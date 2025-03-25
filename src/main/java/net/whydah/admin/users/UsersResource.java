@@ -1,7 +1,6 @@
 package net.whydah.admin.users;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -9,6 +8,7 @@ import net.whydah.admin.AuthenticationFailedException;
 import net.whydah.admin.errorhandling.AppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,9 +31,9 @@ public class UsersResource {
 
     /**
      * Constructor with dependency injection.
-     * Using @Inject which works with both Spring and HK2
+     * Using @Autowired which works with Spring's integration
      */
-    @Inject
+    @Autowired
     public UsersResource(UsersService usersService) {
         log.debug("Constructor injection called with service: {}", usersService);
         this.usersService = usersService;
