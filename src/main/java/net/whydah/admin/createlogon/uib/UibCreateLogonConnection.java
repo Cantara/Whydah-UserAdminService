@@ -6,13 +6,10 @@ import net.whydah.sso.user.mappers.UserAggregateMapper;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserIdentity;
-import net.whydah.sso.util.StringConv;
-
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.Client;
@@ -39,8 +36,7 @@ public class UibCreateLogonConnection {
     private final String myUibUrl;
 
     @Autowired
-    @Configure
-    public UibCreateLogonConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+    public UibCreateLogonConnection(@Value("${useridentitybackend}") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
         this.myUibUrl=uibUrl;
     }
@@ -53,8 +49,8 @@ public class UibCreateLogonConnection {
         WebTarget webResource = uibService.path(applicationTokenId).path(CREATE_AND_LOGON_OPERATION);
         log.debug("URI to use {}",webResource.getUri());
         Response response = webResource.request(MediaType.APPLICATION_XML).
-        		header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).
-        		post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
+                header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).
+                post(Entity.entity(fbUserXml, MediaType.APPLICATION_XML));
         int statusCode = response.getStatus();
         if (statusCode != 200) {
             log.info("Request to UIB failed status {}, response {}", statusCode, response.getEntity());

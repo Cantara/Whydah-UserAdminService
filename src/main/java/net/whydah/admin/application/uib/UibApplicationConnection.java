@@ -5,11 +5,10 @@ import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import net.whydah.sso.application.types.Application;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.Client;
@@ -30,8 +29,7 @@ public class UibApplicationConnection {
 	private final UASCredentials uasCredentials;
 
 	@Autowired
-	@Configure
-	public UibApplicationConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+	public UibApplicationConnection(@Value("${useridentitybackend}") String uibUrl, UASCredentials uasCredentials) {
 		this.uasCredentials = uasCredentials;
 		this.userIdentityBackendUri=uibUrl;
 	}
@@ -41,8 +39,8 @@ public class UibApplicationConnection {
 		WebTarget uib = getUIBWebTarget();
 		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application");
 		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-        UibApplicationsConnection.clearCache();
-        return copyResponse(responseFromUib);
+		UibApplicationsConnection.clearCache();
+		return copyResponse(responseFromUib);
 	}
 
 	public Response getApplication(String applicationTokenId, String userTokenId, String applicationId) throws AppException {
@@ -52,20 +50,20 @@ public class UibApplicationConnection {
 		return copyResponse(responseFromUib);
 	}
 
-    public Application getApplication2(String applicationTokenId, String userTokenId, String applicationId) throws AppException {
-        WebTarget uib = getUIBWebTarget();
-        WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application").path(applicationId);
-        Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
-        Application application = ApplicationMapper.fromJson(responseFromUib.readEntity(String.class));
-        return application;
-    }
+	public Application getApplication2(String applicationTokenId, String userTokenId, String applicationId) throws AppException {
+		WebTarget uib = getUIBWebTarget();
+		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application").path(applicationId);
+		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
+		Application application = ApplicationMapper.fromJson(responseFromUib.readEntity(String.class));
+		return application;
+	}
 
 	public Response updateApplication(String applicationTokenId, String userTokenId, String applicationId, String applicationJson) {
 		WebTarget uib = getUIBWebTarget();
 		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application").path(applicationId);
 		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(applicationJson, MediaType.APPLICATION_JSON));
-        UibApplicationsConnection.clearCache();
-        return copyResponse(responseFromUib);
+		UibApplicationsConnection.clearCache();
+		return copyResponse(responseFromUib);
 	}
 
 	public Response deleteApplication(String applicationTokenId, String userTokenId, String applicationId) {
@@ -73,8 +71,8 @@ public class UibApplicationConnection {
 		WebTarget uib = getUIBWebTarget();
 		WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("application").path(applicationId);
 		Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(uasCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
-        UibApplicationsConnection.clearCache();
-        return copyResponse(responseFromUib);
+		UibApplicationsConnection.clearCache();
+		return copyResponse(responseFromUib);
 	}
 
 	private WebTarget getUIBWebTarget() {
@@ -85,15 +83,11 @@ public class UibApplicationConnection {
 	}
 
 	private Response copyResponse(Response responseFromUib) {
-        Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
-        if (responseFromUib.hasEntity()) {
-            rb.entity(responseFromUib.getEntity());
-        }
-        return rb.build();
+		Response.ResponseBuilder rb = Response.status(responseFromUib.getStatusInfo());
+		if (responseFromUib.hasEntity()) {
+			rb.entity(responseFromUib.getEntity());
+		}
+		return rb.build();
 //		return responseFromUib;
-    }
-
-	
-
-
+	}
 }

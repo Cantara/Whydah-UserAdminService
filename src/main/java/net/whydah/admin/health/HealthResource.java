@@ -2,11 +2,10 @@ package net.whydah.admin.health;
 
 import net.whydah.admin.CredentialStore;
 import net.whydah.sso.util.WhydahUtil;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
@@ -32,11 +31,9 @@ public class HealthResource {
 
 
     @Autowired
-    @Configure
-    public HealthResource(CredentialStore credentialStore, @Configuration("applicationname") String applicationname) {
+    public HealthResource(CredentialStore credentialStore, @Value("${applicationname}") String applicationname) {
         this.credentialStore = credentialStore;
         this.applicationInstanceName = applicationname;
-
     }
 
     @GET
@@ -62,7 +59,7 @@ public class HealthResource {
                 "  \"STS\": \"" + credentialStore.getWas().getSTS() + "\",\n" +
                 "  \"UAS\": \"" + credentialStore.getWas().getUAS() + "\",\n" +
                 "  \"hasApplicationToken\": \"" + Boolean.toString((credentialStore.getWas().getActiveApplicationTokenId() != null)) + "\",\n" +
-               // "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\",\n" +
+                // "  \"hasValidApplicationToken\": \"" + Boolean.toString(credentialStore.getWas().checkActiveSession()) + "\",\n" +
                 "  \"hasApplicationsMetadata\": \"" + Boolean.toString(credentialStore.getWas().hasApplicationMetaData()) + "\",\n" +
 
                 "  \"now\": \"" + Instant.now() + "\",\n" +
@@ -86,5 +83,4 @@ public class HealthResource {
         }
         return "(DEV VERSION)" + " [" + applicationInstanceName + " - " + WhydahUtil.getMyIPAddresssesString() + "]";
     }
-
 }

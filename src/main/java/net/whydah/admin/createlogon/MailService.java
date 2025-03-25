@@ -6,10 +6,9 @@ import net.whydah.admin.email.EmailBodyGenerator;
 import net.whydah.admin.email.IMailSender;
 import net.whydah.admin.email.MailSender;
 import net.whydah.admin.email.msgraph.MsGraphMailSender;
-import org.constretto.ConstrettoConfiguration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -25,36 +24,35 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Service
 public class MailService {
 
-
 	private static final Logger log = getLogger(MailService.class);
 	private final IMailSender mailSender;
 
-    private final ConstrettoConfiguration configuration;
-    private final EmailBodyGenerator bodyGenerator;
+	private final EmailBodyGenerator bodyGenerator;
 	private final AtomicLong nextTaskId = new AtomicLong(1);
 	private final Map<Long, RemindTask> taskById = new ConcurrentHashMap<>();
 	private final Timer timer = new Timer("mail-service-timer");
+	private final String defaultSubject;
 
 	@Autowired
-	@Configure
-	public MailService(ConstrettoConfiguration configuration, EmailBodyGenerator bodyGenerator) {
+	public MailService(EmailBodyGenerator bodyGenerator,
+					   @Value("${email.subject:Whydah}") String defaultSubject) {
 		if(!ConfigValues.get("email.smtp.app.clientid", "").isEmpty() &&
 				!ConfigValues.get("email.smtp.app.fromaddress", "").isEmpty() &&
 				!ConfigValues.get("email.smtp.app.clientsecret", "").isEmpty()) {
 			log.debug("Choosing IMailSender: " + MsGraphMailSender.class.getName());
 			this.mailSender = new MsGraphMailSender(
-					ConfigValues.getString("email.smtp.app.fromaddress"), 
-					ConfigValues.getString("email.smtp.app.clientid"), 
-					ConfigValues.get("email.smtp.app.tenantid", "common"), 
-					ConfigValues.getString("email.smtp.app.clientsecret")				 
-					);
+					ConfigValues.getString("email.smtp.app.fromaddress"),
+					ConfigValues.getString("email.smtp.app.clientid"),
+					ConfigValues.get("email.smtp.app.tenantid", "common"),
+					ConfigValues.getString("email.smtp.app.clientsecret")
+			);
 		} else {
 			log.debug("Choosing IMailSender: " + MailSender.class.getName());
 			this.mailSender = new MailSender();
 		}
-		
-		this.configuration = configuration;
-        this.bodyGenerator = bodyGenerator;
+
+		this.bodyGenerator = bodyGenerator;
+		this.defaultSubject = defaultSubject;
 	}
 
 	public IMailSender getEmailSender() {
@@ -92,42 +90,35 @@ public class MailService {
 			}
 		}
 	}
-	
+
 	public void send(long timestamp, String toEmail, String subject, String templateParamsInJson, String templateName)  {
-
-
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			String effectiveSubject = subject;
 			if(effectiveSubject==null || effectiveSubject.equals("")) {
-				effectiveSubject = configuration.evaluateToString("email.subject." + templateName);
+				effectiveSubject = ConfigValues.getString("email.subject." + templateName);
+				if (effectiveSubject == null) {
+					effectiveSubject = defaultSubject;
+				}
 			}
-			
+
 			String mailMessage = bodyGenerator.createBody(templateName, mapper.readValue(templateParamsInJson, Map.class));
-			
+
 			long milliseconds = timestamp - new Date().getTime();
 			log.debug("Milliseconds:{}", milliseconds);
 
 			RemindTask task = new RemindTask(toEmail, mailMessage, effectiveSubject);
 			task.schedule(milliseconds);
-			
+
 		} catch (Exception e) {
-            log.error("Failed to send mail to {}. Reason {}", toEmail, e.getMessage());
-        }
-		
-		
-
-
+			log.error("Failed to send mail to {}. Reason {}", toEmail, e.getMessage());
+		}
 	}
 
 	public void send(long timestamp, String toEmail, String subject, String mailMessage)  {
-
-
 		long milliseconds = timestamp - new Date().getTime();
 		log.debug("Milliseconds:{}", milliseconds);
 		RemindTask task = new RemindTask(toEmail, mailMessage, subject);
 		task.schedule(milliseconds);
-
 	}
-
 }

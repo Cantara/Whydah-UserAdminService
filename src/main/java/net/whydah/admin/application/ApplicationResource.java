@@ -1,32 +1,14 @@
 package net.whydah.admin.application;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import net.whydah.admin.errorhandling.AppException;
-import net.whydah.admin.errorhandling.AppExceptionCode;
-import net.whydah.admin.security.UASCredentials;
-
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Proxy in front of UIB application CRUD endpoint.
@@ -39,13 +21,12 @@ public class ApplicationResource {
     private static final Logger log = LoggerFactory.getLogger(ApplicationResource.class);
 
     private static final String APPLICATION_PATH = "application";
-    
+
     ApplicationService applicationService;
 
     @Autowired
-    @Configure
     public ApplicationResource(ApplicationService applicationsService) {
-        this.applicationService = applicationsService; 
+        this.applicationService = applicationsService;
     }
 
     /**
@@ -225,7 +206,7 @@ public class ApplicationResource {
                                       @PathParam("userTokenId") String userTokenId,
                                       @PathParam("applicationId") String applicationId,
                                       String applicationJson) throws AppException {
-       return applicationService.updateApplication(applicationTokenId, userTokenId, applicationId, applicationJson);
+        return applicationService.updateApplication(applicationTokenId, userTokenId, applicationId, applicationJson);
 
     }
 

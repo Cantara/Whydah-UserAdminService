@@ -1,9 +1,6 @@
 package net.whydah.admin;
 
 import net.whydah.sso.util.SSLTool;
-import org.constretto.ConstrettoBuilder;
-import org.constretto.ConstrettoConfiguration;
-import org.constretto.model.Resource;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -12,11 +9,12 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.valuereporter.client.activity.ObservedActivityDistributer;
 import org.valuereporter.client.http.HttpObservationDistributer;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
@@ -26,7 +24,7 @@ import java.util.logging.LogManager;
 public class MainWithJetty {
     public static final String CONTEXT_PATH = "/useradminservice";
     private static final Logger log = LoggerFactory.getLogger(MainWithJetty.class);
-    
+
     private Server server;
     private String resourceBase;
     private static int jettyPort;
@@ -48,22 +46,24 @@ public class MainWithJetty {
         SLF4JBridgeHandler.install();
         LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
 
-       
+        // Initialize Spring context to load properties
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
         // Property-overwrite of SSL verification to support weak ssl certificates
-        String sslVerification = ConfigValues.getString("sslverification");
+        String sslVerification = SpringProperties.getString("sslverification");
         if ("disabled".equalsIgnoreCase(sslVerification)) {
             SSLTool.disableCertificateValidation();
         }
 
         //Start Valuereporter event distributer.
-        String reporterHost = ConfigValues.getString("valuereporter.host");
-        String reporterPort = ConfigValues.getString("valuereporter.port");
-        String prefix = ConfigValues.getString("applicationname");
-        int cacheSize = ConfigValues.get("valuereporter.activity.batchsize", 500);
-        int forwardInterval = ConfigValues.get("valuereporter.activity.postintervalms", 10000);
+        String reporterHost = SpringProperties.getString("valuereporter.host");
+        String reporterPort = SpringProperties.getString("valuereporter.port");
+        String prefix = SpringProperties.getString("applicationname");
+        int cacheSize = SpringProperties.get("valuereporter.activity.batchsize", 500);
+        int forwardInterval = SpringProperties.get("valuereporter.activity.postintervalms", 10000);
         new Thread(ObservedActivityDistributer.getInstance(reporterHost, reporterPort, prefix, cacheSize, forwardInterval)).start();
         new Thread(new HttpObservationDistributer(reporterHost, reporterPort, prefix)).start();
-        Integer webappPort = ConfigValues.get("service.port", 9992);
+        Integer webappPort = SpringProperties.get("service.port", 9992);
         MainWithJetty main = new MainWithJetty(webappPort);
         main.start();
         main.join();
@@ -80,8 +80,6 @@ public class MainWithJetty {
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(jettyPort);
         server.setConnectors(new Connector[]{connector});
-
-//        server = new Server(jettyPort);
 
         URL url = ClassLoader.getSystemResource("webapp/WEB-INF/web.xml");
         resourceBase = url.toExternalForm().replace("/WEB-INF/web.xml", "");
@@ -110,26 +108,7 @@ public class MainWithJetty {
         server.join();
     }
 
-    /*
-    //TODO
-    public String getBasePath() {
-        String path = "http://localhost:" + jettyPort + CONTEXT_PATH;
-        return path;
-    }
-    */
     public int getPortNumber() {
         return ((ServerConnector) server.getConnectors()[0]).getLocalPort();
     }
-
-    /*
-    public void setResourceBase(String resourceBase) {
-        this.resourceBase = resourceBase;
-    }
-
-    public String getResourceBase() {
-        return resourceBase;
-    }
-    */
-
-   
 }

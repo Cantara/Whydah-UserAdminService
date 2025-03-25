@@ -11,9 +11,9 @@ import net.whydah.sso.user.types.UserAggregate;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
 import org.apache.commons.lang.NotImplementedException;
-import org.constretto.ConstrettoConfiguration;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,7 +30,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class SignupService {
     private static final Logger log = getLogger(SignupService.class);
     private final UibCreateLogonConnection uibConnection;
-    private final ConstrettoConfiguration configuration;
     private final UibAuthConnection uibAuthConnection;
     private final PasswordSender passwordSender;
 
@@ -51,32 +50,40 @@ public class SignupService {
     static final String CHANGE_PASSWORD_TOKEN = "changePasswordToken";
 
     @Autowired
-    public SignupService(UibCreateLogonConnection uibConnection, ConstrettoConfiguration configuration,
-                         UibAuthConnection uibAuthConnection, PasswordSender passwordSender, ObjectMapper objectMapper) {
+    public SignupService(UibCreateLogonConnection uibConnection,
+                         @Value("${adduser.defaultapplication.id}") String defaultApplicationId,
+                         @Value("${adduser.defaultapplication.name}") String defaultApplicationName,
+                         @Value("${adduser.defaultorganization.name}") String defaultOrganizationName,
+                         @Value("${adduser.defaultrole.name}") String defaultRoleName,
+                         @Value("${adduser.defaultrole.value}") String defaultRoleValue,
+                         @Value("${adduser.netiq.defaultapplication.id}") String netIQapplicationId,
+                         @Value("${adduser.netiq.defaultapplication.name}") String netIQapplicationName,
+                         @Value("${adduser.netiq.defaultorganization.name}") String netIQorganizationName,
+                         @Value("${adduser.netiq.defaultrole.name}") String netIQRoleName,
+                         @Value("${adduser.facebook.defaultapplication.id}") String fbapplicationId,
+                         @Value("${adduser.facebook.defaultapplication.name}") String fbapplicationName,
+                         @Value("${adduser.facebook.defaultorganization.name}") String fborganizationName,
+                         @Value("${adduser.facebook.defaultrole.name}") String fbRoleName,
+                         UibAuthConnection uibAuthConnection,
+                         PasswordSender passwordSender,
+                         ObjectMapper objectMapper) {
         this.uibConnection = uibConnection;
-        this.configuration = configuration;
+        this.defaultApplicationId = defaultApplicationId;
+        this.defaultApplicationName = defaultApplicationName;
+        this.defaultOrganizationName = defaultOrganizationName;
+        this.defaultRoleName = defaultRoleName;
+        this.defaultRoleValue = defaultRoleValue;
+        this.netIQapplicationId = netIQapplicationId;
+        this.netIQapplicationName = netIQapplicationName;
+        this.netIQorganizationName = netIQorganizationName;
+        this.netIQRoleName = netIQRoleName;
+        this.fbapplicationId = fbapplicationId;
+        this.fbapplicationName = fbapplicationName;
+        this.fborganizationName = fborganizationName;
+        this.fbRoleName = fbRoleName;
         this.uibAuthConnection = uibAuthConnection;
         this.passwordSender = passwordSender;
         this.objectMapper = objectMapper;
-        initAddUserDefaults(this.configuration);
-    }
-
-    private void initAddUserDefaults(ConstrettoConfiguration configuration) {
-        this.defaultApplicationId = configuration.evaluateToString("adduser.defaultapplication.id");
-        this.defaultApplicationName = configuration.evaluateToString("adduser.defaultapplication.name");
-        this.defaultOrganizationName = configuration.evaluateToString("adduser.defaultorganization.name");
-        this.defaultRoleName = configuration.evaluateToString("adduser.defaultrole.name");
-        this.defaultRoleValue = configuration.evaluateToString("adduser.defaultrole.value");
-
-        this.netIQapplicationId = configuration.evaluateToString("adduser.netiq.defaultapplication.id");
-        this.netIQapplicationName = configuration.evaluateToString("adduser.netiq.defaultapplication.name");
-        this.netIQorganizationName = configuration.evaluateToString("adduser.netiq.defaultorganization.name");
-        this.netIQRoleName = configuration.evaluateToString("adduser.netiq.defaultrole.name");
-
-        this.fbapplicationId = configuration.evaluateToString("adduser.facebook.defaultapplication.id");
-        this.fbapplicationName = configuration.evaluateToString("adduser.facebook.defaultapplication.name");
-        this.fborganizationName = configuration.evaluateToString("adduser.facebook.defaultorganization.name");
-        this.fbRoleName = configuration.evaluateToString("adduser.facebook.defaultrole.name");
     }
 
     public String signupUser(String applicationtokenId, UserIdentity signupUser, UserAction userAction) throws AppException {

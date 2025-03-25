@@ -1,12 +1,11 @@
 package net.whydah.admin.email;
 
+import net.whydah.admin.ConfigValues;
 import net.whydah.admin.createlogon.MailService;
-import org.constretto.ConstrettoConfiguration;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PasswordSender {
     private static final Logger log = LoggerFactory.getLogger(PasswordSender.class);
-    private final ConstrettoConfiguration configuration;
 
     private static final String RESET_PASSWORD_SUBJECT = "Whydah password reset request";
     private static final String CHANGE_PASSWORD_PATH = "changepassword/";
@@ -27,9 +25,8 @@ public class PasswordSender {
     private final MailService mailService;
 
     @Autowired
-    @Configure
-    public PasswordSender(ConstrettoConfiguration configuration, EmailBodyGenerator bodyGenerator, MailService mailService, @Configuration("ssologinservice") String ssoLoginServiceUrl) {
-        this.configuration = configuration;
+    public PasswordSender(EmailBodyGenerator bodyGenerator, MailService mailService,
+                          @Value("${ssologinservice}") String ssoLoginServiceUrl) {
         this.bodyGenerator = bodyGenerator;
         this.mailService = mailService;
         this.ssoLoginServiceUrl = ssoLoginServiceUrl;
@@ -41,7 +38,7 @@ public class PasswordSender {
         log.info("Sending resetPassword email for user {} to {}, token={}", username, userEmail, token);
         String body = bodyGenerator.resetPassword(resetUrl, username);
         try {
-            String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
+            String reset_subject = ConfigValues.getString("email.subject.PasswordResetEmail.ftl");
             IMailSender mailSender = mailService.getEmailSender();
             mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             messageSent = true;
@@ -57,17 +54,17 @@ public class PasswordSender {
         try {
             String resetUrl = ssoLoginServiceUrl + CHANGE_PASSWORD_PATH + token;
             log.info("Sending resetPassword email for user {} to {}, token={}, templateName={}", username, userEmail, token, templateName);
-            
+
             if (templateName == null || templateName.length() < 10) {
-                String reset_subject = configuration.evaluateToString("email.subject.PasswordResetEmail.ftl");
-                String system_name = configuration.evaluateToString("email.systemname.PasswordResetEmail.ftl");
+                String reset_subject = ConfigValues.getString("email.subject.PasswordResetEmail.ftl");
+                String system_name = ConfigValues.getString("email.systemname.PasswordResetEmail.ftl");
                 String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
                 log.debug(body);
                 IMailSender mailSender = mailService.getEmailSender();
                 mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             } else {
-                String template_subject = configuration.evaluateToString("email.subject." + templateName);
-                String system_name = configuration.evaluateToString("email.systemname."+ templateName);
+                String template_subject = ConfigValues.getString("email.subject." + templateName);
+                String system_name = ConfigValues.getString("email.systemname." + templateName);
                 String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
                 log.debug(body);
                 IMailSender mailSender = mailService.getEmailSender();

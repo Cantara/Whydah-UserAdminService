@@ -79,26 +79,7 @@
             <artifactId>Whydah-Admin-SDK</artifactId>
             <version>${whydah.admin.sdk.version}</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.constretto</groupId>
-            <artifactId>constretto-spring</artifactId>
-            <version>3.0.0-BETA1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>jsr250-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.gson</groupId>
-                    <artifactId>gson</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

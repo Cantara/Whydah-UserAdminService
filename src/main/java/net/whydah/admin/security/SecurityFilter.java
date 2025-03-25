@@ -8,11 +8,10 @@ import net.whydah.sso.commands.userauth.CommandValidateUserTokenId;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.util.WhydahUtil;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -40,8 +39,7 @@ public class SecurityFilter implements Filter {
 
 
     @Autowired
-    @Configure
-    public SecurityFilter(@Configuration("securitytokenservice") String stsUri, @Configuration("securitytokenservice.appid") String stsAppId, UASCredentials uasCredentials, CredentialStore credentialStore) {
+    public SecurityFilter(@Value("${securitytokenservice}") String stsUri, @Value("${securitytokenservice.appid}") String stsAppId, UASCredentials uasCredentials, CredentialStore credentialStore) {
         this.stsAppId = stsAppId;
         if (this.stsAppId == null || this.stsAppId.equals("")) {
             this.stsAppId = "2211";
@@ -98,7 +96,7 @@ public class SecurityFilter implements Filter {
         }
 
         String callerApplicationTokenId = findPathElement(pathInfo, 1).substring(1);
-        
+
         //" we should probably avoid askin sts if we know it is sts asking, but we should ask sts for a valid applicationsession for all other applications"
         String appId = credentialStore.getApplicationID(callerApplicationTokenId);
         if (appId == null) {
@@ -112,27 +110,31 @@ public class SecurityFilter implements Filter {
 
             // And sts gets special treatement too
         } else if (appId.equals(stsAppId)) {
-        	log.debug("Check STS token {}" + callerApplicationTokenId);
-        	//HUY: sometimes this callback failed. Try allowing longer timeout
-        	//also add some logging for detecting if the callback command is really failed
+            log.debug("Check STS token {}" + callerApplicationTokenId);
+            //HUY: sometimes this callback failed. Try allowing longer timeout
+            //also add some logging for detecting if the callback command is really failed
             Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(tokenServiceUri, callerApplicationTokenId, 10000) {
-            	protected Boolean getFallback() {
-            		log.error("Fall back called");
-            		return super.getFallback();
-            	};
-            	
-            	protected Boolean dealWithFailedResponse(String responseBody, int statusCode) {
-            		log.error("Failed response body {} code {}", responseBody, statusCode);
-            		return super.dealWithFailedResponse(responseBody, statusCode);
-            	};
+                protected Boolean getFallback() {
+                    log.error("Fall back called");
+                    return super.getFallback();
+                }
+
+                ;
+
+                protected Boolean dealWithFailedResponse(String responseBody, int statusCode) {
+                    log.error("Failed response body {} code {}", responseBody, statusCode);
+                    return super.dealWithFailedResponse(responseBody, statusCode);
+                }
+
+                ;
             }.execute();
             if (!applicationTokenIsValid) {
                 log.warn("SecurityFilter - invalid application session for sts request, returning unauthorized");
                 return HttpServletResponse.SC_UNAUTHORIZED;
             }
         } else if (!credentialStore.isValidApplicationSession(tokenServiceUri, callerApplicationTokenId)) {
-        	log.info("Invalid caller whydah session, invalid applicationtokenid, returning unauthorized");
-        	return HttpServletResponse.SC_UNAUTHORIZED;
+            log.info("Invalid caller whydah session, invalid applicationtokenid, returning unauthorized");
+            return HttpServletResponse.SC_UNAUTHORIZED;
         }
 
         String usertokenId = findPathElement(pathInfo, 2).substring(1);
@@ -173,22 +175,20 @@ public class SecurityFilter implements Filter {
             }
         }
         try {
-        	
-        	//HUY: this line uibApplicationConnection.getApplication2(...) is redendant and should not be there. 
-        	//Bad idea to check UIB every time. The check is already handled in subsequent service points
-        	
+
+            //HUY: this line uibApplicationConnection.getApplication2(...) is redendant and should not be there.
+            //Bad idea to check UIB every time. The check is already handled in subsequent service points
+
 //            Application callingApplication = uibApplicationConnection.getApplication2(callerApplicationTokenId, usertokenId, appId);
 //            //uibApplicationsConnection.findApplications(callerApplicationTokenId, usertokenId, appId);
 //
-//        	
+//
 //            log.warn("SecurityFilter - got application:" + callingApplication);
 //            // Does the calling application has UAS access
 //            if (callingApplication == null || !callingApplication.getSecurity().isWhydahUASAccess()) {
 //                log.warn("SecurityFiler - got application without UAS access");
 //                return HttpServletResponse.SC_UNAUTHORIZED;
 //            }
-        	
-        	
 
 
             //paths WITH userTokenId verification

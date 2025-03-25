@@ -3,11 +3,10 @@ package net.whydah.admin.user;
 import net.whydah.admin.users.UsersService;
 import net.whydah.sso.internal.commands.uib.userauth.CommandChangeUserPasswordUsingToken;
 import net.whydah.sso.internal.commands.uib.userauth.CommandResetUserPasswordUAS;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -29,8 +28,7 @@ public class PasswordResource {
 
 
     @Autowired
-    @Configure
-    public PasswordResource(@Configuration("useridentitybackend") String uibUri, UsersService usersService, UserService userService) {
+    public PasswordResource(@Value("${useridentitybackend}") String uibUri, UsersService usersService, UserService userService) {
         this.uibUri = uibUri;
         this.usersService = usersService;
         this.userService = userService;
@@ -65,7 +63,7 @@ public class PasswordResource {
 
     }
 
-    
+
     @GET
     @Path("/user/{username}/password_login_enabled")
     public Response hasUserNameSetPassword(@PathParam("applicationtokenid") String applicationtokenid,
@@ -78,11 +76,11 @@ public class PasswordResource {
 
     }
 
-    
+
     @GET
     @Path("/user/{username}/{provider}/thirdparty_login_enabled")
     public Response hasThirdpartyLoginEnabled(@PathParam("applicationtokenid") String applicationtokenid,
-                                           @PathParam("username") String username, @PathParam("provider") String provider) {
+                                              @PathParam("username") String username, @PathParam("provider") String provider) {
         log.info("hasThirdpartyLoginEnabled for username={} using applicationtokenid={}, provider={}", username, applicationtokenid, provider);
 
         boolean response = userService.hasThirdpartyLogin(applicationtokenid, username, provider);
@@ -94,8 +92,8 @@ public class PasswordResource {
     private Response copyResponse(String responseFromUib) {
         Response.ResponseBuilder rb;
         if (responseFromUib!=null && responseFromUib.length()>100){
-             rb = Response.status(200);
-                rb.entity(responseFromUib);
+            rb = Response.status(200);
+            rb.entity(responseFromUib);
 
         } else {
             rb = Response.status(500);

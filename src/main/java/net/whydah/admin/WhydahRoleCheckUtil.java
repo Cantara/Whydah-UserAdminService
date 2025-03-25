@@ -9,11 +9,10 @@ import net.whydah.sso.user.mappers.UserTokenMapper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserToken;
 import net.whydah.sso.util.WhydahUtil;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
@@ -33,8 +32,11 @@ public class WhydahRoleCheckUtil {
     String uaswa = "2219";
 
     @Autowired
-    @Configure
-    public WhydahRoleCheckUtil(@Configuration("securitytokenservice") String stsUrl, UibApplicationsConnection uibApplicationsConnection, UibUserConnection uibUserConnection, CredentialStore credentialStore, @Configuration("uaswa") String uaswaId) {
+    public WhydahRoleCheckUtil(@Value("${securitytokenservice}") String stsUrl,
+                               UibApplicationsConnection uibApplicationsConnection,
+                               UibUserConnection uibUserConnection,
+                               CredentialStore credentialStore,
+                               @Value("${uaswa:2219}") String uaswaId) {
         this.stsUrl = stsUrl;
         this.uibApplicationsConnection = uibApplicationsConnection;
         this.uibUserConnection = uibUserConnection;
@@ -111,7 +113,6 @@ public class WhydahRoleCheckUtil {
         return false;
     }
 
-
     public boolean isValidSession(String applicationTokenId) {
         //		Boolean applicationTokenIsValid = new CommandValidateApplicationTokenId(stsUrl, applicationTokenId).execute();
         //		if(!applicationTokenIsValid){
@@ -122,7 +123,6 @@ public class WhydahRoleCheckUtil {
     }
 
     public boolean isValidSession(String applicationTokenId, String userTokenId) {
-
         //this can be checked at security filter, no need to recheck here
         return true;
 		/*
@@ -151,13 +151,13 @@ public class WhydahRoleCheckUtil {
 //            appId = new CommandGetApplicationIdFromApplicationTokenId(URI.create(stsUrl), applicationTokenId).execute();
 //            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
 //        }
-    	String appId = appStore.getApplicationIdByAppTokenId(applicationTokenId);
+        String appId = appStore.getApplicationIdByAppTokenId(applicationTokenId);
 
         // If I'm calling myself, that is fine
         if (appId==null) {
             return false;
         } else if (appId.equals(credentialStore.getMyApplicationID())) {
-        	return true;
+            return true;
         }
 
         //get application data
@@ -263,23 +263,23 @@ public class WhydahRoleCheckUtil {
 //            appStore.apptopkenId_appId_Map.put(applicationTokenId, appId);
 //        }
         //get application data
-        Application app = appStore.getApplicationByAppTokenId(applicationTokenId);    
+        Application app = appStore.getApplicationByAppTokenId(applicationTokenId);
         if (app!=null) {
-        	log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", app.getId());
-        	 if (app.getSecurity() != null) {
-                 boolean isUAWA = app.getSecurity().isWhydahAdmin() && app.getId().equals(uaswa);
-                 if (isUAWA) {
-                     log.info("Application " + app.getName() + " with apptokenid=" + applicationTokenId + " is UAWA");
-                 }
-                 return isUAWA;
-             } else {
-                 log.error("app.getSecurity() is null. This error should not happen");
-                 return false;
-             }
-        	
-        } else {         	
-        	log.warn(appStore.apps.size() > 0 ? "Application with applicationId:null not found" : "Application list is empty");
-        	return false;
+            log.trace("CommandGetApplicationIdFromApplicationTokenId return appID:{} ", app.getId());
+            if (app.getSecurity() != null) {
+                boolean isUAWA = app.getSecurity().isWhydahAdmin() && app.getId().equals(uaswa);
+                if (isUAWA) {
+                    log.info("Application " + app.getName() + " with apptokenid=" + applicationTokenId + " is UAWA");
+                }
+                return isUAWA;
+            } else {
+                log.error("app.getSecurity() is null. This error should not happen");
+                return false;
+            }
+
+        } else {
+            log.warn(appStore.apps.size() > 0 ? "Application with applicationId:null not found" : "Application list is empty");
+            return false;
         }
     }
 }

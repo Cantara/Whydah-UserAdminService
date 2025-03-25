@@ -4,11 +4,10 @@ import net.whydah.admin.errorhandling.AppException;
 import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.ddd.model.application.ApplicationTokenID;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
@@ -39,8 +38,7 @@ public class UibApplicationsConnection {
     private static Instant cachedApplicationMapInstant = Instant.now();
 
     @Autowired
-    @Configure
-    public UibApplicationsConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+    public UibApplicationsConnection(@Value("${useridentitybackend}") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
         this.userIdentityBackendUri=uibUrl;
     }
@@ -70,8 +68,8 @@ public class UibApplicationsConnection {
 
         Response response = new CommandGetApplicationsFromUIB(userIdentityBackendUri, applicationTokenId, uasCredentials.getApplicationCredentialsXmlEncoded()).execute();
         if(response==null) {
-        	log.error("executed CommandGetApplicationsFromUIB and there was no response from UIB");
-        	return null;
+            log.error("executed CommandGetApplicationsFromUIB and there was no response from UIB");
+            return null;
         }
         int statusCode = response.getStatus();
         String output = response.readEntity(String.class);

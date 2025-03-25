@@ -7,14 +7,13 @@ import net.whydah.admin.errorhandling.AppExceptionCode;
 import net.whydah.admin.security.UASCredentials;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.util.SSLTool;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.valuereporter.client.MonitorReporter;
 import org.valuereporter.activity.ObservedActivity;
+import org.valuereporter.client.MonitorReporter;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
@@ -41,15 +40,14 @@ public class UibAuthConnection {
     private static final int STATUS_NOT_ACCEPTABLE = 406;
     private final UASCredentials uasCredentials;
 
-    private  WebTarget uib;
+    private WebTarget uib;
     private final String myuibUrl;
 
     @Autowired
-    @Configure
-    public UibAuthConnection(@Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+    public UibAuthConnection(@Value("${useridentitybackend}") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
         SSLTool.disableCertificateValidation();
-        this.myuibUrl =uibUrl;
+        this.myuibUrl = uibUrl;
         log.info("Connection to UserIdentityBackend on {}" , uibUrl);
     }
 
@@ -103,7 +101,7 @@ public class UibAuthConnection {
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw new BadRequestException("BadRequest for resetPassword " + response.toString() + ",  Status code " + response.getStatus());
             case STATUS_NOT_ACCEPTABLE:
-            	log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw AppExceptionCode.MISC_NOT_ACCEPTABLE_9991;
             default:
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
@@ -114,8 +112,8 @@ public class UibAuthConnection {
 
     public String resetPassword_new(String userAdminServiceTokenId, String uid) throws AppException {
         // /user/{uid}/reset_password
-    	Client client = ClientBuilder.newClient();
-    	uib = client.target(myuibUrl);
+        Client client = ClientBuilder.newClient();
+        uib = client.target(myuibUrl);
         WebTarget resetPasswordResource = uib.path(userAdminServiceTokenId).path("user").path(uid).path("reset_password");
         Response response = resetPasswordResource.request(MediaType.APPLICATION_XML).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("",MediaType.APPLICATION_XML_TYPE));
         int statusCode = response.getStatus();
@@ -128,7 +126,7 @@ public class UibAuthConnection {
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw new BadRequestException("BadRequest for resetPassword " + response.toString() + ",  Status code " + response.getStatus());
             case STATUS_NOT_ACCEPTABLE:
-            	log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw AppExceptionCode.MISC_NOT_ACCEPTABLE_9991;
             default:
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
@@ -138,7 +136,7 @@ public class UibAuthConnection {
     }
 
     public String setPasswordByToken(String userAdminServiceTokenId, String username,String passwordToken,String password) throws AppException {
-    	Client client = ClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
         uib = client.target(myuibUrl);
         WebTarget resetPasswordResource = uib.path("password").path(userAdminServiceTokenId).path("reset/username").path(username).path("newpassword").path(passwordToken);
         Response response = resetPasswordResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity("{\"newpassword\":\"" + password + "\"}", MediaType.APPLICATION_JSON));
@@ -152,7 +150,7 @@ public class UibAuthConnection {
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw new BadRequestException("BadRequest for resetPassword " + response.toString() + ",  Status code " + response.getStatus());
             case STATUS_NOT_ACCEPTABLE:
-            	log.error("Response from UIB: {}: {}", response.getStatus(), output);
+                log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw AppExceptionCode.MISC_NOT_ACCEPTABLE_9991;
             default:
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
@@ -161,8 +159,7 @@ public class UibAuthConnection {
         return output;
     }
 
-    public  String getUIBUri(){
+    public String getUIBUri() {
         return myuibUrl;
     }
-
 }

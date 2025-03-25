@@ -5,11 +5,10 @@ import net.whydah.sso.commands.userauth.CommandRefreshUserTokenByUserName;
 import net.whydah.sso.user.mappers.UserIdentityMapper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
 import net.whydah.sso.user.types.UserIdentity;
-import org.constretto.annotation.Configuration;
-import org.constretto.annotation.Configure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.Client;
@@ -28,19 +27,16 @@ import java.net.URI;
 public class UibUserConnection {
     private static final Logger log = LoggerFactory.getLogger(UibUserConnection.class);
 
-
-
-    private  WebTarget uib;
+    private WebTarget uib;
     private final UASCredentials uasCredentials;
     private final String myUibUrl;
     private final String myStsUrl;
 
     @Autowired
-    @Configure
-    public UibUserConnection(@Configuration("securitytokenservice") String stsUrl, @Configuration("useridentitybackend") String uibUrl, UASCredentials uasCredentials) {
+    public UibUserConnection(@Value("${securitytokenservice}") String stsUrl, @Value("${useridentitybackend}") String uibUrl, UASCredentials uasCredentials) {
         this.uasCredentials = uasCredentials;
         this.myStsUrl = stsUrl;
-        this.myUibUrl=uibUrl;
+        this.myUibUrl = uibUrl;
     }
 
     private Response copyResponse(Response responseFromUib) {
@@ -49,9 +45,9 @@ public class UibUserConnection {
 //			rb.entity(responseFromUib.getEntity());
 //		}
 //		return rb.build();
-    	return responseFromUib;
-	}
-    
+        return responseFromUib;
+    }
+
     public Response createUser(String userAdminServiceTokenId, String userTokenId, String userIdentityJson){
         uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user");
@@ -59,14 +55,14 @@ public class UibUserConnection {
         return copyResponse(response);
     }
 
-	private WebTarget getWebTarget() {
-		Client client = ClientBuilder.newClient();
+    private WebTarget getWebTarget() {
+        Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         return client.target(myUibUrl);
-	}
+    }
 
     public Response updateUserIdentity(String userAdminServiceTokenId, String userTokenId, String uid, String userIdentityJson) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user").path(uid);
         Response responseFromUib = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(userIdentityJson, MediaType.APPLICATION_JSON));
 
@@ -80,7 +76,7 @@ public class UibUserConnection {
         }
         switch (responseFromUib.getStatusInfo().getFamily()) {
             case SUCCESSFUL:
-            	//we should call STS to sync user info here
+                //we should call STS to sync user info here
                 refreshSTSCommand(userAdminServiceTokenId, userIdentityJson);
                 break;
             default:
@@ -99,47 +95,47 @@ public class UibUserConnection {
             log.error("Unable to refresh UserToken in STS", e);
         }
 
-	}
+    }
 
 
     public Response changePassword(String userAdminServiceTokenId, String userTokenId, String userName, String password) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user").path(userName).path("changepassword");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(password, MediaType.APPLICATION_JSON));
         return copyResponse(response);
     }
 
     public Response hasUserSetPassword(String userAdminServiceTokenId, String userName) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path("user").path(userName).path("password_login_enabled");
         Response responseFromUib = webResource.request(MediaType.TEXT_PLAIN).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(responseFromUib);
     }
-    
+
     public Response hasThirdPartyLogin(String userAdminServiceTokenId, String userName, String provider) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path("user").path(userName).path(provider).path("thirdparty_login_enabled");
         Response responseFromUib = webResource.request(MediaType.TEXT_PLAIN).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(responseFromUib);
     }
 
     public Response addRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid).path("role");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, response);
         return copyResponse(response);
     }
-    
+
     public Response updateRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, UserApplicationRoleEntry roleRequest)  {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid).path("role").path(roleRequest.getId());
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).put(Entity.entity(roleRequest.toJson(), MediaType.APPLICATION_JSON));
         refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, response);
         return copyResponse(response);
     }
 
-	private void refreshSTS(String userAdminServiceTokenId, String adminUserTokenId, String uid, Response response) {
+    private void refreshSTS(String userAdminServiceTokenId, String adminUserTokenId, String uid, Response response) {
         int statusCode = 200;  // Accept null as statiusCode as we have to refresh before we delete the user to get the userName
         if (response != null) {
             statusCode = response.getStatus();
@@ -150,13 +146,13 @@ public class UibUserConnection {
                 String userIdentityJson = responseGetUserIdentity.readEntity(String.class);
                 refreshSTSCommand(userAdminServiceTokenId, userIdentityJson);
             } else {
-        		log.error("Failed to get UserIdentity to sync with STS");
-        	}
+                log.error("Failed to get UserIdentity to sync with STS");
+            }
         }
-	}
+    }
 
     public Response deleteUserRole(String userAdminServiceTokenId, String adminUserTokenId, String uid, String userRoleId) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid).path("role").path(userRoleId);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).delete();
         refreshSTS(userAdminServiceTokenId, adminUserTokenId, uid, response);
@@ -164,28 +160,28 @@ public class UibUserConnection {
     }
 
     public Response getUserIdentity(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("user").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }
 
     public Response getUserAggregateByUid(String userAdminServiceTokenId, String adminUserTokenId, String uid) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }
 
     public Response getUserAggregateByUidAsJson(String userAdminServiceTokenId, String adminUserTokenId, String uid){
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(adminUserTokenId).path("useraggregate").path(uid);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return response;
     }
 
     public Response getRolesAsJson(String userAdminServiceTokenId, String userTokenId, String uid) {
-    	uib = getWebTarget();
+        uib = getWebTarget();
         WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("user").path(uid).path("roles");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
