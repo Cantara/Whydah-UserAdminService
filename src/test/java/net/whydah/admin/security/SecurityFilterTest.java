@@ -1,11 +1,11 @@
 package net.whydah.admin.security;
 
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletException;
 import java.util.regex.Pattern;
 
 import static org.testng.Assert.assertNull;

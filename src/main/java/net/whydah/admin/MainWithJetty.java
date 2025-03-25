@@ -1,11 +1,11 @@
 package net.whydah.admin;
 
 import net.whydah.sso.util.SSLTool;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -90,7 +90,8 @@ public class MainWithJetty {
         WebAppContext context = new WebAppContext();
         log.debug("Start Jetty using resourcebase={}", resourceBase);
         context.setDescriptor(resourceBase + "/WEB-INF/web.xml");
-        context.setResourceBase(resourceBase);
+        context.setBaseResourceAsString(resourceBase);
+//    setResourceBase(resourceBase);
         context.setContextPath(CONTEXT_PATH);
         context.setParentLoaderPriority(true);
         server.setHandler(context);
