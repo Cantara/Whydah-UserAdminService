@@ -1,5 +1,6 @@
 package net.whydah.admin.applications;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -10,7 +11,6 @@ import net.whydah.admin.errorhandling.AppException;
 import net.whydah.sso.application.mappers.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -29,10 +29,23 @@ import static net.whydah.sso.util.LoggerUtil.first50;
 @Component
 public class ApplicationsResource {
 	private static final Logger log = LoggerFactory.getLogger(ApplicationsResource.class);
-	private final ApplicationsService applicationsService;
+	private ApplicationsService applicationsService;
 
-	@Autowired
+	/**
+	 * Default constructor for HK2
+	 */
+	public ApplicationsResource() {
+		log.debug("Default constructor called by HK2");
+		// No initialization - will be injected
+	}
+
+	/**
+	 * Constructor with dependency injection.
+	 * Using @Inject which works with both Spring and HK2
+	 */
+	@Inject
 	public ApplicationsResource(ApplicationsService applicationsService) {
+		log.debug("Constructor injection called with service: {}", applicationsService);
 		this.applicationsService = applicationsService;
 	}
 
