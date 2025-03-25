@@ -24,6 +24,7 @@ public class UASCredentials {
     private final String applicationName;
     private String applicationSecret;
 
+
     public UASCredentials(String applicationId, String applicationName) {
         this.applicationId = applicationId;
         this.applicationName = applicationName;

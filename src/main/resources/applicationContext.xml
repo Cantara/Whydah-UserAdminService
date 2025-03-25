@@ -7,18 +7,42 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- Enable component scanning -->
-    <context:component-scan base-package="net.whydah.admin"/>
-
-    <!-- Property placeholder configurer -->
+    <!-- Property placeholder configurer FIRST -->
     <context:property-placeholder
             location="classpath:useradminservice.properties, classpath:useradminservice_override.properties"
-            ignore-resource-not-found="true"/>
+            ignore-resource-not-found="true" order="1"/>
 
-    <!-- Define Jackson ObjectMapper bean -->
+    <!-- Basic utilities -->
     <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 
-    <!-- Explicitly define SecurityFilter to ensure proper instantiation -->
-    <bean id="securityFilter" class="net.whydah.admin.security.SecurityFilter"/>
+    <!-- UASCredentials bean - check constructor parameters -->
+    <bean id="uasCredentials" class="net.whydah.admin.security.UASCredentials">
+        <constructor-arg index="0" value="${applicationname}"/>
+        <constructor-arg index="1" value="${applicationid}"/>
+        <constructor-arg index="2" value="${applicationsecret}"/>
+
+    </bean>
+
+    <!-- CredentialStore bean depends on uasCredentials -->
+    <bean id="credentialStore" class="net.whydah.admin.CredentialStore">
+        <constructor-arg index="0" value="${securitytokenservice}"/>
+        <constructor-arg index="1" value="${myuri}"/>
+        <constructor-arg index="2" value="${applicationid}"/>
+        <constructor-arg index="3" value="${applicationname}"/>
+        <constructor-arg index="4" value="${applicationsecret}"/>
+    </bean>
+
+    <!-- SecurityFilter bean depends on credentialStore -->
+    <bean id="securityFilter" class="net.whydah.admin.security.SecurityFilter">
+        <constructor-arg index="0" value="${securitytokenservice}"/>
+        <constructor-arg index="1" value="${securitytokenservice.appid}"/>
+        <constructor-arg index="2" ref="uasCredentials"/>
+        <constructor-arg index="3" ref="credentialStore"/>
+    </bean>
+
+    <!-- Enable component scanning LAST (excluding SecurityFilter) -->
+    <context:component-scan base-package="net.whydah.admin">
+        <context:exclude-filter type="assignable" expression="net.whydah.admin.security.SecurityFilter"/>
+    </context:component-scan>
 
 </beans>
