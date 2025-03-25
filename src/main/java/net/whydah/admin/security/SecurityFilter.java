@@ -39,14 +39,16 @@ public class SecurityFilter implements Filter {
 
 
     @Autowired
-    public SecurityFilter(@Value("${securitytokenservice}") String stsUri, @Value("${securitytokenservice.appid}") String stsAppId, UASCredentials uasCredentials, CredentialStore credentialStore) {
+    public SecurityFilter(@Value("${securitytokenservice}") String stsUri,
+                          @Value("${securitytokenservice.appid}") String stsAppId,
+                          UASCredentials uasCredentials,
+                          CredentialStore credentialStore) {
         this.stsAppId = stsAppId;
         if (this.stsAppId == null || this.stsAppId.equals("")) {
             this.stsAppId = "2211";
         }
         this.tokenServiceUri = URI.create(stsUri);
         this.credentialStore = credentialStore;
-        //this.uibApplicationConnection = uibApplicationConnection;
     }
 
     @Override

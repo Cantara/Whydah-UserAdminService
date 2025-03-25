@@ -2,22 +2,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- Remove constretto-specific configuration -->
-    <!-- <constretto:configuration>...</constretto:configuration> -->
-
-    <!-- Add Spring property placeholder configuration -->
-    <!-- Configure property placeholders with proper precedence -->
-    <context:property-placeholder
-            location="classpath:useradminservice.properties,
-                        file:./useradminservice_override.properties,
-                        classpath:test-useradminservice.properties"
-            ignore-resource-not-found="true"
-            ignore-unresolvable="true"
-            order="1"/>
-
+    <!-- Enable component scanning -->
     <context:component-scan base-package="net.whydah.admin"/>
+
+    <!-- Property placeholder configurer -->
+    <context:property-placeholder
+            location="classpath:useradminservice.properties, classpath:useradminservice_override.properties"
+            ignore-resource-not-found="true"/>
+
+    <!-- Define Jackson ObjectMapper bean -->
     <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+
+    <!-- Explicitly define SecurityFilter to ensure proper instantiation -->
+    <bean id="securityFilter" class="net.whydah.admin.security.SecurityFilter"/>
+
 </beans>
