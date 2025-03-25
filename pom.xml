@@ -11,6 +11,7 @@
         <version>8</version>
     </parent>
     <properties>
+        <jdk.version>21</jdk.version>
         <service.name>Whydah-UserAdminService</service.name>
         <whydah.admin.sdk.version>2.30.0</whydah.admin.sdk.version>
         <maven.compiler.source>21</maven.compiler.source>

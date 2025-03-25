@@ -83,7 +83,7 @@ public class WhydahLogonToken {
             logonToken.getParams().setApplicationname(applicationName);
             String expires = (String ) xPath.evaluate("/applicationtoken/params/expires", doc, XPathConstants.STRING);
             if (expires != null && !expires.isEmpty()) {
-                Long longDate = new Long(expires);
+				Long longDate = Long.valueOf(expires);
                 logonToken.getParams().setExpires(new Date(longDate));
             }
             //FIXME - applicatons

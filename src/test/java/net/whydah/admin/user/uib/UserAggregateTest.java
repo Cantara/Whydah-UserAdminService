@@ -39,17 +39,19 @@ public class UserAggregateTest {
 
     @Test
     public void buildJson() throws Exception {
-        String fromJson = "{\n" +
-                "    \"username\": \"userName1\",\n" +
-                "    \"firstName\": \"firstName1\",\n" +
-                "    \"lastName\": \"lastName1\",\n" +
-                "    \"personRef\": \"personRef1\",\n" +
-                "    \"email\": \"first.last@example.com\",\n" +
-                "    \"cellPhone\": \"93333000\",\n" +
-                "    \"uid\": \"uid1\",\n" +
-                "    \"password\": \"pwdPwd1234\",\n" +
-                "    \"personName\": \"firstName1 lastName1\"\n" +
-                "}";
+        String fromJson = """
+                {
+                    "username": "userName1",
+                    "firstName": "firstName1",
+                    "lastName": "lastName1",
+                    "personRef": "personRef1",
+                    "email": "first.last@example.com",
+                    "cellPhone": "93333000",
+                    "uid": "uid1",
+                    "password": "pwdPwd1234",
+                    "personName": "firstName1 lastName1"
+                }\
+                """;
         UserIdentity uiFromJson = UserIdentityMapper.fromUserIdentityJson(fromJson);
 
     }

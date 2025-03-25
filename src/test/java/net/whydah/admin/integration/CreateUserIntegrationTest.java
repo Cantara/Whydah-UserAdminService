@@ -91,20 +91,22 @@ public class CreateUserIntegrationTest {
 
 
     private String uasCredentialXml() {
-        return "<applicationcredential>\n" +
-                "      <params>\n" +
-                "         <applicationID>UserAdminService</applicationID>\n" +
-                "         <applicationSecret>9ju592A4t8dzz8mz7a5QQJ7Px</applicationSecret>\n" +
-                "      </params>\n" +
-                "   </applicationcredential>";
+        return """
+                <applicationcredential>
+                      <params>
+                         <applicationID>UserAdminService</applicationID>
+                         <applicationSecret>9ju592A4t8dzz8mz7a5QQJ7Px</applicationSecret>
+                      </params>
+                   </applicationcredential>""";
     }
     private String userAdminCredentialXml() {
-        return "<usercredential>\n" +
-                "   <params>\n" +
-                "      <username>bardl</username>\n" +
-                "      <password>Asker2014</password>\n" +
-                "   </params>\n" +
-                "</usercredential>";
+        return """
+                <usercredential>
+                   <params>
+                      <username>bardl</username>
+                      <password>Asker2014</password>
+                   </params>
+                </usercredential>""";
     }
 
 

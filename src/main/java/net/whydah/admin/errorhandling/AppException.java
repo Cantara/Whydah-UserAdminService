@@ -1,12 +1,13 @@
 package net.whydah.admin.errorhandling;
 
 import javax.ws.rs.core.Response.Status;
-
+import java.io.Serial;
 
 
 public class AppException extends Exception {
 
-	private static final long serialVersionUID = -8999932578270387947L;
+    @Serial
+    private static final long serialVersionUID = -8999932578270387947L;
 	
 	
 	Status status;
@@ -63,7 +64,7 @@ public class AppException extends Exception {
 		return this;
 	}
 	public AppException setDeveloperMessage(String developerMessage, Object...args) {
-		this.developerMessage = String.format(developerMessage, args);
+        this.developerMessage = developerMessage.formatted(args);
 		return this;
 	}
 
