@@ -1,12 +1,12 @@
 package net.whydah.admin.application;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import net.whydah.admin.errorhandling.AppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,15 +21,21 @@ public class ApplicationResource {
 
     private static final String APPLICATION_PATH = "application";
 
-    ApplicationService applicationService;
+    private ApplicationService applicationService;
 
-
-    @Autowired
-    public ApplicationResource(ApplicationService applicationsService) {
-        this.applicationService = applicationsService;
+    // Default constructor for HK2
+    public ApplicationResource() {
+        log.debug("Default constructor called by HK2");
     }
 
+    // Constructor with @Inject annotation compatible with both Spring and HK2
+    @Inject
+    public ApplicationResource(ApplicationService applicationService) {
+        log.debug("Injected constructor called with service: {}", applicationService);
+        this.applicationService = applicationService;
+    }
     /**
+     *
      * @throws Exception
      * @api {post} :applicationtokenid}/:userTokenId/application createApplication
      * @apiName createApplication
