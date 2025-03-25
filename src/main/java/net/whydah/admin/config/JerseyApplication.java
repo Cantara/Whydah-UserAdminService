@@ -15,6 +15,8 @@ public class JerseyApplication extends ResourceConfig {
 
         // Do NOT disable auto-discovery when using HK2
         // property("jersey.config.disableAutoDiscovery", true);
+        // Register Spring integration
+        register(org.glassfish.jersey.server.spring.scope.RequestContextFilter.class);
 
         log.debug(this.getClass().getSimpleName() + " started!");
     }

@@ -23,6 +23,7 @@ public class ApplicationResource {
 
     ApplicationService applicationService;
 
+
     @Autowired
     public ApplicationResource(ApplicationService applicationsService) {
         this.applicationService = applicationsService;
