@@ -16,6 +16,7 @@
     <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 
     <!-- UASCredentials bean - check constructor parameters -->
+    
     <bean id="uasCredentials" class="net.whydah.admin.security.UASCredentials">
         <constructor-arg index="0" value="${applicationid}"/>
         <constructor-arg index="1" value="${applicationname}"/>
@@ -23,15 +24,16 @@
 
     </bean>
 
-    <!-- CredentialStore bean depends on uasCredentials -->
+    <!-- CredentialStore bean depends on uasCredentials 
+    
     <bean id="credentialStore" class="net.whydah.admin.CredentialStore">
         <constructor-arg index="0" value="${securitytokenservice}"/>
         <constructor-arg index="1" value="${myuri}"/>
         <constructor-arg index="2" value="${applicationid}"/>
         <constructor-arg index="3" value="${applicationname}"/>
         <constructor-arg index="4" value="${applicationsecret}"/>
-    </bean>
-
+    </bean>-->
+    
     <!-- SecurityFilter bean depends on credentialStore -->
     <bean id="securityFilter" class="net.whydah.admin.security.SecurityFilter">
         <constructor-arg index="0" value="${securitytokenservice}"/>

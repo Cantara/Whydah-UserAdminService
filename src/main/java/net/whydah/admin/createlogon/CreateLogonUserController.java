@@ -24,10 +24,10 @@ import org.springframework.stereotype.Component;
 public class CreateLogonUserController {
     private static final Logger log = LoggerFactory.getLogger(CreateLogonUserController.class);
 
-    private final UibCreateLogonConnection uibConnection;
-    private final SignupService signupService;
-    private final ObjectMapper objectMapper;
-    private final MailService mailService;
+    private UibCreateLogonConnection uibConnection;
+    private SignupService signupService;
+    private ObjectMapper objectMapper;
+    private MailService mailService;
 
     @Autowired
     @Configure

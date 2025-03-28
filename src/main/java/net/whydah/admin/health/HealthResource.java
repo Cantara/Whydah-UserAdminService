@@ -25,16 +25,13 @@ import java.util.Properties;
 @Path("/health")
 public class HealthResource {
     private static final Logger log = LoggerFactory.getLogger(HealthResource.class);
-    private final CredentialStore credentialStore;
-    private static String applicationInstanceName;
+    @Autowired
+    private CredentialStore credentialStore;
+    
+    @Value("${applicationname}") 
+    private String applicationInstanceName;
     private static boolean ok = true;
 
-
-    @Autowired
-    public HealthResource(CredentialStore credentialStore, @Value("${applicationname}") String applicationname) {
-        this.credentialStore = credentialStore;
-        this.applicationInstanceName = applicationname;
-    }
 
     @GET
     @Path("/")
@@ -69,7 +66,7 @@ public class HealthResource {
     }
 
 
-    private static String getVersion() {
+    private String getVersion() {
         Properties mavenProperties = new Properties();
         String resourcePath = "/META-INF/maven/net.whydah.identity/UserAdminService/pom.properties";
         URL mavenVersionResource = HealthResource.class.getResource(resourcePath);

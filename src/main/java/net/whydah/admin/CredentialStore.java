@@ -116,19 +116,27 @@ public class CredentialStore {
         }
     });
 
-    private final String myApplicationId;
     private final String stsUri;
     private final String uasUri;
+    private final String applicationid;
+    private final String applicationname;
+    private final String applicationsecret;
+    private final String myApplicationId;
 
+  
+    
     @Autowired
     public CredentialStore(@Value("${securitytokenservice}") String stsUri,
                            @Value("${myuri}") String uasUri,
                            @Value("${applicationid}") String applicationid,
                            @Value("${applicationname}") String applicationname,
                            @Value("${applicationsecret}") String applicationsecret) {
-        this.myApplicationId = applicationid;
-        this.stsUri = stsUri;
-        this.uasUri = uasUri;
+    	 this.stsUri = stsUri;
+         this.uasUri = uasUri;
+         this.applicationid = applicationid;
+         this.applicationname = applicationname;
+         this.applicationsecret = applicationsecret;
+         this.myApplicationId = applicationid;
 
         log.info("Initializing CredentialStore with STS: {}, UAS: {}, AppID: {}, AppName: {}",
                 stsUri, uasUri, applicationid, applicationname);
