@@ -17,8 +17,8 @@
 
     <!-- UASCredentials bean - check constructor parameters -->
     <bean id="uasCredentials" class="net.whydah.admin.security.UASCredentials">
-        <constructor-arg index="0" value="${applicationname}"/>
-        <constructor-arg index="1" value="${applicationid}"/>
+        <constructor-arg index="0" value="${applicationid}"/>
+        <constructor-arg index="1" value="${applicationname}"/>
         <constructor-arg index="2" value="${applicationsecret}"/>
 
     </bean>

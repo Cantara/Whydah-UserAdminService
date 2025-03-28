@@ -31,7 +31,9 @@ public class UASCredentials {
     }
 
     @Autowired
-    public UASCredentials(@Value("${applicationid}") String applicationId, @Value("${applicationname}") String applicationName, @Value("${applicationsecret}") String applicationSecret) {
+    public UASCredentials(@Value("${applicationid}") String applicationId, 
+    		@Value("${applicationname}") String applicationName, 
+    		@Value("${applicationsecret}") String applicationSecret) {
         this.applicationId = applicationId;
         this.applicationName = applicationName;
         this.applicationSecret = applicationSecret;
