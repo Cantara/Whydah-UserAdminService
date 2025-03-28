@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("/{stsApplicationtokenId}/application/auth")
-public class ApplicationAuthenticationEndpoint {
+public class ApplicationAuthenticationEndpoint  {
     private static final Logger log = LoggerFactory.getLogger(ApplicationAuthenticationEndpoint.class);
     private final String uibUri;
     private final String stsUri;

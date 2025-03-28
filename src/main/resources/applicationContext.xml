@@ -39,7 +39,9 @@
         <constructor-arg index="2" ref="uasCredentials"/>
         <constructor-arg index="3" ref="credentialStore"/>
     </bean>
-
+    
+    
+    
     <!-- Enable component scanning LAST (excluding SecurityFilter) -->
     <context:component-scan base-package="net.whydah.admin">
         <context:exclude-filter type="assignable" expression="net.whydah.admin.security.SecurityFilter"/>

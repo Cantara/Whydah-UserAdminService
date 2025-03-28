@@ -33,6 +33,15 @@
             <param-name>jakarta.ws.rs.Application</param-name>
             <param-value>net.whydah.admin.config.JerseyApplication</param-value>
         </init-param>
+        <!-- Add Spring integration -->
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>net.whydah.admin</param-value> <!-- Scan for JAX-RS resources -->
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.disableAutoDiscovery</param-name>
+            <param-value>false</param-value> <!-- Ensure provider discovery works -->
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
