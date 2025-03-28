@@ -31,14 +31,6 @@ public class UserAggregateResource {
 	private UserService userService;
 
 	/**
-	 * Default constructor for HK2
-	 */
-	public UserAggregateResource() {
-		log.debug("Default constructor called by HK2");
-		// No initialization - will be injected
-	}
-
-	/**
 	 * Constructor with dependency injection.
 	 * Using @Inject which works with both Spring and HK2
 	 */

@@ -28,12 +28,7 @@ public class UserResource {
 
     private Request request;
 
-    /**
-     * Default constructor for HK2
-     */
-    public UserResource() {
-        log.debug("Default constructor called by HK2");
-    }
+   
 
     /**
      * Constructor with dependency injection.

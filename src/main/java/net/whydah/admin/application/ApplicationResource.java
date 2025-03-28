@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Response;
 import net.whydah.admin.errorhandling.AppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,13 +24,7 @@ public class ApplicationResource {
 
     private ApplicationService applicationService;
 
-    // Default constructor for HK2
-    public ApplicationResource() {
-        log.debug("Default constructor called by HK2");
-    }
-
-    // Constructor with @Inject annotation compatible with both Spring and HK2
-    @Inject
+    @Autowired
     public ApplicationResource(ApplicationService applicationService) {
         log.debug("Injected constructor called with service: {}", applicationService);
         this.applicationService = applicationService;

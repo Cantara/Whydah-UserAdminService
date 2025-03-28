@@ -23,18 +23,7 @@ public class ApplicationsResource {
 	private static final Logger log = LoggerFactory.getLogger(ApplicationsResource.class);
 	private ApplicationsService applicationsService;
 
-	/**
-	 * Default constructor for HK2
-	 */
-	public ApplicationsResource() {
-		log.debug("Default constructor called by HK2");
-		// No initialization - will be injected
-	}
-
-	/**
-	 * Constructor with dependency injection.
-	 * Using @Autowired to explicitly use Spring's injection instead of HK2's @Inject
-	 */
+	
 	@Autowired
 	public ApplicationsResource(ApplicationsService applicationsService) {
 		log.debug("Constructor injection called with service: {}", applicationsService);

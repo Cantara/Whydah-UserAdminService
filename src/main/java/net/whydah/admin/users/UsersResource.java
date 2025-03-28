@@ -22,12 +22,6 @@ public class UsersResource {
 
     private UsersService usersService;
 
-    /**
-     * Default constructor for HK2
-     */
-    public UsersResource() {
-        log.debug("Default constructor called by HK2");
-    }
 
     /**
      * Constructor with dependency injection.
