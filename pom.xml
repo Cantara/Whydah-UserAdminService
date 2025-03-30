@@ -97,7 +97,7 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
+            <version>6.1.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -474,8 +474,8 @@
                 	<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
 					    <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
 					</transformer>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                         <resource>META-INF/spring.handlers</resource>
                     </transformer>
