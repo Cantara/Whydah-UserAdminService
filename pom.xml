@@ -371,7 +371,7 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
-            <version>1.15.3</version>
+            <version>1.15.4</version>
         </dependency>
 
         <dependency>
@@ -474,8 +474,8 @@
                 	<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
 					    <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
 					</transformer>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                         <resource>META-INF/spring.handlers</resource>
                     </transformer>
