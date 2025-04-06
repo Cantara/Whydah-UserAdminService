@@ -47,7 +47,7 @@ public class MainWithJetty {
         SLF4JBridgeHandler.install();
         LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
 
-// Initialize Spring context to load properties
+        // Initialize Spring context to load properties
         // Look for external properties first, then fall back to classpath
         System.out.println("Looking for properties in current directory and classpath...");
 
