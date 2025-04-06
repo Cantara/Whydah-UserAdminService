@@ -367,6 +367,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.17.5</version>
+        </dependency>
+
         <!-- Azure stuff -->
         <dependency>
             <groupId>com.azure</groupId>
