@@ -9,10 +9,10 @@
 
     <!-- Property placeholder configurer FIRST -->
     <context:property-placeholder
-            location="file:./useradminservice_override.properties,
-                 file:./config/useradminservice_override.properties,
-                 classpath:useradminservice.properties,
-                 classpath:useradminservice_override.properties"
+            location="classpath:useradminservice.properties,
+         classpath:useradminservice_override.properties,
+         file:./config/useradminservice_override.properties,
+         file:./useradminservice_override.properties"
             ignore-resource-not-found="true" order="1"/>
 
     <!-- Basic utilities -->
