@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.env.Environment;
 import org.valuereporter.client.activity.ObservedActivityDistributer;
 import org.valuereporter.client.http.HttpObservationDistributer;
 
@@ -72,6 +73,20 @@ public class MainWithJetty {
         // Initialize Spring context with both classpath and file system resources
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
+        // Inspect the Environment directly
+        Environment env = context.getEnvironment();
+        System.out.println("Direct inspection of Spring Environment:");
+        log.info("Direct inspection of Spring Environment:");
+        String[] keysToLog = {
+                "service.port", "myuri", "useridentitybackend",
+                "securitytokenservice", "applicationid", "applicationname",
+                "sslverification"
+        };
+        for (String key : keysToLog) {
+            String value = env.getProperty(key);
+            System.out.println("  " + key + " = " + value);
+            log.info("  " + key + " = " + value);
+        }
         // Property-overwrite of SSL verification to support weak ssl certificates
         String sslVerification = SpringProperties.getString("sslverification");
         if ("disabled".equalsIgnoreCase(sslVerification)) {
