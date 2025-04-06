@@ -14,6 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.valuereporter.client.activity.ObservedActivityDistributer;
 import org.valuereporter.client.http.HttpObservationDistributer;
 
+import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -46,7 +47,29 @@ public class MainWithJetty {
         SLF4JBridgeHandler.install();
         LogManager.getLogManager().getLogger("").setLevel(Level.FINEST);
 
-        // Initialize Spring context to load properties
+// Initialize Spring context to load properties
+        // Look for external properties first, then fall back to classpath
+        System.out.println("Looking for properties in current directory and classpath...");
+
+        // Set system property to help Spring find the properties
+        String configPath = System.getProperty("config.location");
+        if (configPath == null) {
+            // Default to the current directory if not specified
+            configPath = "./";
+            System.setProperty("config.location", configPath);
+        }
+
+        // Try to load external property file first for debugging
+        File externalProps = new File(configPath + "useradminservice_override.properties");
+        if (externalProps.exists()) {
+            System.out.println("Found external properties at: " + externalProps.getAbsolutePath());
+            log.info("Found external properties at: " + externalProps.getAbsolutePath());
+        } else {
+            System.out.println("No external properties found at: " + externalProps.getAbsolutePath());
+            log.info("No external properties found at: " + externalProps.getAbsolutePath());
+        }
+
+        // Initialize Spring context with both classpath and file system resources
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
         // Property-overwrite of SSL verification to support weak ssl certificates
