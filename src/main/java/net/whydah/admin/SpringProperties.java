@@ -15,11 +15,20 @@ public class SpringProperties {
     private static final Logger log = LoggerFactory.getLogger(SpringProperties.class);
     private static Environment environment;
     private static ApplicationContext applicationContext;
+    private static boolean initialized = false;
 
     @Autowired
     public SpringProperties(Environment env, ApplicationContext appContext) {
-        environment = env;
-        applicationContext = appContext;
+        // Store references in instance variables first
+        Environment instanceEnv = env;
+        ApplicationContext instanceContext = appContext;
+
+        // Then update static variables in a synchronized block
+        synchronized (SpringProperties.class) {
+            environment = instanceEnv;
+            applicationContext = instanceContext;
+            initialized = true;
+        }
     }
 
     @PostConstruct
@@ -34,16 +43,18 @@ public class SpringProperties {
                     "sslverification", ApplicationMode.IAM_MODE_KEY
             };
 
-            for (String key : keysToLog) {
-                String value = environment.getProperty(key);
-                if (value != null) {
-                    if (key.contains("secret") || key.contains("password")) {
-                        log.debug("  {} = ********", key);
+            synchronized (SpringProperties.class) {
+                for (String key : keysToLog) {
+                    String value = environment.getProperty(key);
+                    if (value != null) {
+                        if (key.contains("secret") || key.contains("password")) {
+                            log.debug("  {} = ********", key);
+                        } else {
+                            log.debug("  {} = {}", key, value);
+                        }
                     } else {
-                        log.debug("  {} = {}", key, value);
+                        log.warn("  {} = <not set>", key);
                     }
-                } else {
-                    log.warn("  {} = <not set>", key);
                 }
             }
         }
@@ -62,11 +73,13 @@ public class SpringProperties {
             return sysProp;
         }
 
-        if (environment == null) {
-            log.warn("Environment not initialized yet when trying to get property: {}", configKey);
-            return null;
+        synchronized (SpringProperties.class) {
+            if (environment == null) {
+                log.warn("Environment not initialized yet when trying to get property: {}", configKey);
+                return null;
+            }
+            return environment.getProperty(configKey);
         }
-        return environment.getProperty(configKey);
     }
 
     /**
@@ -89,22 +102,24 @@ public class SpringProperties {
             }
         }
 
-        if (environment == null) {
-            log.warn("Environment not initialized yet when trying to get property: {}", configKey);
-            return defaultValue;
-        }
+        synchronized (SpringProperties.class) {
+            if (environment == null) {
+                log.warn("Environment not initialized yet when trying to get property: {}", configKey);
+                return defaultValue;
+            }
 
-        String value = environment.getProperty(configKey);
-        if (value == null) {
-            return defaultValue;
-        }
+            String value = environment.getProperty(configKey);
+            if (value == null) {
+                return defaultValue;
+            }
 
-        try {
-            return convertStringToType(value, defaultValue);
-        } catch (Exception e) {
-            log.warn("Could not convert property '{}' with value '{}' to type {}, using default",
-                    configKey, value, defaultValue.getClass().getSimpleName());
-            return defaultValue;
+            try {
+                return convertStringToType(value, defaultValue);
+            } catch (Exception e) {
+                log.warn("Could not convert property '{}' with value '{}' to type {}, using default",
+                        configKey, value, defaultValue.getClass().getSimpleName());
+                return defaultValue;
+            }
         }
     }
 
