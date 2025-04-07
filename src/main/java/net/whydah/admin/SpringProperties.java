@@ -1,7 +1,6 @@
 package net.whydah.admin;
 
-import jakarta.annotation.PostConstruct;
-import net.whydah.sso.config.ApplicationMode;
+import net.whydah.admin.config.ApplicationConfig.ApplicationPropertiesHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,120 +10,54 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SpringProperties {
-
     private static final Logger log = LoggerFactory.getLogger(SpringProperties.class);
     private static Environment environment;
-    private static ApplicationContext applicationContext;
-    private static boolean initialized = false;
-
+    
     @Autowired
-    public SpringProperties(Environment env, ApplicationContext appContext) {
-        // Store references in instance variables first
-        Environment instanceEnv = env;
-        ApplicationContext instanceContext = appContext;
-
-        // Then update static variables in a synchronized block
-        synchronized (SpringProperties.class) {
-            environment = instanceEnv;
-            applicationContext = instanceContext;
-            initialized = true;
-        }
+    public SpringProperties(Environment env) {
+        environment = env;
+        log.info("SpringProperties initialized with Environment");
     }
-
-    @PostConstruct
-    public void init() {
-        // Log important properties for debugging
-        if (log.isDebugEnabled()) {
-            log.debug("Application initialized with properties:");
-            // Log specific important properties
-            String[] keysToLog = {
-                    "service.port", "myuri", "useridentitybackend",
-                    "securitytokenservice", "applicationid", "applicationname",
-                    "sslverification", ApplicationMode.IAM_MODE_KEY
-            };
-
-            synchronized (SpringProperties.class) {
-                for (String key : keysToLog) {
-                    String value = environment.getProperty(key);
-                    if (value != null) {
-                        if (key.contains("secret") || key.contains("password")) {
-                            log.debug("  {} = ********", key);
-                        } else {
-                            log.debug("  {} = {}", key, value);
-                        }
-                    } else {
-                        log.warn("  {} = <not set>", key);
-                    }
-                }
-            }
+    
+    public String getString(String configKey) {
+        // First check static holder
+        String value = ApplicationPropertiesHolder.getProperty(configKey);
+        if (value != null) {
+            return value;
         }
-    }
-
-    /**
-     * Get a string configuration value.
-     *
-     * @param configKey the configuration key
-     * @return the string value or null if not found
-     */
-    public static String getString(String configKey) {
-        // First check system properties (useful for testing)
-        String sysProp = System.getProperty(configKey);
-        if (sysProp != null) {
-            return sysProp;
+        
+        // Then check system properties
+        value = System.getProperty(configKey);
+        if (value != null) {
+            return value;
         }
-
-        synchronized (SpringProperties.class) {
-            if (environment == null) {
-                log.warn("Environment not initialized yet when trying to get property: {}", configKey);
-                return null;
-            }
+        
+        // Finally try environment if available
+        if (environment != null) {
             return environment.getProperty(configKey);
         }
+        
+        log.warn("Property not found: {}", configKey);
+        return null;
     }
-
-    /**
-     * Get a configuration value with a default.
-     *
-     * @param configKey    the configuration key
-     * @param defaultValue the default value to return if key not found
-     * @param <K>          the type of the value
-     * @return the value or default if not found
-     */
-    public static <K> K get(String configKey, K defaultValue) {
-        // First check system properties (useful for testing)
-        String sysProp = System.getProperty(configKey);
-        if (sysProp != null) {
-            try {
-                return convertStringToType(sysProp, defaultValue);
-            } catch (Exception e) {
-                log.warn("Failed to convert system property {} with value '{}' to type {}",
-                        configKey, sysProp, defaultValue.getClass().getSimpleName(), e);
-            }
+    
+    public <K> K get(String configKey, K defaultValue) {
+        String value = getString(configKey);
+        if (value == null) {
+            return defaultValue;
         }
-
-        synchronized (SpringProperties.class) {
-            if (environment == null) {
-                log.warn("Environment not initialized yet when trying to get property: {}", configKey);
-                return defaultValue;
-            }
-
-            String value = environment.getProperty(configKey);
-            if (value == null) {
-                return defaultValue;
-            }
-
-            try {
-                return convertStringToType(value, defaultValue);
-            } catch (Exception e) {
-                log.warn("Could not convert property '{}' with value '{}' to type {}, using default",
-                        configKey, value, defaultValue.getClass().getSimpleName());
-                return defaultValue;
-            }
+        
+        try {
+            return convertStringToType(value, defaultValue);
+        } catch (Exception e) {
+            log.warn("Could not convert property '{}' with value '{}' to type {}, using default",
+                    configKey, value, defaultValue.getClass().getSimpleName());
+            return defaultValue;
         }
     }
-
+    
     @SuppressWarnings("unchecked")
-    private static <K> K convertStringToType(String value, K defaultValue) {
+    private <K> K convertStringToType(String value, K defaultValue) {
         if (defaultValue instanceof Integer) {
             return (K) Integer.valueOf(value);
         } else if (defaultValue instanceof Long) {
@@ -136,7 +69,6 @@ public class SpringProperties {
         } else if (defaultValue instanceof Float) {
             return (K) Float.valueOf(value);
         } else {
-            // For String and other types, just return the value
             return (K) value;
         }
     }

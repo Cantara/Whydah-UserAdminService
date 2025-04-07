@@ -1,12 +1,12 @@
 package net.whydah.admin.email;
 
-import net.whydah.admin.ConfigValues;
-import net.whydah.admin.createlogon.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import net.whydah.admin.SpringProperties;
+import net.whydah.admin.createlogon.MailService;
 
 /**
  * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a> 18.08.13
@@ -23,13 +23,16 @@ public class PasswordSender {
 
     private final EmailBodyGenerator bodyGenerator;
     private final MailService mailService;
+    
+    
+    SpringProperties properties;
 
     @Autowired
-    public PasswordSender(EmailBodyGenerator bodyGenerator, MailService mailService,
-                          @Value("${ssologinservice}") String ssoLoginServiceUrl) {
+    public PasswordSender(EmailBodyGenerator bodyGenerator, MailService mailService, SpringProperties properties) {
         this.bodyGenerator = bodyGenerator;
         this.mailService = mailService;
-        this.ssoLoginServiceUrl = ssoLoginServiceUrl;
+        this.ssoLoginServiceUrl = properties.getString("ssologinservice");
+        this.properties = properties;
     }
 
     public boolean sendResetPasswordEmail(String username, String token, String userEmail) {
@@ -38,7 +41,7 @@ public class PasswordSender {
         log.info("Sending resetPassword email for user {} to {}, token={}", username, userEmail, token);
         String body = bodyGenerator.resetPassword(resetUrl, username);
         try {
-            String reset_subject = ConfigValues.getString("email.subject.PasswordResetEmail.ftl");
+            String reset_subject = properties.getString("email.subject.PasswordResetEmail.ftl");
             IMailSender mailSender = mailService.getEmailSender();
             mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             messageSent = true;
@@ -56,15 +59,15 @@ public class PasswordSender {
             log.info("Sending resetPassword email for user {} to {}, token={}, templateName={}", username, userEmail, token, templateName);
 
             if (templateName == null || templateName.length() < 10) {
-                String reset_subject = ConfigValues.getString("email.subject.PasswordResetEmail.ftl");
-                String system_name = ConfigValues.getString("email.systemname.PasswordResetEmail.ftl");
+                String reset_subject = properties.getString("email.subject.PasswordResetEmail.ftl");
+                String system_name = properties.getString("email.systemname.PasswordResetEmail.ftl");
                 String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
                 log.debug(body);
                 IMailSender mailSender = mailService.getEmailSender();
                 mailSender.send(userEmail, reset_subject != null ? reset_subject : RESET_PASSWORD_SUBJECT, body);
             } else {
-                String template_subject = ConfigValues.getString("email.subject." + templateName);
-                String system_name = ConfigValues.getString("email.systemname." + templateName);
+                String template_subject = properties.getString("email.subject." + templateName);
+                String system_name = properties.getString("email.systemname." + templateName);
                 String body = bodyGenerator.resetPassword(resetUrl, username, system_name !=null? system_name: "Whydah system", templateName);
                 log.debug(body);
                 IMailSender mailSender = mailService.getEmailSender();

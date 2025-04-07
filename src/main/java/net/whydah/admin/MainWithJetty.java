@@ -10,13 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.Environment;
 import org.valuereporter.client.activity.ObservedActivityDistributer;
 import org.valuereporter.client.http.HttpObservationDistributer;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
@@ -69,12 +72,41 @@ public class MainWithJetty {
             System.out.println("No external properties found at: " + externalProps.getAbsolutePath());
             log.info("No external properties found at: " + externalProps.getAbsolutePath());
         }
-
-        // Initialize Spring context with both classpath and file system resources
+        
+        
+        
+        
+        // Manually load properties first
+        Properties manualProps = new Properties();
+        try (InputStream in = ClassLoader.getSystemResourceAsStream("useradminservice.properties")) {
+            if (in != null) {
+                manualProps.load(in);
+                System.out.println("Manually loaded default properties");
+            } else {
+                System.out.println("Could not find default properties");
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading default properties: " + e.getMessage());
+        }
+        
+        // Initialize Spring context
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-
-        // Inspect the Environment directly
+        
+        // Now try to get property through various methods for debugging
         Environment env = context.getEnvironment();
+        String host1 = env.getProperty("valuereporter.host");
+        String host2 = manualProps.getProperty("valuereporter.host");
+        String host3 = System.getProperty("valuereporter.host");
+        
+        System.out.println("Reporter host from Spring Environment: " + host1);
+        System.out.println("Reporter host from manual props: " + host2);
+        System.out.println("Reporter host from system props: " + host3);
+        
+        // Use manual properties if Spring fails
+        String reporterHost = host1 != null ? host1 : host2;
+        String reporterPort = env.getProperty("valuereporter.port", manualProps.getProperty("valuereporter.port"));
+        String prefix = env.getProperty("applicationname", manualProps.getProperty("applicationname"));
+       
         System.out.println("Direct inspection of Spring Environment:");
         log.info("Direct inspection of Spring Environment:");
         String[] keysToLog = {
@@ -88,20 +120,16 @@ public class MainWithJetty {
             log.info("  " + key + " = " + value);
         }
         // Property-overwrite of SSL verification to support weak ssl certificates
-        String sslVerification = SpringProperties.getString("sslverification");
+        String sslVerification = env.getProperty("sslverification");
         if ("disabled".equalsIgnoreCase(sslVerification)) {
             SSLTool.disableCertificateValidation();
         }
 
-        //Start Valuereporter event distributer.
-        String reporterHost = SpringProperties.getString("valuereporter.host");
-        String reporterPort = SpringProperties.getString("valuereporter.port");
-        String prefix = SpringProperties.getString("applicationname");
-        int cacheSize = SpringProperties.get("valuereporter.activity.batchsize", 500);
-        int forwardInterval = SpringProperties.get("valuereporter.activity.postintervalms", 10000);
+        int cacheSize = Integer.valueOf(env.getProperty("valuereporter.activity.batchsize","50"));
+        int forwardInterval = Integer.valueOf(env.getProperty("valuereporter.activity.postintervalms", "10000"));
         new Thread(ObservedActivityDistributer.getInstance(reporterHost, reporterPort, prefix, cacheSize, forwardInterval)).start();
         new Thread(new HttpObservationDistributer(reporterHost, reporterPort, prefix)).start();
-        Integer webappPort = SpringProperties.get("service.port", 9992);
+        Integer webappPort = Integer.valueOf(env.getProperty("service.port", "9992"));
         MainWithJetty main = new MainWithJetty(webappPort);
         main.start();
         main.join();

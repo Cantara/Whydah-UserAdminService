@@ -1,9 +1,14 @@
 package net.whydah.admin.email;
 
-import net.whydah.admin.ConfigValues;
+import net.whydah.sso.application.types.ApplicationCredential;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -11,27 +16,31 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:erik-dev@fjas.no">Erik Drolshammer</a>
- */
-@Component
+
 public class MailSender implements IMailSender {
 	private static final Logger log = LoggerFactory.getLogger(MailSender.class);
 
-	private final String smtpUsername;
-	private final String smtpPassword;
-	private final String smtpHost;
-	private final String smtpPort;
-	private final String smtpFromPersonalname;
-	private final String smtpFromAddress;
+	private String smtpUsername;
+	private String smtpPassword;
+	private String smtpHost;
+	private String smtpPort;
+	private String smtpFromPersonalname;
+	private String smtpFromAddress;
 
-	public MailSender() {
-		this.smtpUsername = ConfigValues.getString("email.smtp.username");
-		this.smtpPassword = ConfigValues.getString("email.smtp.password");
-		this.smtpHost = ConfigValues.getString("email.smtp.host");
-		this.smtpPort = ConfigValues.getString("email.smtp.port");
-		this.smtpFromPersonalname = ConfigValues.getString("email.smtp.from.personalname");
-		this.smtpFromAddress = ConfigValues.getString("email.smtp.from.address");
+	
+	public MailSender(String smtpUsername,
+			String smtpPassword,
+			String smtpHost,
+			String smtpPort,
+			String smtpFromPersonalname,
+			String smtpFromAddress) {
+
+		this.smtpUsername = smtpUsername;
+		this.smtpPassword = smtpPassword;
+		this.smtpHost = smtpHost;
+		this.smtpPort = smtpPort;
+		this.smtpFromPersonalname = smtpFromPersonalname;
+		this.smtpFromAddress = smtpFromAddress;
 
 		log.info("email.smtp.host:" + smtpHost);
 		log.info("email.smtp.port:" + smtpPort);
@@ -39,6 +48,7 @@ public class MailSender implements IMailSender {
 		log.info("email.smtp.password:" + smtpPassword);
 		log.info("email.smtp.from.address:" + smtpFromAddress);
 		log.info("email.smtp.from.personalname:" + smtpFromPersonalname);
+
 	}
 
 	public void send(String recipients, String subject, String body) {
@@ -56,10 +66,10 @@ public class MailSender implements IMailSender {
 
 		Session session = Session.getInstance(smtpProperties,
 				new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(smtpUsername, smtpPassword);
-					}
-				});
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(smtpUsername, smtpPassword);
+			}
+		});
 
 		try {
 			Message message = new MimeMessage(session);

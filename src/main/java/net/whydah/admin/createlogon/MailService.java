@@ -1,17 +1,8 @@
 package net.whydah.admin.createlogon;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.whydah.admin.ConfigValues;
-import net.whydah.admin.email.EmailBodyGenerator;
-import net.whydah.admin.email.IMailSender;
-import net.whydah.admin.email.MailSender;
-import net.whydah.admin.email.msgraph.MsGraphMailSender;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import static org.slf4j.LoggerFactory.getLogger;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
@@ -19,7 +10,17 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.whydah.admin.SpringProperties;
+import net.whydah.admin.email.EmailBodyGenerator;
+import net.whydah.admin.email.IMailSender;
+import net.whydah.admin.email.MailSender;
+import net.whydah.admin.email.msgraph.MsGraphMailSender;
 
 @Service
 public class MailService {
@@ -32,27 +33,35 @@ public class MailService {
 	private final Map<Long, RemindTask> taskById = new ConcurrentHashMap<>();
 	private final Timer timer = new Timer("mail-service-timer");
 	private final String defaultSubject;
+	
+	SpringProperties properties;
 
 	@Autowired
-	public MailService(EmailBodyGenerator bodyGenerator,
-					   @Value("${email.subject:Whydah}") String defaultSubject) {
-		if(!ConfigValues.get("email.smtp.app.clientid", "").isEmpty() &&
-				!ConfigValues.get("email.smtp.app.fromaddress", "").isEmpty() &&
-				!ConfigValues.get("email.smtp.app.clientsecret", "").isEmpty()) {
+	public MailService(EmailBodyGenerator bodyGenerator, SpringProperties properties) {
+		this.properties = properties;
+		
+		if(!properties.get("email.smtp.app.clientid", "").isEmpty() &&
+				!properties.get("email.smtp.app.fromaddress", "").isEmpty() &&
+				!properties.get("email.smtp.app.clientsecret", "").isEmpty()) {
 			log.debug("Choosing IMailSender: " + MsGraphMailSender.class.getName());
 			this.mailSender = new MsGraphMailSender(
-					ConfigValues.getString("email.smtp.app.fromaddress"),
-					ConfigValues.getString("email.smtp.app.clientid"),
-					ConfigValues.get("email.smtp.app.tenantid", "common"),
-					ConfigValues.getString("email.smtp.app.clientsecret")
+					properties.getString("email.smtp.app.fromaddress"),
+					properties.getString("email.smtp.app.clientid"),
+					properties.get("email.smtp.app.tenantid", "common"),
+					properties.getString("email.smtp.app.clientsecret")
 			);
 		} else {
 			log.debug("Choosing IMailSender: " + MailSender.class.getName());
-			this.mailSender = new MailSender();
+			this.mailSender = new MailSender(properties.get("email.smtp.username",""),
+					properties.get("email.smtp.password",""),
+					properties.get("email.smtp.host",""),
+					properties.get("email.smtp.port",""),
+					properties.get("email.smtp.from.personalname",""),
+					properties.get("email.smtp.from.address",""));
 		}
 
 		this.bodyGenerator = bodyGenerator;
-		this.defaultSubject = defaultSubject;
+		this.defaultSubject = properties.get("email.subject:Whydah","");
 	}
 
 	public IMailSender getEmailSender() {
@@ -96,7 +105,7 @@ public class MailService {
 		try {
 			String effectiveSubject = subject;
 			if(effectiveSubject==null || effectiveSubject.equals("")) {
-				effectiveSubject = ConfigValues.getString("email.subject." + templateName);
+				effectiveSubject = properties.getString("email.subject." + templateName);
 				if (effectiveSubject == null) {
 					effectiveSubject = defaultSubject;
 				}
