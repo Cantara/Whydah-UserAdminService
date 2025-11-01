@@ -371,7 +371,7 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.17.7</version>
+            <version>1.17.8</version>
         </dependency>
 
         <!-- Azure stuff -->
@@ -481,8 +481,8 @@
                 	<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
 					    <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
 					</transformer>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                         <resource>META-INF/spring.handlers</resource>
                     </transformer>
