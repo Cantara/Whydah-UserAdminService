@@ -59,7 +59,7 @@ public class ServiceStartTest {
     public void testGetHealth() {
         HttpURLConnection conn = null;
         try {
-            String healthUrl = MainWithJetty.getHEALTHURL();
+            String healthUrl = MainWithJetty.getHealthUrl();
             log.info("Testing health endpoint: {}", healthUrl);
 
             URI uri = new URI(healthUrl);

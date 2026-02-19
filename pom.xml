@@ -1,4 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.whydah.identity</groupId>
     <artifactId>UserAdminService</artifactId>
@@ -10,6 +13,7 @@
         <artifactId>parent</artifactId>
         <version>8</version>
     </parent>
+
     <properties>
         <jdk.version>21</jdk.version>
         <service.name>Whydah-UserAdminService</service.name>
@@ -21,35 +25,43 @@
         <jersey.version>3.1.11</jersey.version>
         <jetty.version>12.1.4</jetty.version>
         <spring.version>6.2.14</spring.version>
+
+        <!--
+            LOGGING - treat as a single unit, never update independently.
+            Compatibility reference: https://logback.qos.ch/dependencies.html
+            slf4j 2.0.16+ requires logback 1.5.12+ (setMDCAdapter was added there).
+        -->
         <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.18</logback.version>
+
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <unirest-java.version>3.14.5</unirest-java.version>
         <jakarta.version>4.0.0</jakarta.version>
+        <exoreaction-slack-notification-library.version>1.0.9</exoreaction-slack-notification-library.version>
+        <jackson.version>2.18.3</jackson.version>
     </properties>
+
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
         <url>https://github.com/cantara/Whydah-UserAdminService</url>
         <tag>HEAD</tag>
     </scm>
+
     <developers>
         <developer>
             <id>totto</id>
             <name>Thor Henning Hetland</name>
             <email>totto@totto.org</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
+            <roles><role>Developer</role></roles>
             <organization>Cantara</organization>
-            <organizationUrl>https://wwiki.cantara.no/</organizationUrl>
+            <organizationUrl>https://wiki.cantara.no/</organizationUrl>
         </developer>
         <developer>
             <id>kimcs</id>
             <name>Kim Christian Swenson</name>
             <email>kim.christian.swenson@gmail.com</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
+            <roles><role>Developer</role></roles>
             <organization>Capra Consulting AS</organization>
             <organizationUrl>http://www.capraconsulting.no/</organizationUrl>
         </developer>
@@ -57,158 +69,287 @@
             <id>baardl</id>
             <name>Bard Lind</name>
             <email>bard.lind@gmail.com</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
+            <roles><role>Developer</role></roles>
             <organization>Cantara</organization>
-            <organizationUrl>https://wwiki.cantara.no/</organizationUrl>
+            <organizationUrl>https://wiki.cantara.no/</organizationUrl>
         </developer>
         <developer>
             <name>Erik Drolshammer</name>
             <email>erik-dev@fjas.no</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
+            <roles><role>Developer</role></roles>
             <organization>Capra Consulting AS</organization>
             <organizationUrl>http://www.capraconsulting.no/</organizationUrl>
         </developer>
     </developers>
 
+    <!--
+        dependencyManagement is the single source of truth for ALL logging versions.
+        This wins over whatever transitive deps declare.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <!-- Pin Jackson across all transitive deps -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+
+        <!-- ============================================================ -->
+        <!-- LOGGING                                                       -->
+        <!-- ============================================================ -->
+
+        <!-- JUL (java.util.logging) → SLF4J bridge for Jetty/Jersey -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+        </dependency>
+
+        <!-- JCL (commons-logging) → SLF4J bridge for Spring -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+
+        <!-- The implementation -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <!-- ============================================================ -->
+        <!-- SLACK NOTIFICATION                                            -->
+        <!-- Exclude its slf4j so our dependencyManagement wins           -->
+        <!-- ============================================================ -->
+        <dependency>
+            <groupId>com.exoreaction</groupId>
+            <artifactId>slack-notification-library</artifactId>
+            <version>${exoreaction-slack-notification-library.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- ============================================================ -->
+        <!-- JACKSON                                                       -->
+        <!-- ============================================================ -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- ============================================================ -->
+        <!-- WHYDAH                                                        -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>net.whydah.sso</groupId>
             <artifactId>Whydah-Admin-SDK</artifactId>
             <version>${whydah.admin.sdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
+        <!-- ============================================================ -->
+        <!-- MISC                                                          -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.2</version>
+            <version>2.13.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.valuereporter</groupId>
             <artifactId>valuereporter-agent</artifactId>
             <version>1.10.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- Jakarta EE APIs -->
+        <!-- ============================================================ -->
+        <!-- JAKARTA EE APIs                                               -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>6.1.0</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
             <version>${jakarta.version}</version>
         </dependency>
-
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>3.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
             <version>2.0.1</version>
         </dependency>
 
-       
-       <!-- Jersey Core -->
-    <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
-        <artifactId>jersey-server</artifactId>
-        <version>${jersey.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
-        <artifactId>jersey-common</artifactId>
-        <version>${jersey.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
-        <artifactId>jersey-client</artifactId>
-        <version>${jersey.version}</version>
-    </dependency>
+        <!-- ============================================================ -->
+        <!-- JERSEY                                                        -->
+        <!-- ============================================================ -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring6</artifactId>
+            <version>${jersey.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <!-- Jersey Container -->
-    <dependency>
-        <groupId>org.glassfish.jersey.containers</groupId>
-        <artifactId>jersey-container-servlet</artifactId>
-        <version>${jersey.version}</version>
-    </dependency>
-
-    <!-- HK2 Injection -->
-    <dependency>
-        <groupId>org.glassfish.jersey.inject</groupId>
-        <artifactId>jersey-hk2</artifactId>
-        <version>${jersey.version}</version>
-    </dependency>
-
-    <!-- Jersey Media -->
-    <dependency>
-        <groupId>org.glassfish.jersey.media</groupId>
-        <artifactId>jersey-media-json-jackson</artifactId>
-        <version>${jersey.version}</version>
-    </dependency>
-
-    <!-- Jersey Spring Integration -->
-    <dependency>
-        <groupId>org.glassfish.jersey.ext</groupId>
-        <artifactId>jersey-spring6</artifactId>
-        <version>${jersey.version}</version>
-        <exclusions>
-            <exclusion>
-                <groupId>org.hibernate.validator</groupId>
-                <artifactId>hibernate-validator</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-
+        <!-- ============================================================ -->
+        <!-- CDI / WELD                                                    -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
             <version>5.1.5.Final</version>
         </dependency>
 
-        <!-- Jersey Spring 6 integration -->
-        
-        <!-- Jetty 12 dependencies -->
+        <!-- ============================================================ -->
+        <!-- JETTY 12                                                      -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-servlet -->
         <dependency>
             <groupId>org.eclipse.jetty.ee10</groupId>
             <artifactId>jetty-ee10-servlet</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-webapp -->
         <dependency>
             <groupId>org.eclipse.jetty.ee10</groupId>
             <artifactId>jetty-ee10-webapp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
 
-        <!-- Add this dependency to your pom.xml -->
-        <dependency>
-            <groupId>org.glassfish.jersey.inject</groupId>
-            <artifactId>jersey-hk2</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-
-        <!-- ONLY for DI, override spring versions from constretto-spring -->
+        <!-- ============================================================ -->
+        <!-- SPRING                                                        -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -220,200 +361,163 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
             <exclusions>
-                <!-- use jcl over slf4j instead -->
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!-- Add jcl-over-slf4j to replace commons-logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.25</version>
-        </dependency>
-
-        <!-- javax.mail and javax.activation is used by logback SmtpAppender -->
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1.1</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-
-        <!-- Validation -->
+        <!-- ============================================================ -->
+        <!-- VALIDATION                                                    -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>9.1.0.Final</version>
+            <version>9.0.0.Final</version>
         </dependency>
-
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.1.1</version>
         </dependency>
 
-        <!-- JAXB implementation -->
+        <!-- ============================================================ -->
+        <!-- JAXB                                                          -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.4</version>
         </dependency>
-
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <version>4.0.6</version>
         </dependency>
 
-        <!-- Support for mail sending -->
+        <!-- ============================================================ -->
+        <!-- MAIL / TEMPLATE                                               -->
+        <!-- ============================================================ -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.34</version>
         </dependency>
 
+        <!-- ============================================================ -->
+        <!-- MISC RUNTIME                                                  -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20250517</version>
         </dependency>
-
-        <!-- Testing -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.5</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>2.0.2-beta</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>json-path</artifactId>
-            <version>2.9.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>xml-path</artifactId>
-            <version>2.9.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>spring-mock-mvc</artifactId>
-            <version>2.9.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>1.18.1</version>
-        </dependency>
-
-        <!-- Azure stuff -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
-            <version>1.18.2</version>
+            <version>1.15.4</version>
         </dependency>
-
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.1</version>
-            <scope>test</scope>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.17.5</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>5.7.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.1</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.thoughtworks.paranamer</groupId>
             <artifactId>paranamer</artifactId>
             <version>2.8.3</version>
         </dependency>
 
+        <!-- ============================================================ -->
+        <!-- TEST                                                          -->
+        <!-- ============================================================ -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>2.0.2-beta</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>xml-path</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -422,13 +526,49 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
             </resource>
-            <!-- Add webapp as resource folder to embed it in the jar file. -->
             <resource>
                 <directory>src/main/webapp</directory>
                 <targetPath>webapp</targetPath>
             </resource>
         </resources>
+
         <plugins>
+
+            <!-- ======================================================== -->
+            <!-- ENFORCER - fail build on logging version conflicts        -->
+            <!-- ======================================================== -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-logging-sanity</id>
+                        <goals><goal>enforce</goal></goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                                <bannedDependencies>
+                                    <message>Use SLF4J bridges instead of concrete logging frameworks.</message>
+                                    <excludes>
+                                        <exclude>log4j:log4j</exclude>
+                                        <exclude>org.slf4j:slf4j-log4j12</exclude>
+                                        <exclude>org.slf4j:slf4j-jdk14</exclude>
+                                        <exclude>org.slf4j:slf4j-simple</exclude>
+                                        <exclude>org.slf4j:slf4j-nop</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ======================================================== -->
+            <!-- JAR                                                       -->
+            <!-- ======================================================== -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -444,59 +584,54 @@
                     </archive>
                 </configuration>
             </plugin>
-            
-          
-       
-         <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-shade-plugin</artifactId>
-    <version>3.6.0</version>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>shade</goal>
-            </goals>
-            <configuration>
-                <filters>
-                    <filter>
-                        <artifact>*:*</artifact>
-                        <includes>
-                            <include>**</include>
-                        </includes>
-                        <excludes>
-                            <exclude>META-INF/*.SF</exclude>
-                            <exclude>META-INF/*.DSA</exclude>
-                            <exclude>META-INF/*.RSA</exclude>
-                        </excludes>
-                    </filter>
-                    <filter>
-                        <artifact>org.glassfish.jersey.ext:jersey-spring6</artifact>
-                        <includes>
-                            <include>**</include>
-                        </includes>
-                    </filter>
-                </filters>
-                <transformers>
-                	<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-					    <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
-					</transformer>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                        <resource>META-INF/spring.handlers</resource>
-                    </transformer>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                        <resource>META-INF/spring.schemas</resource>
-                    </transformer>
-                </transformers>
-                <createDependencyReducedPom>false</createDependencyReducedPom>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
 
-            <!--Create Windows, and Unix/Linux installation script -->
+            <!-- ======================================================== -->
+            <!-- SHADE                                                     -->
+            <!-- ======================================================== -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>net.whydah.admin.MainWithJetty</mainClass>
+                                </transformer>
+                            </transformers>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ======================================================== -->
+            <!-- APPASSEMBLER                                              -->
+            <!-- ======================================================== -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
@@ -531,7 +666,6 @@
                                             <name>wrapper.logfile</name>
                                             <value>logs/wrapper.log</value>
                                         </property>
-
                                         <property>
                                             <name>wrapper.console.title</name>
                                             <value>${service.name}</value>
@@ -550,10 +684,6 @@
                             <jvmSettings>
                                 <initialMemorySize>32M</initialMemorySize>
                                 <maxMemorySize>512M</maxMemorySize>
-                                <extraArguments>
-                                    <extraArgument>-XX:PermSize=32m</extraArgument>
-                                    <extraArgument>-XX:MaxPermSize=32m</extraArgument>
-                                </extraArguments>
                             </jvmSettings>
                         </daemon>
                     </daemons>
@@ -562,12 +692,14 @@
                     <execution>
                         <id>generate-jsw-scripts</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>generate-daemons</goal>
-                        </goals>
+                        <goals><goal>generate-daemons</goal></goals>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- ======================================================== -->
+            <!-- ASSEMBLY                                                  -->
+            <!-- ======================================================== -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -580,12 +712,14 @@
                     <execution>
                         <id>assemble-zip</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
+                        <goals><goal>single</goal></goals>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- ======================================================== -->
+            <!-- JAVADOC                                                   -->
+            <!-- ======================================================== -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -593,13 +727,14 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
+                        <goals><goal>jar</goal></goals>
                     </execution>
                 </executions>
             </plugin>
 
+            <!-- ======================================================== -->
+            <!-- DEPENDENCY LIST (for audit)                               -->
+            <!-- ======================================================== -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -608,15 +743,14 @@
                     <execution>
                         <id>print-dependencies</id>
                         <phase>test-compile</phase>
-                        <goals>
-                            <goal>list</goal>
-                        </goals>
+                        <goals><goal>list</goal></goals>
                         <configuration>
                             <outputFile>${project.build.directory}/dependency-list.txt</outputFile>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
@@ -642,4 +776,5 @@
             <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+
 </project>

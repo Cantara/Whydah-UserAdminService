@@ -68,7 +68,11 @@ public class UserService {
 	public UserIdentity createUser(String applicationTokenId, String userTokenId, String userJsonIdentity) throws AppException {
 		UserIdentity userIdentity = null;
 		if (adminChecker.authorise(applicationTokenId, userTokenId)) {
-			UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJsonIdentity);
+//			try {
+//				UserIdentity signupUser = UserIdentityMapper.fromUserIdentityJson(userJsonIdentity);
+//			} catch(Exception ex) {
+//
+//			}
 			//Response userCheckResponse = uibUsersConnection.checkExist(applicationTokenId, userTokenId, signupUser.getUsername());
 			//int userCheckStatusCode = userCheckResponse.getStatus();
 			Response response = uibUserConnection.createUser(credentialStore.getUserAdminServiceTokenId(), userTokenId, userJsonIdentity);
