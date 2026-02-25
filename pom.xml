@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.whydah.identity</groupId>
     <artifactId>UserAdminService</artifactId>
-    <version>2.31.14-SNAPSHOT</version>
+    <version>2.31.14</version>
     <name>UserAdminService</name>
     <url>https://wiki.cantara.no/display/iam/UserAdminService</url>
     <parent>
@@ -45,7 +43,7 @@
         <developerConnection>scm:git:ssh://git@github.com/cantara/Whydah-UserAdminService.git</developerConnection>
         <connection>scm:git:https://github.com/cantara/Whydah-UserAdminService.git</connection>
         <url>https://github.com/cantara/Whydah-UserAdminService</url>
-        <tag>HEAD</tag>
+        <tag>UserAdminService-2.31.14</tag>
     </scm>
 
     <developers>
@@ -779,7 +777,7 @@
                         <phase>validate</phase>
                         <configuration>
                             <rules>
-                                <dependencyConvergence/>
+                                <dependencyConvergence />
                                 <bannedDependencies>
                                     <message>Use SLF4J bridges instead of concrete logging frameworks.</message>
                                     <excludes>
@@ -842,8 +840,8 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
                                 </transformer>
