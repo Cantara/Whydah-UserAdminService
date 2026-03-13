@@ -34,29 +34,29 @@ public class UibUsersConnection {
         // uib = client.target(userIdentityBackendUri);
     }
 
-    public Response findUsers(String userAdminServiceTokenId, String userTokenId, String query) {
+    public Response findUsers(String appTokenId, String userTokenId, String query) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uib = client.target(myUibUrl);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/find").path(query);
+        WebTarget webResource = uib.path(appTokenId).path(userTokenId).path("users/find").path(query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }
 
-    public Response queryUsers(String userAdminServiceTokenId, String userTokenId, String page, String query) {
+    public Response queryUsers(String appTokenId, String userTokenId, String page, String query) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uib = client.target(myUibUrl);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/query").path(page).path(query);
+        WebTarget webResource = uib.path(appTokenId).path(userTokenId).path("users/query").path(page).path(query);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }
 
-    public Response exportUsers(String userAdminServiceTokenId, String userTokenId, String page) {
+    public Response exportUsers(String appTokenId, String userTokenId, String page) {
         Client client = ClientBuilder.newClient();
         log.info("exportUsers Connection to UserIdentityBackend on {}", myUibUrl);
         uib = client.target(myUibUrl);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/export").path(page);
+        WebTarget webResource = uib.path(appTokenId).path(userTokenId).path("users/export").path(page);
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }
@@ -70,20 +70,20 @@ public class UibUsersConnection {
         return responseFromUib;
     }
 
-    public Response getDuplicateUsers(String applicationTokenId, String userTokenId, String json) {
+    public Response getDuplicateUsers(String appTokenId, String userTokenId, String json) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}" , myUibUrl);
         uib = client.target(myUibUrl);
-        WebTarget webResource = uib.path(applicationTokenId).path(userTokenId).path("users/checkduplicates");
+        WebTarget webResource = uib.path(appTokenId).path(userTokenId).path("users/checkduplicates");
         Response response = webResource.request(MediaType.APPLICATION_JSON).header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).post(Entity.entity(json, MediaType.APPLICATION_JSON));
         return copyResponse(response);
     }
 
-    public Response checkExist(String userAdminServiceTokenId, String userTokenId, String username) {
+    public Response checkExist(String appTokenId, String userTokenId, String username) {
         Client client = ClientBuilder.newClient();
         log.info("Connection to UserIdentityBackend on {}", myUibUrl);
         uib = client.target(myUibUrl);
-        WebTarget webResource = uib.path(userAdminServiceTokenId).path(userTokenId).path("users/checkexist").path(username);
+        WebTarget webResource = uib.path(appTokenId).path(userTokenId).path("users/checkexist").path(username);
         Response response = webResource.request().header(UASCredentials.APPLICATION_CREDENTIALS_HEADER_XML, uasCredentials.getApplicationCredentialsXmlEncoded()).get();
         return copyResponse(response);
     }

@@ -14,6 +14,8 @@ import net.whydah.sso.util.WhydahUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exoreaction.notification.SlackNotificationFacade;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.regex.Pattern;
@@ -167,21 +169,37 @@ public class SecurityFilter implements Filter {
             /{applicationtokenid}/{usertokenid}/users           //UsersResource
              */
 
-            Boolean userTokenIsValid = new CommandValidateUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
-            if (!userTokenIsValid) {
-                log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
-                return HttpServletResponse.SC_UNAUTHORIZED;
-            }
-            UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
-            String userTokenXml = new CommandGetUserTokenByUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
-            if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
-                log.debug("{} was matched adminUserRole {}. SecurityFilter passed.", path, adminUserRole);
-                return null;
-            }
+        		if(usertokenId!=null) {
+        			Boolean userTokenIsValid = new CommandValidateUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
+        			if (!userTokenIsValid) {
+        				log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
+        				return HttpServletResponse.SC_UNAUTHORIZED;
+        			}
+        			
+        			if(credentialStore.getWas()!=null && credentialStore.getWas().getActiveApplicationTokenId()!=null) {
+        				UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
+            			String userTokenXml = new CommandGetUserTokenByUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
+            			if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
+            				log.debug("{} was matched adminUserRole {}. SecurityFilter passed.", path, adminUserRole);
+            				return null;
+            			} else {
+            				log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
+            				return HttpServletResponse.SC_UNAUTHORIZED;
+            			}
+        			}
+        			
+        			//just by pass this filter to avoid blocking on initialization
+        			return null;
+        			
+        		}
+           
         } catch (Exception e) {
             log.error("Unable to lookup application in UIB", e);
+            SlackNotificationFacade.handleException(e);
         }
+        
         log.warn("SecurityFilter - fallback... unhandled ACL");
+        
         return HttpServletResponse.SC_UNAUTHORIZED;
     }
 
