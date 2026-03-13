@@ -8,8 +8,10 @@ import net.whydah.sso.application.mappers.ApplicationCredentialMapper;
 import net.whydah.sso.commands.appauth.CommandValidateApplicationTokenId;
 import net.whydah.sso.commands.userauth.CommandGetUserTokenByUserTokenId;
 import net.whydah.sso.commands.userauth.CommandValidateUserTokenId;
+import net.whydah.sso.ddd.model.user.UserTokenId;
 import net.whydah.sso.user.helpers.UserXpathHelper;
 import net.whydah.sso.user.types.UserApplicationRoleEntry;
+import net.whydah.sso.user.types.UserToken;
 import net.whydah.sso.util.WhydahUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,16 +130,17 @@ public class SecurityFilter implements Filter {
         path = path.substring(path.indexOf("/"));
 
         /*
-        /{applicationTokenId}/auth/password/reset/{usernaem}     //PasswordResource
-         /{applicationTokenId}/user/{uid}/reset_password     //PasswordResource
-        /{applicationTokenId}/user/{uid}/change_password    //PasswordResource
-        /{applicationTokenId}/authenticate/user/*           //UserAuthenticationEndpoint
-        /{applicationTokenId}/signup/user                   //UserSignupEndpoint
+        /{applicationTokenId}/auth/password/reset/{username}                                    //PasswordResource
+        /{applicationTokenId}/auth/password/reset/username/{username}/newpassword/{token}       //PasswordResource
+        /{applicationTokenId}/user/{uid}/reset_password                                         //PasswordResource
+        /{applicationTokenId}/user/{uid}/change_password                                        //PasswordResource
+        /{applicationTokenId}/authenticate/user/*                                               //UserAuthenticationEndpoint
+        /{applicationTokenId}/signup/user                                                       //UserSignupEndpoint
         */
         String applicationAuthPattern = "/application/auth";
         String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
         String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
-        String pwResetAuthPattern = "/auth/password/reset/username/[^/]+";
+        String pwResetAuthPattern = "/auth/password/reset/username/[^/]+(/.*)?";  // fixed: allow optional extra segments e.g. /newpassword/{token}
         String pwPattern = "/user/[^/]+/(reset|change)_password";
         String userSignupPattern = "/signup";
         String userThirdParySignupPattern = "/createandlogon";
@@ -169,37 +172,38 @@ public class SecurityFilter implements Filter {
             /{applicationtokenid}/{usertokenid}/users           //UsersResource
              */
 
-        		if(usertokenId!=null) {
-        			Boolean userTokenIsValid = new CommandValidateUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
-        			if (!userTokenIsValid) {
-        				log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
-        				return HttpServletResponse.SC_UNAUTHORIZED;
-        			}
-        			
-        			if(credentialStore.getWas()!=null && credentialStore.getWas().getActiveApplicationTokenId()!=null) {
-        				UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
-            			String userTokenXml = new CommandGetUserTokenByUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
-            			if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
-            				log.debug("{} was matched adminUserRole {}. SecurityFilter passed.", path, adminUserRole);
-            				return null;
-            			} else {
-            				log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
-            				return HttpServletResponse.SC_UNAUTHORIZED;
-            			}
-        			}
-        			
-        			//just by pass this filter to avoid blocking on initialization
-        			return null;
-        			
-        		}
-           
+            if (usertokenId != null && UserTokenId.isValid(usertokenId)) {
+                Boolean userTokenIsValid = new CommandValidateUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), usertokenId).execute();
+                if (!userTokenIsValid) {
+                    log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
+                    return HttpServletResponse.SC_UNAUTHORIZED;
+                }
+
+                if (credentialStore.getWas() != null && credentialStore.getWas().getActiveApplicationTokenId() != null) {
+                    UserApplicationRoleEntry adminUserRole = WhydahUtil.getWhydahUserAdminRole();
+                    String userTokenXml = new CommandGetUserTokenByUserTokenId(tokenServiceUri, credentialStore.getWas().getActiveApplicationTokenId(), ApplicationCredentialMapper.toXML(credentialStore.getWas().getMyApplicationCredential()), usertokenId).execute();
+                    if (UserXpathHelper.hasRoleFromUserToken(userTokenXml, adminUserRole.getApplicationId(), adminUserRole.getRoleName())) {
+                        log.debug("{} was matched adminUserRole {}. SecurityFilter passed.", path, adminUserRole);
+                        return null;
+                    } else {
+                        log.warn("SecurityFilter - got application without valid userToken " + HttpServletResponse.SC_UNAUTHORIZED);
+                        return HttpServletResponse.SC_UNAUTHORIZED;
+                    }
+                } else {
+                	 //just by pass this filter to avoid blocking on initialization
+                  return null;
+                }
+
+               
+            }
+
         } catch (Exception e) {
             log.error("Unable to lookup application in UIB", e);
             SlackNotificationFacade.handleException(e);
         }
-        
+
         log.warn("SecurityFilter - fallback... unhandled ACL");
-        
+
         return HttpServletResponse.SC_UNAUTHORIZED;
     }
 
