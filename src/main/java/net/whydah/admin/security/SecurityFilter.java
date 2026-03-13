@@ -135,22 +135,22 @@ public class SecurityFilter implements Filter {
         String applicationAuthPattern = "/application/auth";
         String userLogonPattern = "/auth/logon/user";           //LogonController, same as authenticate/user in UIB.
         String userAuthPattern = "/authenticate/user(|/.*)";    //This is the pattern used in UIB
-        String pwResetAuthPattern = "/auth/password/reset/username/(.*?)";
-        String pwPattern = "/user/.+/(reset|change)_password";
+        String pwResetAuthPattern = "/auth/password/reset/username/[^/]+";
+        String pwPattern = "/user/[^/]+/(reset|change)_password";
         String userSignupPattern = "/signup";
         String userThirdParySignupPattern = "/createandlogon";
         String listApplicationsPattern = "/applications";
-        String findApplicationsPattern = "/applications/find/(.*?)";
+        String findApplicationsPattern = "/applications/find/[^/]+";
         String findApplicationsPattern_ = "/applications/find";
-        String findApplicationsPattern2 = "/find/applications/(.*?)";
+        String findApplicationsPattern2 = "/find/applications/[^/]+";
         String findApplicationsPattern2_ = "/find/applications";
         String hasUASAccess = "/hasUASAccess";
         String send_scheduled_email = "/send_scheduled_email";
-        String userPWEnabeled = "/user/.+/password_login_enabled";
-        String userThirdPartyLoginEnabled = "/user/.+/.+/thirdparty_login_enabled";
-        String checkExits = "/.+/users/checkexist/.+";
-        
-        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, userThirdParySignupPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userPWEnabeled, userThirdPartyLoginEnabled, findApplicationsPattern, findApplicationsPattern2, findApplicationsPattern_, findApplicationsPattern2_, checkExits};
+        String userPWEnabeled = "/user/[^/]+/password_login_enabled";
+        String userThirdPartyLoginEnabled = "/user/[^/]+/[^/]+/thirdparty_login_enabled";
+        String checkExists = "/[^/]+/users/checkexist/[^/]+";
+
+        String[] patternsWithoutUserTokenId = {applicationAuthPattern, userLogonPattern, userThirdParySignupPattern, pwResetAuthPattern, pwPattern, userAuthPattern, userSignupPattern, listApplicationsPattern, hasUASAccess, send_scheduled_email, userPWEnabeled, userThirdPartyLoginEnabled, findApplicationsPattern, findApplicationsPattern2, findApplicationsPattern_, findApplicationsPattern2_, checkExists};
         for (String pattern : patternsWithoutUserTokenId) {
             if (Pattern.compile(pattern).matcher(path).matches()) {
                 log.debug("{} was matched to {}. SecurityFilter passed.", path, pattern);
