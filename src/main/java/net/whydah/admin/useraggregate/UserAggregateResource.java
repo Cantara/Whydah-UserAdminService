@@ -141,6 +141,9 @@ public class UserAggregateResource {
 
 		UserAggregate userAggregate = null;
 		userAggregate = userService.getUserAggregateByUid(applicationTokenId, userTokenId, uid);
+		if (userAggregate == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 		return Response.ok(UserAggregateMapper.toJson(userAggregate)).build();
 	}
 

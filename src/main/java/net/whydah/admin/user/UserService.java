@@ -308,6 +308,9 @@ public class UserService {
 			case STATUS_FORBIDDEN:
 				log.error("getUserAggregateByUid-Not allowed from UIB: {}: {} Using adminUserTokenId {}, userName {}", response.getStatus(), responseBody);
 				throw AppExceptionCode.MISC_FORBIDDEN_9993;
+			case 404:
+				log.warn("getUserAggregateByUid - user not found in UIB for uid={}", uid);
+				return null;
 			default:
 				log.error("getUserAggregateByUid-Response from UIB: {}: {}", response.getStatus(), responseBody);
 				throw new AuthenticationFailedException("getUserIdentity failed. Status code " + response.getStatus());
