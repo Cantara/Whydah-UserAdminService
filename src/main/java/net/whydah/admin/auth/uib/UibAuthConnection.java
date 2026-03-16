@@ -151,9 +151,12 @@ public class UibAuthConnection {
             case STATUS_NOT_ACCEPTABLE:
                 log.error("Response from UIB: {}: {}", response.getStatus(), output);
                 throw AppExceptionCode.MISC_NOT_ACCEPTABLE_9991;
+            case 401:
+                log.warn("setPasswordByToken - token invalid or expired for username={}", username);
+                throw AppExceptionCode.MISC_NOT_ACCEPTABLE_9991;
             default:
-                log.error("Response from UIB: {}: {}", response.getStatus(), output);
-                throw new AuthenticationFailedException("ResetPassword failed. Status code " + response.getStatus());
+                log.error("setPasswordByToken failed for username={}, UIB status={}", username, statusCode);
+                throw new RuntimeException("setPasswordByToken failed. Status code " + statusCode);
         }
         return output;
     }

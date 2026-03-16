@@ -191,6 +191,12 @@ public class PasswordController {
             return Response.ok(userIdentity).build();
         } catch (IOException e) {
             log.trace("Failed to parse inncomming newPasswordJson {}", newPasswordJson);
+        } catch (AppException e) {
+            log.warn("resetNewPW - AppException for username={}: {}", username, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.warn("resetNewPW - failed for username={}: {}", username, e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.accepted(newPasswordJson).build();
 
