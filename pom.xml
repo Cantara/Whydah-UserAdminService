@@ -36,7 +36,7 @@
         <unirest-java.version>3.14.5</unirest-java.version>
         <jakarta.version>4.0.0</jakarta.version>
         <exoreaction-slack-notification-library.version>1.0.9</exoreaction-slack-notification-library.version>
-        <jackson.version>2.18.3</jackson.version>
+        <jackson.version>2.21.2</jackson.version>
     </properties>
 
     <scm>
@@ -777,7 +777,7 @@
                         <phase>validate</phase>
                         <configuration>
                             <rules>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <bannedDependencies>
                                     <message>Use SLF4J bridges instead of concrete logging frameworks.</message>
                                     <excludes>
@@ -840,8 +840,8 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/org.glassfish.jersey.server.spi.ComponentProvider</resource>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
                                 </transformer>
