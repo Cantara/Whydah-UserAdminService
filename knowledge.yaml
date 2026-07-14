@@ -1,4 +1,4 @@
-kcp_version: "0.21"
+kcp_version: "0.26"
 updated: "2026-06-20"
 language: en
 license: "Apache-2.0"
@@ -25,27 +25,23 @@ units:
     type: api
     description: User CRUD REST endpoints for creating, reading, updating, and deleting users.
     path: src/main/java/net/whydah/useradminservice
-      content_hash:
-        algorithm: sha256
-        value: ""
   - id: application-api
     name: Application API
     type: api
     description: Application management API for registering and configuring applications.
-      content_hash:
-        algorithm: sha256
-        value: ""
   - id: role-api
     name: Role API
     type: api
     description: Role and group management endpoints for assigning and querying permissions.
-      content_hash:
-        algorithm: sha256
-        value: ""
   - id: integration
     name: Whydah STS Integration
     type: component
     description: Integration layer with the Whydah Security Token Service for token validation.
-      content_hash:
-        algorithm: sha256
-        value: ""
+
+# Serving Endpoint Binding (KCP SPEC v0.26 §3.12): authoritative manifest URL
+# and authorized MCP representative. Ignored by pre-0.26 verifiers.
+serving:
+  manifest:
+    - https://raw.githubusercontent.com/Cantara/Whydah-UserAdminService/master/knowledge.yaml
+  mcp:
+    - https://mcp.cantara.no/mcp
